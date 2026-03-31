@@ -150,6 +150,11 @@
                     <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория" class="p-2 text-slate-400 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
                     </button>
+                    <button onclick="configureGitHubSync()" title="Настроить GitHub Sync" class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 0 0 8.36 22.9c.58.1.8-.25.8-.57v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.7.08-.68.08-.68 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.3-5.23-1.27-5.23-5.66 0-1.25.45-2.26 1.17-3.06-.12-.29-.5-1.47.12-3.06 0 0 .96-.3 3.15 1.17a10.8 10.8 0 0 1 5.74 0c2.2-1.48 3.16-1.17 3.16-1.17.62 1.6.24 2.77.12 3.06.73.8 1.17 1.81 1.17 3.06 0 4.4-2.69 5.36-5.25 5.65.42.37.78 1.08.78 2.2v3.25c0 .32.21.68.8.57A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+                    </button>
+                    <button onclick="downloadFromGitHub()" title="Загрузить из GitHub" class="p-2 text-slate-400 hover:text-white transition-colors text-xs font-black">↓GH</button>
+                    <button onclick="uploadToGitHub()" title="Сохранить в GitHub" class="p-2 text-slate-400 hover:text-white transition-colors text-xs font-black">↑GH</button>
                     <div class="w-px h-6 bg-slate-800 mx-1"></div>
                     <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
                         <button id="btnLog" onclick="switchRoom('log')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white">Лог</button>
@@ -214,6 +219,7 @@
         const TEMPLATE_KEY = 'workout_v4_templates';
         const REPO_FILE_KEY = 'trainlog_repo_file_handle_v1';
         const REPO_FILE_NAME = 'trainlog_data.json';
+        const GITHUB_SYNC_KEY = 'trainlog_github_sync_v1';
         const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
         const WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
@@ -280,6 +286,110 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        function getGitHubConfig() {
+            return JSON.parse(localStorage.getItem(GITHUB_SYNC_KEY) || 'null');
+        }
+
+        function configureGitHubSync() {
+            const current = getGitHubConfig() || {};
+            const owner = prompt("GitHub owner (username/org):", current.owner || "");
+            if (!owner) return;
+            const repo = prompt("Repository name:", current.repo || "");
+            if (!repo) return;
+            const path = prompt("Path to JSON in repo:", current.path || "trainlog_data.json");
+            if (!path) return;
+            const branch = prompt("Branch:", current.branch || "main");
+            if (!branch) return;
+            const token = prompt("GitHub token (classic/fine-grained with Contents read/write):", current.token || "");
+            if (!token) return;
+
+            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({ owner, repo, path, branch, token }));
+            showToast("GitHub Sync настроен");
+        }
+
+        function getGitHubApiUrl(cfg) {
+            const safePath = cfg.path.split('/').map(encodeURIComponent).join('/');
+            return `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${safePath}?ref=${encodeURIComponent(cfg.branch)}`;
+        }
+
+        async function downloadFromGitHub() {
+            const cfg = getGitHubConfig();
+            if (!cfg) {
+                configureGitHubSync();
+                if (!getGitHubConfig()) return;
+            }
+            const activeCfg = getGitHubConfig();
+
+            try {
+                const res = await fetch(getGitHubApiUrl(activeCfg), {
+                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
+                });
+                if (!res.ok) throw new Error(`GitHub HTTP ${res.status}`);
+                const payload = await res.json();
+                const decoded = decodeURIComponent(escape(atob((payload.content || '').replace(/\n/g, ''))));
+                const data = JSON.parse(decoded);
+                if (!data.workouts || !data.templates) throw new Error('Неверный формат данных');
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
+                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
+                await loadFromStorage();
+                showToast("Загружено из GitHub");
+            } catch (err) {
+                showToast("Ошибка загрузки из GitHub");
+            }
+        }
+
+        async function uploadToGitHub() {
+            const cfg = getGitHubConfig();
+            if (!cfg) {
+                configureGitHubSync();
+                if (!getGitHubConfig()) return;
+            }
+            const activeCfg = getGitHubConfig();
+
+            try {
+                let sha = null;
+                const getRes = await fetch(getGitHubApiUrl(activeCfg), {
+                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
+                });
+                if (getRes.ok) {
+                    const existing = await getRes.json();
+                    sha = existing.sha || null;
+                } else if (getRes.status !== 404) {
+                    throw new Error(`GitHub HTTP ${getRes.status}`);
+                }
+
+                const bodyPayload = {
+                    workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
+                    templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
+                    exportDate: new Date().toISOString()
+                };
+
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(bodyPayload, null, 2))));
+                const putBody = {
+                    message: `TrainLog sync ${new Date().toISOString()}`,
+                    content,
+                    branch: activeCfg.branch
+                };
+                if (sha) putBody.sha = sha;
+
+                const putRes = await fetch(`https://api.github.com/repos/${encodeURIComponent(activeCfg.owner)}/${encodeURIComponent(activeCfg.repo)}/contents/${activeCfg.path.split('/').map(encodeURIComponent).join('/')}`, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${activeCfg.token}`,
+                        Accept: 'application/vnd.github+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+                if (!putRes.ok) throw new Error(`GitHub HTTP ${putRes.status}`);
+
+                showToast("Сохранено в GitHub");
+            } catch (err) {
+                showToast("Ошибка сохранения в GitHub");
+            }
         }
 
         // --- CORE UI LOGIC ---
