@@ -684,16 +684,35 @@
         }
 
         async function connectRepoFile() {
-            if (!window.showSaveFilePicker) {
+            if (!window.showOpenFilePicker && !window.showSaveFilePicker) {
                 showToast("Браузер не поддерживает доступ к файлам");
                 return;
             }
             try {
-                repoFileHandle = await window.showSaveFilePicker({
-                    suggestedName: REPO_FILE_NAME,
-                    types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-                });
+                if (window.showOpenFilePicker) {
+                    const [handle] = await window.showOpenFilePicker({
+                        multiple: false,
+                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+                    });
+                    repoFileHandle = handle;
+                } else {
+                    repoFileHandle = await window.showSaveFilePicker({
+                        suggestedName: REPO_FILE_NAME,
+                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+                    });
+                }
+
                 await persistFileHandle(repoFileHandle);
+
+                const fileData = await readDataFromRepoFile();
+                if (fileData?.workouts && fileData?.templates) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
+                    localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
+                    await loadFromStorage();
+                    showToast("Файл подключен. История загружена");
+                    return;
+                }
+
                 await writeDataToRepoFile({
                     workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
                     templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
