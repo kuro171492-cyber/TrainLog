@@ -139,6 +139,9 @@
                     <button onclick="triggerImport()" title="Импорт из файла" class="p-2 text-slate-400 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     </button>
+                    <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория" class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+                    </button>
                     <div class="w-px h-6 bg-slate-800 mx-1"></div>
                     <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
                         <button id="btnLog" onclick="switchRoom('log')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white">Лог</button>
@@ -201,12 +204,16 @@
     <script>
         const STORAGE_KEY = 'workout_v4_data';
         const TEMPLATE_KEY = 'workout_v4_templates';
+        const REPO_FILE_KEY = 'trainlog_repo_file_handle_v1';
+        const REPO_FILE_NAME = 'trainlog_data.json';
         const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
         const WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-        
+
         let activeInput = null;
         let activeSessionIdForTemplate = null;
         let workoutChart = null;
+        let repoFileHandle = null;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -217,9 +224,10 @@
             reps: document.getElementById('repsDropdown')
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             initDropdownOptions();
-            loadFromStorage();
+            await loadPersistedFileHandle();
+            await loadFromStorage();
         });
 
         // --- FILE STORAGE FUNCTIONS ---
@@ -256,7 +264,8 @@
                     if (confirm("Это заменит все текущие данные. Продолжить?")) {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
                         localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
-                        location.reload(); 
+                        writeDataToRepoFile(data).catch(() => {});
+                        location.reload();
                     }
                 } catch (err) {
                     showToast("Ошибка при импорте");
@@ -280,7 +289,7 @@
             }
         }
 
-        function addDay(data = null) {
+        function addDay(data = null, insertAtTop = true) {
             const id = data?.id || Date.now();
             const now = new Date();
             const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
@@ -326,7 +335,9 @@
                     </div>
                 </div>
             `;
-            document.getElementById('daysContainer').prepend(card);
+            const container = document.getElementById('daysContainer');
+            if (insertAtTop) container.prepend(card);
+            else container.appendChild(card);
             const list = card.querySelector('.exercise-list');
             if (data?.items) data.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));
             else renderExercise(list);
@@ -533,6 +544,7 @@
         }
 
         function autoSave() {
+            sortDayCardsInDom();
             const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
                 id: card.dataset.id,
                 dateObj: {
@@ -544,7 +556,9 @@
                 totalTime: card.querySelector('[data-type="total-time"]').value,
                 items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
             }));
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
+            const sortedDays = sortSessionsByDate(days);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedDays));
+            writeDataToRepoFile({ workouts: sortedDays, templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]') }).catch(() => {});
         }
 
         function parseExerciseElement(el) {
@@ -562,15 +576,23 @@
             };
         }
 
-        function loadFromStorage() {
-            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            if (data.length > 0) { document.getElementById('daysContainer').innerHTML = ''; data.forEach(d => addDay(d)); }
-            else addDay();
+        async function loadFromStorage() {
+            const fileData = await readDataFromRepoFile();
+            if (fileData?.workouts && fileData?.templates) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
+                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
+                showToast("Данные загружены из trainlog_data.json");
+            }
+
+            const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+            document.getElementById('daysContainer').innerHTML = '';
+            if (data.length > 0) data.forEach(d => addDay(d, false));
+            else addDay(null, true);
         }
 
         // Analytics (simplified for this version)
         function renderAnalytics() {
-            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const body = document.getElementById('analyticsBody');
             body.innerHTML = '';
             data.forEach(session => {
@@ -587,6 +609,117 @@
                         body.appendChild(row);
                     });
                 });
+            });
+        }
+
+        function sessionDateToTimestamp(session) {
+            const d = Number(session?.dateObj?.d) || 1;
+            const m = MONTH_INDEX[session?.dateObj?.m] ?? 0;
+            const y = Number(session?.dateObj?.y) || new Date().getFullYear();
+            return new Date(y, m, d).getTime();
+        }
+
+        function sortSessionsByDate(sessions = []) {
+            return [...sessions].sort((a, b) => sessionDateToTimestamp(b) - sessionDateToTimestamp(a));
+        }
+
+        function sortDayCardsInDom() {
+            const container = document.getElementById('daysContainer');
+            const cards = Array.from(container.querySelectorAll('.day-card'));
+            cards.sort((a, b) => {
+                const aSession = {
+                    dateObj: {
+                        d: a.querySelector('[data-type="d"]').textContent.trim(),
+                        m: a.querySelector('[data-type="m"]').textContent.trim(),
+                        y: a.querySelector('[data-type="y"]').textContent.trim()
+                    }
+                };
+                const bSession = {
+                    dateObj: {
+                        d: b.querySelector('[data-type="d"]').textContent.trim(),
+                        m: b.querySelector('[data-type="m"]').textContent.trim(),
+                        y: b.querySelector('[data-type="y"]').textContent.trim()
+                    }
+                };
+                return sessionDateToTimestamp(bSession) - sessionDateToTimestamp(aSession);
+            });
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        async function connectRepoFile() {
+            if (!window.showSaveFilePicker) {
+                showToast("Браузер не поддерживает доступ к файлам");
+                return;
+            }
+            try {
+                repoFileHandle = await window.showSaveFilePicker({
+                    suggestedName: REPO_FILE_NAME,
+                    types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+                });
+                await persistFileHandle(repoFileHandle);
+                await writeDataToRepoFile({
+                    workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
+                    templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
+                    exportDate: new Date().toISOString()
+                });
+                showToast("Файл подключен. Сохранение в репозиторий активно");
+            } catch (err) {
+                if (err?.name !== 'AbortError') showToast("Не удалось подключить файл");
+            }
+        }
+
+        async function writeDataToRepoFile(payload) {
+            if (!repoFileHandle) return;
+            const writable = await repoFileHandle.createWritable();
+            await writable.write(JSON.stringify({ ...payload, exportDate: new Date().toISOString() }, null, 2));
+            await writable.close();
+        }
+
+        async function readDataFromRepoFile() {
+            try {
+                if (!repoFileHandle) return null;
+                const file = await repoFileHandle.getFile();
+                const txt = await file.text();
+                return JSON.parse(txt);
+            } catch (err) {
+                return null;
+            }
+        }
+
+        async function persistFileHandle(handle) {
+            if (!window.indexedDB) return;
+            const db = await openRepoDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(REPO_FILE_KEY, 'readwrite');
+                tx.objectStore(REPO_FILE_KEY).put(handle, 'handle');
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function loadPersistedFileHandle() {
+            if (!window.indexedDB) return;
+            const db = await openRepoDb();
+            repoFileHandle = await new Promise((resolve) => {
+                const tx = db.transaction(REPO_FILE_KEY, 'readonly');
+                const req = tx.objectStore(REPO_FILE_KEY).get('handle');
+                req.onsuccess = async () => {
+                    const handle = req.result || null;
+                    if (!handle) return resolve(null);
+                    const permission = await handle.queryPermission({ mode: 'readwrite' });
+                    if (permission === 'granted') return resolve(handle);
+                    resolve(null);
+                };
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        function openRepoDb() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('trainlog-repo-db', 1);
+                req.onupgradeneeded = () => req.result.createObjectStore(REPO_FILE_KEY);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
             });
         }
         function updateAnalyticsChart() {} 
