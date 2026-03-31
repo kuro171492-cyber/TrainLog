@@ -105,6 +105,14 @@
             padding-bottom: 4px;
         }
         .template-name-input:focus { border-bottom-color: #3b82f6; }
+
+        .day-card.theme-a { background: #161f32; border-color: rgba(51, 65, 85, 0.6); }
+        .day-card.theme-b { background: #1a2338; border-color: rgba(30, 64, 175, 0.35); }
+
+        .exercise-card.theme-a { background: rgba(30, 41, 59, 0.3); border-color: rgba(51, 65, 85, 0.6); }
+        .exercise-card.theme-b { background: rgba(30, 58, 138, 0.12); border-color: rgba(59, 130, 246, 0.25); }
+        .exercise-card.is-sub.theme-a { background: rgba(30, 58, 138, 0.09); border-color: rgba(59, 130, 246, 0.2); }
+        .exercise-card.is-sub.theme-b { background: rgba(8, 47, 73, 0.2); border-color: rgba(14, 165, 233, 0.25); }
     </style>
 </head>
 <body class="min-h-screen pb-20">
@@ -295,7 +303,7 @@
             const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
             
             const card = document.createElement('div');
-            card.className = "day-card bg-[#161f32] rounded-[32px] border border-slate-800/60 shadow-xl overflow-hidden mb-6 transition-all";
+            card.className = "day-card rounded-[32px] border shadow-xl overflow-hidden mb-6 transition-all";
             card.dataset.id = id;
             card.innerHTML = `
                 <div class="p-6 cursor-pointer hover:bg-slate-800/10" onclick="toggleCollapse(this)">
@@ -322,7 +330,7 @@
                         <input type="text" readonly class="bg-transparent text-blue-400 font-mono font-bold text-xs w-12 text-center outline-none cursor-pointer" onclick="openDropdown(event, 'total')" data-type="total-time" value="${data?.totalTime || '01:00'}">
                     </div>
                 </div>
-                <div class="day-content p-6 pt-0 border-t border-slate-800/40">
+                <div class="day-content hidden p-6 pt-0 border-t border-slate-800/40">
                     <div class="exercise-list space-y-4 pt-4"></div>
                     <div class="mt-8 flex justify-between items-center">
                         <div class="flex gap-2">
@@ -341,12 +349,13 @@
             const list = card.querySelector('.exercise-list');
             if (data?.items) data.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));
             else renderExercise(list);
+            applyAlternatingThemes();
             autoSave();
         }
 
         function renderExercise(container, data = null, isSub = false) {
             const div = document.createElement('div');
-            div.className = `p-4 rounded-2xl ${isSub ? 'bg-blue-600/5 border border-blue-500/10' : 'bg-slate-800/20 border border-slate-800/50'} space-y-4`;
+            div.className = `exercise-card p-4 rounded-2xl border space-y-4 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
             div.innerHTML = `
                 <div class="flex items-center gap-3">
@@ -360,6 +369,7 @@
             if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
             else sets.appendChild(createSet());
             container.appendChild(div);
+            applyAlternatingThemes();
         }
 
         function renderSuperset(container, data = null) {
@@ -375,6 +385,7 @@
             const inner = div.querySelector('.superset-inner');
             if (data?.exercises) data.exercises.forEach(ex => renderExercise(inner, ex, true));
             else { renderExercise(inner, null, true); renderExercise(inner, null, true); }
+            applyAlternatingThemes();
         }
 
         function createSet(w = '', r = '', t = '00:00') {
@@ -545,6 +556,7 @@
 
         function autoSave() {
             sortDayCardsInDom();
+            applyAlternatingThemes();
             const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
                 id: card.dataset.id,
                 dateObj: {
@@ -644,6 +656,31 @@
                 return sessionDateToTimestamp(bSession) - sessionDateToTimestamp(aSession);
             });
             cards.forEach(card => container.appendChild(card));
+        }
+
+        function applyAlternatingThemes() {
+            const dayCards = Array.from(document.querySelectorAll('#daysContainer .day-card'));
+            dayCards.forEach((card, index) => {
+                card.classList.remove('theme-a', 'theme-b');
+                card.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
+
+                const topLevelItems = Array.from(card.querySelectorAll('.exercise-list > [data-type]'));
+                applyExerciseThemes(topLevelItems);
+
+                const nestedGroups = card.querySelectorAll('.superset-inner');
+                nestedGroups.forEach(group => {
+                    const nestedExercises = Array.from(group.querySelectorAll(':scope > .exercise-card'));
+                    applyExerciseThemes(nestedExercises);
+                });
+            });
+        }
+
+        function applyExerciseThemes(exerciseElements) {
+            exerciseElements.forEach((exercise, index) => {
+                if (!exercise.classList.contains('exercise-card')) return;
+                exercise.classList.remove('theme-a', 'theme-b');
+                exercise.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
+            });
         }
 
         async function connectRepoFile() {
