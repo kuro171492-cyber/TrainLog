@@ -11,11 +11,11 @@
         body { 
             font-family: 'Inter', sans-serif; 
             background:
-                radial-gradient(circle at 5% 10%, rgba(125, 211, 252, 0.28), transparent 32%),
-                radial-gradient(circle at 85% 0%, rgba(165, 180, 252, 0.22), transparent 35%),
-                radial-gradient(circle at 50% 120%, rgba(251, 191, 36, 0.14), transparent 35%),
-                #f3f7ff;
-            color: #1e293b;
+                radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.18), transparent 30%),
+                radial-gradient(circle at 82% 0%, rgba(99, 102, 241, 0.16), transparent 35%),
+                radial-gradient(circle at 50% 120%, rgba(244, 63, 94, 0.1), transparent 35%),
+                #040712;
+            color: #f1f5f9;
         }
         
         .editable:focus { outline: none; border-bottom: 1px solid #3b82f6; background: rgba(59, 130, 246, 0.08); }
@@ -87,9 +87,9 @@
         #toast.active { transform: translateX(-50%) translateY(0); }
         
         nav {
-            background: rgba(255, 255, 255, 0.78) !important;
-            border-bottom-color: rgba(148, 163, 184, 0.38) !important;
-            box-shadow: 0 12px 35px rgba(148, 163, 184, 0.25);
+            background: rgba(8, 12, 26, 0.75) !important;
+            border-bottom-color: rgba(100, 116, 139, 0.2) !important;
+            box-shadow: 0 16px 40px rgba(2, 6, 23, 0.45);
         }
 
         .room { display: none; }
@@ -97,10 +97,10 @@
 
         /* Template UI */
         .template-card {
-            background: linear-gradient(140deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.96));
+            background: linear-gradient(140deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.78));
             border-radius: 24px;
             padding: 20px;
-            border: 1px solid rgba(148, 163, 184, 0.45);
+            border: 1px solid rgba(148, 163, 184, 0.2);
             margin-bottom: 14px;
             backdrop-filter: blur(14px);
         }
@@ -108,7 +108,7 @@
             background: transparent;
             border: none;
             border-bottom: 1px solid #475569;
-            color: #0f172a;
+            color: white;
             font-size: 1.1rem;
             font-weight: 700;
             width: 100%;
@@ -123,9 +123,9 @@
             letter-spacing: .07em;
             padding: 4px 10px;
             border-radius: 999px;
-            color: #1d4ed8;
-            background: rgba(191, 219, 254, 0.55);
-            border: 1px solid rgba(96, 165, 250, 0.45);
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.16);
+            border: 1px solid rgba(59, 130, 246, 0.25);
         }
         .template-menu {
             display: flex;
@@ -134,9 +134,9 @@
             margin-top: 14px;
         }
         .template-menu-btn {
-            border: 1px solid rgba(148, 163, 184, 0.45);
-            background: rgba(255, 255, 255, 0.8);
-            color: #334155;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(15, 23, 42, 0.6);
+            color: #e2e8f0;
             font-size: 11px;
             font-weight: 700;
             padding: 8px 12px;
@@ -146,44 +146,35 @@
             min-width: 105px;
             text-align: center;
         }
-        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.65); background: rgba(219, 234, 254, 0.8); color: #1e3a8a; }
+        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.5); background: rgba(30, 64, 175, 0.2); }
         .template-menu-btn.primary {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
             border-color: transparent;
             color: white;
             box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
         }
-        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.5); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
+        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(127, 29, 29, 0.25); color: #fecaca; }
 
         .day-card,
         #roomTable > div {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.95));
-            border-color: rgba(148, 163, 184, 0.42) !important;
-            box-shadow: 0 20px 45px rgba(148, 163, 184, 0.24);
+            background: linear-gradient(150deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.65));
+            border-color: rgba(148, 163, 184, 0.2) !important;
+            box-shadow: 0 25px 55px rgba(2, 6, 23, 0.45);
             backdrop-filter: blur(14px);
         }
 
-        .day-card.theme-a { background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.94)); border-color: rgba(148, 163, 184, 0.4); }
-        .day-card.theme-b { background: linear-gradient(145deg, rgba(239, 246, 255, 0.92), rgba(224, 242, 254, 0.65)); border-color: rgba(125, 211, 252, 0.45); }
+        .day-card.theme-a { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.72)); border-color: rgba(71, 85, 105, 0.45); }
+        .day-card.theme-b { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 64, 175, 0.18)); border-color: rgba(59, 130, 246, 0.26); }
 
-        .exercise-card.theme-a { background: rgba(248, 250, 252, 0.95); border-color: rgba(148, 163, 184, 0.45); }
-        .exercise-card.theme-b { background: rgba(239, 246, 255, 0.95); border-color: rgba(125, 211, 252, 0.45); }
-        .exercise-card.is-sub.theme-a { background: rgba(239, 246, 255, 0.7); border-color: rgba(96, 165, 250, 0.35); }
-        .exercise-card.is-sub.theme-b { background: rgba(224, 242, 254, 0.75); border-color: rgba(56, 189, 248, 0.35); }
-
-        .light-surface {
-            background: rgba(255, 255, 255, 0.72);
-            border: 1px solid rgba(148, 163, 184, 0.45);
-            color: #334155;
-        }
+        .exercise-card.theme-a { background: rgba(30, 41, 59, 0.3); border-color: rgba(51, 65, 85, 0.6); }
+        .exercise-card.theme-b { background: rgba(30, 58, 138, 0.12); border-color: rgba(59, 130, 246, 0.25); }
+        .exercise-card.is-sub.theme-a { background: rgba(30, 58, 138, 0.09); border-color: rgba(59, 130, 246, 0.2); }
+        .exercise-card.is-sub.theme-b { background: rgba(8, 47, 73, 0.2); border-color: rgba(14, 165, 233, 0.25); }
 
         @media (max-width: 640px) {
             .template-card { padding: 16px; border-radius: 20px; }
             .template-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .template-menu-btn { min-width: 0; }
-            .top-actions { width: 100%; justify-content: space-between; }
-            .top-actions .group-toggle { width: 100%; }
-            .top-actions .group-toggle button { flex: 1; }
         }
     </style>
 </head>
@@ -274,15 +265,15 @@
 
     <!-- Template Library Modal -->
     <div id="templateModal" class="modal-overlay">
-        <div class="bg-white/95 rounded-[30px] border border-slate-300/70 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
-            <div class="p-5 sm:p-6 border-b border-slate-300/70 flex justify-between items-start gap-4">
+        <div class="bg-[#090f1f]/95 rounded-[30px] border border-slate-700/50 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
+            <div class="p-5 sm:p-6 border-b border-slate-700/40 flex justify-between items-start gap-4">
                 <div>
-                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800">Библиотека шаблонов</h3>
-                    <p class="text-slate-500 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-white">Библиотека шаблонов</h3>
+                    <p class="text-slate-400 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
                 </div>
-                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-slate-800 p-2 text-2xl leading-none">&times;</button>
+                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-white p-2 text-2xl leading-none">&times;</button>
             </div>
-            <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-slate-50"></div>
+            <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-[#020617]/55"></div>
         </div>
     </div>
 
