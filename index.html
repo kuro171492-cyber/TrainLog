@@ -10,7 +10,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #0b1120;
+            background:
+                radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.18), transparent 30%),
+                radial-gradient(circle at 82% 0%, rgba(99, 102, 241, 0.16), transparent 35%),
+                radial-gradient(circle at 50% 120%, rgba(244, 63, 94, 0.1), transparent 35%),
+                #040712;
             color: #f1f5f9;
         }
         
@@ -82,21 +86,28 @@
         }
         #toast.active { transform: translateX(-50%) translateY(0); }
         
+        nav {
+            background: rgba(8, 12, 26, 0.75) !important;
+            border-bottom-color: rgba(100, 116, 139, 0.2) !important;
+            box-shadow: 0 16px 40px rgba(2, 6, 23, 0.45);
+        }
+
         .room { display: none; }
         .room.active { display: block; }
 
         /* Template UI */
         .template-card {
-            background-color: #1e293b;
+            background: linear-gradient(140deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.78));
             border-radius: 24px;
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 16px;
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            margin-bottom: 14px;
+            backdrop-filter: blur(14px);
         }
         .template-name-input {
             background: transparent;
             border: none;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #475569;
             color: white;
             font-size: 1.1rem;
             font-weight: 700;
@@ -105,14 +116,66 @@
             padding-bottom: 4px;
         }
         .template-name-input:focus { border-bottom-color: #3b82f6; }
+        .template-chip {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            padding: 4px 10px;
+            border-radius: 999px;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.16);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+        .template-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .template-menu-btn {
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(15, 23, 42, 0.6);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: 0.2s ease;
+            flex: 1;
+            min-width: 105px;
+            text-align: center;
+        }
+        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.5); background: rgba(30, 64, 175, 0.2); }
+        .template-menu-btn.primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+        }
+        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(127, 29, 29, 0.25); color: #fecaca; }
 
-        .day-card.theme-a { background: #161f32; border-color: rgba(51, 65, 85, 0.6); }
-        .day-card.theme-b { background: #1a2338; border-color: rgba(30, 64, 175, 0.35); }
+        .day-card,
+        #roomTable > div {
+            background: linear-gradient(150deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.65));
+            border-color: rgba(148, 163, 184, 0.2) !important;
+            box-shadow: 0 25px 55px rgba(2, 6, 23, 0.45);
+            backdrop-filter: blur(14px);
+        }
+
+        .day-card.theme-a { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.72)); border-color: rgba(71, 85, 105, 0.45); }
+        .day-card.theme-b { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 64, 175, 0.18)); border-color: rgba(59, 130, 246, 0.26); }
 
         .exercise-card.theme-a { background: rgba(30, 41, 59, 0.3); border-color: rgba(51, 65, 85, 0.6); }
         .exercise-card.theme-b { background: rgba(30, 58, 138, 0.12); border-color: rgba(59, 130, 246, 0.25); }
         .exercise-card.is-sub.theme-a { background: rgba(30, 58, 138, 0.09); border-color: rgba(59, 130, 246, 0.2); }
         .exercise-card.is-sub.theme-b { background: rgba(8, 47, 73, 0.2); border-color: rgba(14, 165, 233, 0.25); }
+
+        @media (max-width: 640px) {
+            .template-card { padding: 16px; border-radius: 20px; }
+            .template-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .template-menu-btn { min-width: 0; }
+        }
     </style>
 </head>
 <body class="min-h-screen pb-20">
@@ -202,15 +265,15 @@
 
     <!-- Template Library Modal -->
     <div id="templateModal" class="modal-overlay">
-        <div class="bg-[#111827] rounded-[32px] border border-slate-800/60 max-w-lg w-full mx-4 overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
-            <div class="p-6 border-b border-slate-800/40 flex justify-between items-center">
+        <div class="bg-[#090f1f]/95 rounded-[30px] border border-slate-700/50 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
+            <div class="p-5 sm:p-6 border-b border-slate-700/40 flex justify-between items-start gap-4">
                 <div>
-                    <h3 class="text-xl font-bold text-white">Шаблоны</h3>
-                    <p class="text-slate-500 text-[11px] mt-1">Редактируйте названия и применяйте</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-white">Библиотека шаблонов</h3>
+                    <p class="text-slate-400 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
                 </div>
-                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-white p-2">&times;</button>
+                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-white p-2 text-2xl leading-none">&times;</button>
             </div>
-            <div id="templateList" class="p-5 overflow-y-auto space-y-4 bg-[#0b1120]/30"></div>
+            <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-[#020617]/55"></div>
         </div>
     </div>
 
@@ -538,21 +601,20 @@
                 const card = document.createElement('div');
                 card.className = "template-card";
                 card.innerHTML = `
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-1 mr-4">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[9px] font-black text-blue-500 uppercase bg-blue-500/10 px-2 py-0.5 rounded">${t.weekday}</span>
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-3 flex-wrap">
+                                <span class="template-chip">${t.weekday}</span>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
                             </div>
-                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')">
+                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <button onclick="applyTemplateById('${t.id}')" class="bg-blue-600 text-white p-3 rounded-2xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                            </button>
-                            <button onclick="deleteTemplate('${t.id}')" class="text-slate-500 hover:text-red-400 p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            </button>
-                        </div>
+                    </div>
+                    <div class="template-menu">
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary">Применить</button>
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn">Переименовать</button>
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn">Дублировать</button>
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger">Удалить</button>
                     </div>
                 `;
                 list.appendChild(card);
@@ -562,15 +624,44 @@
         function handleTemplateNameKey(e, templateId) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-                const idx = templates.findIndex(t => t.id === templateId);
-                if (idx !== -1) {
-                    templates[idx].name = e.target.value.trim() || "Без названия";
-                    localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
-                    e.target.blur();
-                    showToast("Название обновлено");
-                }
+                saveTemplateName(e.target, templateId);
+                e.target.blur();
             }
+        }
+
+        function saveTemplateName(inputEl, templateId) {
+            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
+            const idx = templates.findIndex(t => t.id === templateId);
+            if (idx === -1) return;
+            const nextName = inputEl.value.trim() || "Без названия";
+            if (templates[idx].name === nextName) return;
+            templates[idx].name = nextName;
+            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
+            showToast("Название обновлено");
+        }
+
+        function focusTemplateName(templateId) {
+            const allCards = Array.from(document.querySelectorAll('#templateList .template-card'));
+            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
+            const index = templates.findIndex(t => t.id === templateId);
+            const input = allCards[index]?.querySelector('.template-name-input');
+            if (!input) return;
+            input.focus();
+            input.select();
+        }
+
+        function duplicateTemplate(id) {
+            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
+            const source = templates.find(x => x.id === id);
+            if (!source) return;
+            templates.push({
+                ...JSON.parse(JSON.stringify(source)),
+                id: Date.now().toString(),
+                name: `${source.name || 'Шаблон'} (копия)`
+            });
+            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
+            renderTemplateList();
+            showToast("Шаблон продублирован");
         }
 
         function applyTemplateById(id) {
