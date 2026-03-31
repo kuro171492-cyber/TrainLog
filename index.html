@@ -139,7 +139,7 @@
                     <button onclick="triggerImport()" title="Импорт из файла" class="p-2 text-slate-400 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     </button>
-                    <button onclick="handleGitHubSyncClick()" title="Синхронизация с GitHub" class="p-2 text-slate-400 hover:text-white transition-colors">
+                    <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория" class="p-2 text-slate-400 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
                     </button>
                     <div class="w-px h-6 bg-slate-800 mx-1"></div>
@@ -204,8 +204,8 @@
     <script>
         const STORAGE_KEY = 'workout_v4_data';
         const TEMPLATE_KEY = 'workout_v4_templates';
-        const GITHUB_SYNC_KEY = 'trainlog_github_sync_v1';
-        const GITHUB_DATA_FILE = 'trainlog_data.json';
+        const REPO_FILE_KEY = 'trainlog_repo_file_handle_v1';
+        const REPO_FILE_NAME = 'trainlog_data.json';
         const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
         const WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
@@ -213,7 +213,7 @@
         let activeInput = null;
         let activeSessionIdForTemplate = null;
         let workoutChart = null;
-        let githubSyncConfig = null;
+        let repoFileHandle = null;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -226,7 +226,7 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             initDropdownOptions();
-            githubSyncConfig = getGitHubSyncConfig();
+            await loadPersistedFileHandle();
             await loadFromStorage();
         });
 
@@ -264,7 +264,7 @@
                     if (confirm("Это заменит все текущие данные. Продолжить?")) {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
                         localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
-                        saveDataToGitHub(data).catch(() => {});
+                        writeDataToRepoFile(data).catch(() => {});
                         location.reload();
                     }
                 } catch (err) {
@@ -558,6 +558,7 @@
             }));
             const sortedDays = sortSessionsByDate(days);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedDays));
+            writeDataToRepoFile({ workouts: sortedDays, templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]') }).catch(() => {});
         }
 
         function parseExerciseElement(el) {
@@ -576,11 +577,11 @@
         }
 
         async function loadFromStorage() {
-            const gitHubData = await loadDataFromGitHub();
-            if (gitHubData?.workouts && gitHubData?.templates) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(gitHubData.workouts));
-                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(gitHubData.templates));
-                showToast("Данные загружены из GitHub");
+            const fileData = await readDataFromRepoFile();
+            if (fileData?.workouts && fileData?.templates) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
+                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
+                showToast("Данные загружены из trainlog_data.json");
             }
 
             const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -645,98 +646,83 @@
             cards.forEach(card => container.appendChild(card));
         }
 
-        function getGitHubSyncConfig() {
-            return JSON.parse(localStorage.getItem(GITHUB_SYNC_KEY) || 'null');
-        }
-
-        function setGitHubSyncConfig(cfg) {
-            githubSyncConfig = cfg;
-            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify(cfg));
-        }
-
-        async function handleGitHubSyncClick() {
-            if (!githubSyncConfig) {
-                const owner = prompt('GitHub owner (например: username):');
-                const repo = prompt('GitHub repo (например: TrainLog):');
-                const branch = prompt('Ветка для сохранения:', 'main') || 'main';
-                const token = prompt('GitHub token (repo scope):');
-                if (!owner || !repo || !token) {
-                    showToast('Синхронизация отменена');
-                    return;
-                }
-                setGitHubSyncConfig({ owner, repo, branch, token, path: GITHUB_DATA_FILE });
+        async function connectRepoFile() {
+            if (!window.showSaveFilePicker) {
+                showToast("Браузер не поддерживает доступ к файлам");
+                return;
             }
-            const payload = {
-                workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
-                templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]')
-            };
-            await saveDataToGitHub(payload);
+            try {
+                repoFileHandle = await window.showSaveFilePicker({
+                    suggestedName: REPO_FILE_NAME,
+                    types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+                });
+                await persistFileHandle(repoFileHandle);
+                await writeDataToRepoFile({
+                    workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
+                    templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
+                    exportDate: new Date().toISOString()
+                });
+                showToast("Файл подключен. Сохранение в репозиторий активно");
+            } catch (err) {
+                if (err?.name !== 'AbortError') showToast("Не удалось подключить файл");
+            }
         }
 
-        async function loadDataFromGitHub() {
-            if (!githubSyncConfig) return null;
-            const { owner, repo, branch, token, path } = githubSyncConfig;
-            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`;
+        async function writeDataToRepoFile(payload) {
+            if (!repoFileHandle) return;
+            const writable = await repoFileHandle.createWritable();
+            await writable.write(JSON.stringify({ ...payload, exportDate: new Date().toISOString() }, null, 2));
+            await writable.close();
+        }
+
+        async function readDataFromRepoFile() {
             try {
-                const res = await fetch(url, {
-                    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
-                });
-                if (!res.ok) return null;
-                const json = await res.json();
-                const decoded = decodeBase64Utf8(json.content || '');
-                return JSON.parse(decoded);
-            } catch {
+                if (!repoFileHandle) return null;
+                const file = await repoFileHandle.getFile();
+                const txt = await file.text();
+                return JSON.parse(txt);
+            } catch (err) {
                 return null;
             }
         }
 
-        async function saveDataToGitHub(payload) {
-            if (!githubSyncConfig) return;
-            const { owner, repo, branch, token, path } = githubSyncConfig;
-            const baseUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-            const getRes = await fetch(`${baseUrl}?ref=${encodeURIComponent(branch)}`, {
-                headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+        async function persistFileHandle(handle) {
+            if (!window.indexedDB) return;
+            const db = await openRepoDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(REPO_FILE_KEY, 'readwrite');
+                tx.objectStore(REPO_FILE_KEY).put(handle, 'handle');
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
             });
-            let sha;
-            if (getRes.ok) {
-                const existing = await getRes.json();
-                sha = existing.sha;
-            }
+        }
 
-            const body = {
-                message: `Update ${path} from TrainLog`,
-                branch,
-                content: encodeBase64Utf8(JSON.stringify({ ...payload, exportDate: new Date().toISOString() }, null, 2))
-            };
-            if (sha) body.sha = sha;
-
-            const putRes = await fetch(baseUrl, {
-                method: 'PUT',
-                headers: {
-                    Authorization: `token ${token}`,
-                    Accept: 'application/vnd.github+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
+        async function loadPersistedFileHandle() {
+            if (!window.indexedDB) return;
+            const db = await openRepoDb();
+            repoFileHandle = await new Promise((resolve) => {
+                const tx = db.transaction(REPO_FILE_KEY, 'readonly');
+                const req = tx.objectStore(REPO_FILE_KEY).get('handle');
+                req.onsuccess = async () => {
+                    const handle = req.result || null;
+                    if (!handle) return resolve(null);
+                    const permission = await handle.queryPermission({ mode: 'readwrite' });
+                    if (permission === 'granted') return resolve(handle);
+                    resolve(null);
+                };
+                req.onerror = () => resolve(null);
             });
-
-            if (putRes.ok) showToast(`Сохранено в ${path} (GitHub)`);
-            else showToast('Ошибка сохранения в GitHub');
         }
 
-        function encodeBase64Utf8(str) {
-            const bytes = new TextEncoder().encode(str);
-            let binary = '';
-            bytes.forEach(b => binary += String.fromCharCode(b));
-            return btoa(binary);
+        function openRepoDb() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('trainlog-repo-db', 1);
+                req.onupgradeneeded = () => req.result.createObjectStore(REPO_FILE_KEY);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
         }
-
-        function decodeBase64Utf8(base64) {
-            const binary = atob(base64.replace(/\n/g, ''));
-            const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-            return new TextDecoder().decode(bytes);
-        }
-        function updateAnalyticsChart() {}
+        function updateAnalyticsChart() {} 
     </script>
 </body>
 </html>
