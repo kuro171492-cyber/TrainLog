@@ -8,34 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-        body { 
-            font-family: 'Inter', sans-serif; 
+        body {
+            font-family: 'Inter', sans-serif;
             background:
-                radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.18), transparent 30%),
-                radial-gradient(circle at 82% 0%, rgba(99, 102, 241, 0.16), transparent 35%),
-                radial-gradient(circle at 50% 120%, rgba(244, 63, 94, 0.1), transparent 35%),
-                #040712;
-            color: #f1f5f9;
+                radial-gradient(circle at 12% 15%, rgba(56, 189, 248, 0.16), transparent 32%),
+                radial-gradient(circle at 82% 0%, rgba(99, 102, 241, 0.12), transparent 36%),
+                radial-gradient(circle at 50% 120%, rgba(14, 165, 233, 0.12), transparent 36%),
+                #f8fbff;
+            color: #0f172a;
         }
-        
+
         .editable:focus { outline: none; border-bottom: 1px solid #3b82f6; background: rgba(59, 130, 246, 0.08); }
-        
+
         [contenteditable]:empty:before {
             content: attr(placeholder);
             color: #94a3b8;
             font-style: italic;
         }
 
-        .set-input { 
-            width: 55px; 
-            text-align: center; 
-            border-bottom: 1px solid #94a3b8; 
-            font-size: 0.8rem; 
-            color: #0f172a; 
+        .set-input {
+            width: 55px;
+            text-align: center;
+            border-bottom: 1px solid #94a3b8;
+            font-size: 0.8rem;
+            color: #0f172a;
             background: transparent;
             cursor: pointer;
         }
-        
+
         /* Dropdowns */
         .custom-dropdown {
             display: none;
@@ -57,14 +57,14 @@
             font-size: 0.85rem;
         }
         .dropdown-item:hover { background: #dbeafe; color: #1d4ed8; }
-        
+
         /* Modals */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
             z-index: 1000;
-            background: rgba(15, 23, 42, 0.28);
+            background: rgba(148, 163, 184, 0.28);
             backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
@@ -85,11 +85,11 @@
             transition: transform 0.3s ease;
         }
         #toast.active { transform: translateX(-50%) translateY(0); }
-        
+
         nav {
-            background: rgba(8, 12, 26, 0.75) !important;
-            border-bottom-color: rgba(100, 116, 139, 0.2) !important;
-            box-shadow: 0 16px 40px rgba(2, 6, 23, 0.45);
+            background: rgba(255, 255, 255, 0.82) !important;
+            border-bottom-color: rgba(148, 163, 184, 0.35) !important;
+            box-shadow: 0 14px 32px rgba(148, 163, 184, 0.25);
         }
 
         .room { display: none; }
@@ -97,18 +97,18 @@
 
         /* Template UI */
         .template-card {
-            background: linear-gradient(140deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.78));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.92));
             border-radius: 24px;
             padding: 20px;
-            border: 1px solid rgba(148, 163, 184, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.28);
             margin-bottom: 14px;
             backdrop-filter: blur(14px);
         }
         .template-name-input {
             background: transparent;
             border: none;
-            border-bottom: 1px solid #475569;
-            color: white;
+            border-bottom: 1px solid #94a3b8;
+            color: #0f172a;
             font-size: 1.1rem;
             font-weight: 700;
             width: 100%;
@@ -123,9 +123,9 @@
             letter-spacing: .07em;
             padding: 4px 10px;
             border-radius: 999px;
-            color: #93c5fd;
-            background: rgba(59, 130, 246, 0.16);
-            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #1d4ed8;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.22);
         }
         .template-menu {
             display: flex;
@@ -134,9 +134,9 @@
             margin-top: 14px;
         }
         .template-menu-btn {
-            border: 1px solid rgba(148, 163, 184, 0.22);
-            background: rgba(15, 23, 42, 0.6);
-            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: rgba(255, 255, 255, 0.88);
+            color: #334155;
             font-size: 11px;
             font-weight: 700;
             padding: 8px 12px;
@@ -146,30 +146,30 @@
             min-width: 105px;
             text-align: center;
         }
-        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.5); background: rgba(30, 64, 175, 0.2); }
+        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.55); background: rgba(191, 219, 254, 0.55); }
         .template-menu-btn.primary {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
             border-color: transparent;
             color: white;
             box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
         }
-        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(127, 29, 29, 0.25); color: #fecaca; }
+        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
 
         .day-card,
         #roomTable > div {
-            background: linear-gradient(150deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.65));
-            border-color: rgba(148, 163, 184, 0.2) !important;
-            box-shadow: 0 25px 55px rgba(2, 6, 23, 0.45);
+            background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.94));
+            border-color: rgba(148, 163, 184, 0.32) !important;
+            box-shadow: 0 20px 44px rgba(148, 163, 184, 0.25);
             backdrop-filter: blur(14px);
         }
 
-        .day-card.theme-a { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.72)); border-color: rgba(71, 85, 105, 0.45); }
-        .day-card.theme-b { background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(30, 64, 175, 0.18)); border-color: rgba(59, 130, 246, 0.26); }
+        .day-card.theme-a { background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(241, 245, 249, 0.93)); border-color: rgba(148, 163, 184, 0.35); }
+        .day-card.theme-b { background: linear-gradient(145deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.86)); border-color: rgba(56, 189, 248, 0.32); }
 
-        .exercise-card.theme-a { background: rgba(30, 41, 59, 0.3); border-color: rgba(51, 65, 85, 0.6); }
-        .exercise-card.theme-b { background: rgba(30, 58, 138, 0.12); border-color: rgba(59, 130, 246, 0.25); }
-        .exercise-card.is-sub.theme-a { background: rgba(30, 58, 138, 0.09); border-color: rgba(59, 130, 246, 0.2); }
-        .exercise-card.is-sub.theme-b { background: rgba(8, 47, 73, 0.2); border-color: rgba(14, 165, 233, 0.25); }
+        .exercise-card.theme-a { background: rgba(248, 250, 252, 0.95); border-color: rgba(148, 163, 184, 0.45); }
+        .exercise-card.theme-b { background: rgba(239, 246, 255, 0.92); border-color: rgba(96, 165, 250, 0.35); }
+        .exercise-card.is-sub.theme-a { background: rgba(224, 242, 254, 0.75); border-color: rgba(56, 189, 248, 0.3); }
+        .exercise-card.is-sub.theme-b { background: rgba(219, 234, 254, 0.72); border-color: rgba(59, 130, 246, 0.32); }
 
         @media (max-width: 640px) {
             .template-card { padding: 16px; border-radius: 20px; }
@@ -192,7 +192,7 @@
     <div id="weightDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 75px;" id="tensList"></div><div class="dropdown-column" style="min-width: 75px;" id="unitsList"></div></div>
     <div id="repsDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 80px;" id="repsList"></div></div>
 
-    <nav class="sticky top-0 z-50 bg-[#0b1120]/95 backdrop-blur-xl border-b border-slate-800/50 px-3 sm:px-4 py-3 sm:py-4 mb-5 sm:mb-6">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-300/70 px-3 sm:px-4 py-3 sm:py-4 mb-5 sm:mb-6">
         <div class="max-w-xl mx-auto flex flex-col gap-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="flex items-center gap-3">
@@ -201,7 +201,7 @@
                     </div>
                     <h1 class="text-xl font-bold uppercase tracking-tight text-slate-800">Train<span class="text-blue-600">Log</span></h1>
                 </div>
-                
+
                 <div class="top-actions flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
                     <!-- File Actions -->
                     <button onclick="exportData()" title="Экспорт в файл" class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
@@ -265,15 +265,15 @@
 
     <!-- Template Library Modal -->
     <div id="templateModal" class="modal-overlay">
-        <div class="bg-[#090f1f]/95 rounded-[30px] border border-slate-700/50 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
-            <div class="p-5 sm:p-6 border-b border-slate-700/40 flex justify-between items-start gap-4">
+        <div class="bg-white/95 rounded-[30px] border border-slate-200/90 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
+            <div class="p-5 sm:p-6 border-b border-slate-200/90 flex justify-between items-start gap-4">
                 <div>
-                    <h3 class="text-xl sm:text-2xl font-bold text-white">Библиотека шаблонов</h3>
-                    <p class="text-slate-400 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Библиотека шаблонов</h3>
+                    <p class="text-slate-500 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
                 </div>
-                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-white p-2 text-2xl leading-none">&times;</button>
+                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-slate-900 p-2 text-2xl leading-none">&times;</button>
             </div>
-            <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-[#020617]/55"></div>
+            <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-slate-50/80"></div>
         </div>
     </div>
 
@@ -337,7 +337,7 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (!data.workouts || !data.templates) throw new Error("Неверный формат файла");
-                    
+
                     if (confirm("Это заменит все текущие данные. Продолжить?")) {
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
                         localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
@@ -474,7 +474,7 @@
             const id = data?.id || Date.now();
             const now = new Date();
             const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
-            
+
             const card = document.createElement('div');
             card.className = "day-card rounded-[32px] border shadow-xl overflow-hidden mb-6 transition-all";
             card.dataset.id = id;
@@ -595,8 +595,8 @@
             const list = document.getElementById('templateList');
             const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
             list.innerHTML = '';
-            if (templates.length === 0) { list.innerHTML = '<p class="text-center text-slate-500 py-10">Библиотека пуста</p>'; return; }
-            
+            if (templates.length === 0) { list.innerHTML = '<p class="text-center text-slate-600 py-10">Библиотека пуста</p>'; return; }
+
             templates.forEach(t => {
                 const card = document.createElement('div');
                 card.className = "template-card";
@@ -605,7 +605,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-3 flex-wrap">
                                 <span class="template-chip">${t.weekday}</span>
-                                <span class="text-[10px] text-slate-400 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
+                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
                             </div>
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
@@ -979,7 +979,7 @@
                 req.onerror = () => reject(req.error);
             });
         }
-        function updateAnalyticsChart() {} 
+        function updateAnalyticsChart() {}
     </script>
 </body>
 </html>
