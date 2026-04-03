@@ -129,9 +129,10 @@
         }
         .template-menu {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 8px;
             margin-top: 14px;
+            justify-content: flex-end;
         }
         .template-menu-btn {
             border: 1px solid rgba(148, 163, 184, 0.35);
@@ -146,6 +147,17 @@
             min-width: 105px;
             text-align: center;
         }
+        .template-menu-btn.icon {
+            width: 38px;
+            min-width: 38px;
+            height: 38px;
+            padding: 0;
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
         .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.55); background: rgba(191, 219, 254, 0.55); }
         .template-menu-btn.primary {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
@@ -154,6 +166,11 @@
             box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
         }
         .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
+        .template-exercises-preview {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.5);
+        }
 
         .day-card,
         #roomTable > div {
@@ -173,8 +190,7 @@
 
         @media (max-width: 640px) {
             .template-card { padding: 16px; border-radius: 20px; }
-            .template-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .template-menu-btn { min-width: 0; }
+            .template-menu { gap: 6px; }
         }
     </style>
 </head>
@@ -291,6 +307,7 @@
         let activeSessionIdForTemplate = null;
         let workoutChart = null;
         let repoFileHandle = null;
+        let needsDomSort = false;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -476,17 +493,21 @@
             const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
 
             const card = document.createElement('div');
-            card.className = "day-card rounded-[32px] border shadow-xl overflow-hidden mb-6 transition-all";
+            card.className = "day-card rounded-[26px] border shadow-xl overflow-hidden mb-4 transition-all";
             card.dataset.id = id;
             card.innerHTML = `
-                <div class="p-4 sm:p-6 cursor-pointer hover:bg-sky-50/70" onclick="toggleCollapse(this)">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2 bg-white/80 border border-slate-300 p-1.5 rounded-2xl" onclick="event.stopPropagation()">
+                <div class="p-3 sm:p-4 cursor-pointer hover:bg-sky-50/70" onclick="toggleCollapse(this)">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 bg-white/80 border border-slate-300 p-1.5 rounded-2xl flex-wrap" onclick="event.stopPropagation()">
                             <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDropdown(event, 'date')">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span> <span data-type="y">${date.y}</span>
                             </div>
                             <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1 cursor-pointer hover:text-slate-700" onclick="openDropdown(event, 'weekday')">
                                 ${date.wd}
+                            </div>
+                            <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
+                                <span class="text-[9px] font-black text-slate-500 uppercase">Время:</span>
+                                <input type="text" readonly class="bg-transparent text-blue-400 font-mono font-bold text-xs w-12 text-center outline-none cursor-pointer" onclick="openDropdown(event, 'total')" data-type="total-time" value="${data?.totalTime || '01:00'}">
                             </div>
                         </div>
                         <div class="flex gap-2" onclick="event.stopPropagation()">
@@ -498,14 +519,10 @@
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-white/80 border border-slate-300 rounded-xl px-4 py-2 w-fit" onclick="event.stopPropagation()">
-                        <span class="text-[9px] font-black text-slate-500 uppercase">Время:</span>
-                        <input type="text" readonly class="bg-transparent text-blue-400 font-mono font-bold text-xs w-12 text-center outline-none cursor-pointer" onclick="openDropdown(event, 'total')" data-type="total-time" value="${data?.totalTime || '01:00'}">
-                    </div>
                 </div>
-                <div class="day-content hidden p-4 sm:p-6 pt-0 border-t border-slate-300/70">
-                    <div class="exercise-list space-y-4 pt-4"></div>
-                    <div class="mt-8 flex justify-between items-center">
+                <div class="day-content hidden p-3 sm:p-4 pt-0 border-t border-slate-300/70">
+                    <div class="exercise-list space-y-3 pt-3"></div>
+                    <div class="mt-5 flex justify-between items-center">
                         <div class="flex gap-2">
                             <button onclick="addExerciseByBtn(this)" class="bg-white/90 text-slate-500 border border-slate-300 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition-all">+ УПР</button>
                             <button onclick="addSupersetByBtn(this)" class="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-blue-600/20 transition-all">+ БЛОК</button>
@@ -528,15 +545,18 @@
 
         function renderExercise(container, data = null, isSub = false) {
             const div = document.createElement('div');
-            div.className = `exercise-card p-4 rounded-2xl border space-y-4 ${isSub ? 'is-sub' : ''}`;
+            div.className = `exercise-card p-3 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
             div.innerHTML = `
                 <div class="flex items-center gap-3">
-                    <div class="editable flex-1 bg-white/85 border border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none" contenteditable="true" oninput="autoSave()" placeholder="Упражнение...">${data?.name || ''}</div>
+                    <div class="editable flex-1 bg-white/85 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 outline-none" contenteditable="true" oninput="autoSave()" placeholder="Упражнение...">${data?.name || ''}</div>
+                    <button onclick="toggleExerciseDetails(this)" class="text-blue-500 hover:text-blue-700 text-sm font-black" title="Показать/скрыть подходы">✎</button>
                     <button onclick="this.closest('[data-type]').remove(); autoSave();" class="text-slate-600 hover:text-red-500">&times;</button>
                 </div>
-                <div class="sets-container space-y-2"></div>
-                <button onclick="addSetToBtn(this)" class="text-[9px] text-blue-500 font-black uppercase tracking-widest px-2 py-1">+ подход</button>
+                <div class="exercise-details hidden space-y-2">
+                    <div class="sets-container space-y-2"></div>
+                    <button onclick="addSetToBtn(this)" class="text-[9px] text-blue-500 font-black uppercase tracking-widest px-2 py-1">+ подход</button>
+                </div>
             `;
             const sets = div.querySelector('.sets-container');
             if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
@@ -563,7 +583,7 @@
 
         function createSet(w = '', r = '', t = '00:00') {
             const div = document.createElement('div');
-            div.className = "flex items-center gap-3 bg-white border border-slate-300 rounded-xl px-4 py-2 w-fit";
+            div.className = "flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5 w-fit";
             div.innerHTML = `
                 <div class="flex items-center gap-1"><input type="text" readonly class="set-input font-bold" value="${w}" onclick="openDropdown(event, 'weight')"><span class="text-slate-500 text-[9px] font-black">КГ</span></div>
                 <div class="w-px h-3 bg-slate-300"></div>
@@ -610,15 +630,44 @@
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
                     </div>
+                    <div class="template-exercises-preview hidden">
+                        ${getTemplateExerciseSummary(t)}
+                    </div>
                     <div class="template-menu">
-                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary">Применить</button>
-                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn">Переименовать</button>
-                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn">Дублировать</button>
-                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger">Удалить</button>
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
+                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
                     </div>
                 `;
                 list.appendChild(card);
             });
+        }
+
+        function getTemplateExerciseSummary(template) {
+            const names = [];
+            (template?.items || []).forEach(item => {
+                if (item?.type === 'superset') {
+                    (item.exercises || []).forEach(ex => {
+                        const name = (ex?.name || '').trim();
+                        if (name) names.push(name);
+                    });
+                    return;
+                }
+                const name = (item?.name || '').trim();
+                if (name) names.push(name);
+            });
+
+            const uniqueNames = Array.from(new Set(names));
+            if (uniqueNames.length === 0) return '<p class="text-[11px] text-slate-500">Нет упражнений в шаблоне</p>';
+
+            return `
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Упражнения</p>
+                <div class="flex flex-wrap gap-2">
+                    ${uniqueNames.map(name => `<span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-semibold">${name}</span>`).join('')}
+                </div>
+            `;
         }
 
         function handleTemplateNameKey(e, templateId) {
@@ -693,6 +742,19 @@
         function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
         function deleteDay(id) { if(confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
+        function toggleTemplateExercises(btn) {
+            const preview = btn.closest('.template-card')?.querySelector('.template-exercises-preview');
+            if (!preview) return;
+            preview.classList.toggle('hidden');
+            btn.classList.toggle('primary', !preview.classList.contains('hidden'));
+        }
+        function toggleExerciseDetails(btn) {
+            const card = btn.closest('.exercise-card');
+            const details = card?.querySelector('.exercise-details');
+            if (!details) return;
+            details.classList.toggle('hidden');
+            btn.textContent = details.classList.contains('hidden') ? '✎' : '▾';
+        }
 
         function openDropdown(e, type) {
             e.stopPropagation(); closeAllDropdowns();
@@ -725,6 +787,7 @@
                 if (val.includes('d_')) parent.querySelector('[data-type="d"]').textContent = val.replace('d_','');
                 else if (val.includes('m_')) parent.querySelector('[data-type="m"]').textContent = val.replace('m_','');
                 else parent.querySelector('[data-type="y"]').textContent = val.replace('y_','');
+                needsDomSort = true;
             }
             if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
             autoSave();
@@ -756,7 +819,10 @@
         }
 
         function autoSave() {
-            sortDayCardsInDom();
+            if (needsDomSort) {
+                sortDayCardsInDom();
+                needsDomSort = false;
+            }
             applyAlternatingThemes();
             const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
                 id: card.dataset.id,
