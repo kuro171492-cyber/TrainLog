@@ -6,6 +6,8 @@
     <title>Workout Tracker - File Storage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
         body {
@@ -206,6 +208,26 @@
 
         .day-card.theme-a { background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(241, 245, 249, 0.93)); border-color: rgba(148, 163, 184, 0.35); }
         .day-card.theme-b { background: linear-gradient(145deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.86)); border-color: rgba(56, 189, 248, 0.32); }
+        .day-card.status-past { border: 2px solid rgba(22, 163, 74, 0.85) !important; box-shadow: 0 16px 36px rgba(22, 163, 74, 0.22); }
+        .day-card.status-future { border: 2px solid rgba(220, 38, 38, 0.82) !important; box-shadow: 0 16px 36px rgba(220, 38, 38, 0.22); }
+        .day-card.status-today { border: 2px solid rgba(249, 115, 22, 0.9) !important; box-shadow: 0 16px 36px rgba(249, 115, 22, 0.24); }
+
+        .flatpickr-calendar {
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.45);
+            box-shadow: 0 28px 48px rgba(15, 23, 42, 0.28);
+            overflow: hidden;
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .flatpickr-day.today {
+            border-color: #f97316;
+            color: #f97316;
+        }
 
         .exercise-card.theme-a { background: rgba(248, 250, 252, 0.95); border-color: rgba(148, 163, 184, 0.45); }
         .exercise-card.theme-b { background: rgba(239, 246, 255, 0.92); border-color: rgba(96, 165, 250, 0.35); }
@@ -223,6 +245,7 @@
     <div id="toast">Успешно!</div>
     <!-- Hidden input for file import -->
     <input type="file" id="fileImportInput" class="hidden" accept=".json" onchange="importData(event)">
+    <input type="text" id="nativeDatePicker" class="hidden" aria-hidden="true">
 
     <!-- Dropdowns -->
     <div id="dateDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 60px;" id="dayList"></div><div class="dropdown-column" style="min-width: 100px;" id="monthList"></div><div class="dropdown-column" style="min-width: 80px;" id="yearList"></div></div>
@@ -332,6 +355,7 @@
         let workoutChart = null;
         let repoFileHandle = null;
         let needsDomSort = false;
+        let datePickerInstance = null;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -341,9 +365,11 @@
             weight: document.getElementById('weightDropdown'),
             reps: document.getElementById('repsDropdown')
         };
+        const nativeDatePicker = document.getElementById('nativeDatePicker');
 
         window.addEventListener('DOMContentLoaded', async () => {
             initDropdownOptions();
+            initDatePickerPopup();
             await loadPersistedFileHandle();
             await loadFromStorage();
         });
@@ -523,7 +549,7 @@
                 <div class="p-3 sm:p-4 cursor-pointer hover:bg-sky-50/70" onclick="toggleCollapse(this)">
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2 bg-white/80 border border-slate-300 p-1.5 rounded-2xl flex-wrap" onclick="event.stopPropagation()">
-                            <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDropdown(event, 'date')">
+                            <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDateCalendar(event)">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span> <span data-type="y">${date.y}</span>
                             </div>
                             <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1 cursor-pointer hover:text-slate-700" onclick="openDropdown(event, 'weekday')">
@@ -626,7 +652,6 @@
             const newT = {
                 id: Date.now().toString(),
                 name: "Новый шаблон",
-                weekday: card.querySelector('.weekday-value').textContent.trim(),
                 totalTime: card.querySelector('[data-type="total-time"]').value,
                 items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
             };
@@ -648,7 +673,6 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
                                 <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
                             </div>
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
@@ -753,7 +777,6 @@
             const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
             if (!t) return;
             const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
-            card.querySelector('.weekday-value').textContent = t.weekday;
             card.querySelector('[data-type="total-time"]').value = t.totalTime;
             const list = card.querySelector('.exercise-list');
             list.innerHTML = '';
@@ -784,6 +807,56 @@
             if (!details) return;
             details.classList.toggle('hidden');
             btn.textContent = details.classList.contains('hidden') ? '✎' : '▾';
+        }
+
+        function initDatePickerPopup() {
+            if (typeof flatpickr !== 'function') {
+                showToast('Календарь не загрузился');
+                return;
+            }
+            datePickerInstance = flatpickr(nativeDatePicker, {
+                dateFormat: "Y-m-d",
+                locale: {
+                    firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                        longhand: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+                    },
+                    months: {
+                        shorthand: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                        longhand: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+                    }
+                },
+                disableMobile: true,
+                onChange: (selectedDates) => {
+                    if (!activeInput || selectedDates.length === 0) return;
+                    const selectedDate = selectedDates[0];
+                    const parent = activeInput.closest('.date-container');
+                    if (!parent) return;
+                    parent.querySelector('[data-type="d"]').textContent = String(selectedDate.getDate());
+                    parent.querySelector('[data-type="m"]').textContent = MONTHS[selectedDate.getMonth()];
+                    parent.querySelector('[data-type="y"]').textContent = String(selectedDate.getFullYear());
+                    const weekdayIdx = (selectedDate.getDay() + 6) % 7;
+                    const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
+                    if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
+                    needsDomSort = true;
+                    autoSave();
+                }
+            });
+        }
+
+        function openDateCalendar(e) {
+            e.stopPropagation();
+            activeInput = e.currentTarget;
+            const dateObj = {
+                d: Number(activeInput.querySelector('[data-type="d"]')?.textContent || 1),
+                m: MONTH_INDEX[activeInput.querySelector('[data-type="m"]')?.textContent?.trim()] ?? 0,
+                y: Number(activeInput.querySelector('[data-type="y"]')?.textContent || new Date().getFullYear())
+            };
+            if (!datePickerInstance) return;
+            datePickerInstance.setDate(new Date(dateObj.y, dateObj.m, dateObj.d), false);
+            datePickerInstance.set('positionElement', activeInput);
+            datePickerInstance.open();
         }
 
         function openDropdown(e, type) {
@@ -955,6 +1028,29 @@
             cards.forEach(card => container.appendChild(card));
         }
 
+        function normalizeToLocalMidnight(date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+        }
+
+        function getDayCardTimestamp(card) {
+            const day = Number(card.querySelector('[data-type="d"]')?.textContent.trim()) || 1;
+            const monthLabel = card.querySelector('[data-type="m"]')?.textContent.trim();
+            const month = MONTH_INDEX[monthLabel] ?? 0;
+            const year = Number(card.querySelector('[data-type="y"]')?.textContent.trim()) || new Date().getFullYear();
+            return normalizeToLocalMidnight(new Date(year, month, day));
+        }
+
+        function applyDayStatusBorders() {
+            const todayStamp = normalizeToLocalMidnight(new Date());
+            document.querySelectorAll('#daysContainer .day-card').forEach(card => {
+                const stamp = getDayCardTimestamp(card);
+                card.classList.remove('status-past', 'status-future', 'status-today');
+                if (stamp < todayStamp) card.classList.add('status-past');
+                else if (stamp > todayStamp) card.classList.add('status-future');
+                else card.classList.add('status-today');
+            });
+        }
+
         function applyAlternatingThemes() {
             const dayCards = Array.from(document.querySelectorAll('#daysContainer .day-card'));
             dayCards.forEach((card, index) => {
@@ -970,6 +1066,7 @@
                     applyExerciseThemes(nestedExercises);
                 });
             });
+            applyDayStatusBorders();
         }
 
         function applyExerciseThemes(exerciseElements) {
