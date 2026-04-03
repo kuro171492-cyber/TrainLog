@@ -129,9 +129,10 @@
         }
         .template-menu {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 8px;
             margin-top: 14px;
+            justify-content: flex-end;
         }
         .template-menu-btn {
             border: 1px solid rgba(148, 163, 184, 0.35);
@@ -146,6 +147,17 @@
             min-width: 105px;
             text-align: center;
         }
+        .template-menu-btn.icon {
+            width: 38px;
+            min-width: 38px;
+            height: 38px;
+            padding: 0;
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
         .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.55); background: rgba(191, 219, 254, 0.55); }
         .template-menu-btn.primary {
             background: linear-gradient(135deg, #2563eb, #3b82f6);
@@ -154,6 +166,11 @@
             box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
         }
         .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
+        .template-exercises-preview {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.5);
+        }
 
         .day-card,
         #roomTable > div {
@@ -173,8 +190,7 @@
 
         @media (max-width: 640px) {
             .template-card { padding: 16px; border-radius: 20px; }
-            .template-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .template-menu-btn { min-width: 0; }
+            .template-menu { gap: 6px; }
         }
     </style>
 </head>
@@ -614,15 +630,44 @@
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
                     </div>
+                    <div class="template-exercises-preview hidden">
+                        ${getTemplateExerciseSummary(t)}
+                    </div>
                     <div class="template-menu">
-                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary">Применить</button>
-                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn">Переименовать</button>
-                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn">Дублировать</button>
-                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger">Удалить</button>
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
+                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
                     </div>
                 `;
                 list.appendChild(card);
             });
+        }
+
+        function getTemplateExerciseSummary(template) {
+            const names = [];
+            (template?.items || []).forEach(item => {
+                if (item?.type === 'superset') {
+                    (item.exercises || []).forEach(ex => {
+                        const name = (ex?.name || '').trim();
+                        if (name) names.push(name);
+                    });
+                    return;
+                }
+                const name = (item?.name || '').trim();
+                if (name) names.push(name);
+            });
+
+            const uniqueNames = Array.from(new Set(names));
+            if (uniqueNames.length === 0) return '<p class="text-[11px] text-slate-500">Нет упражнений в шаблоне</p>';
+
+            return `
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Упражнения</p>
+                <div class="flex flex-wrap gap-2">
+                    ${uniqueNames.map(name => `<span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-semibold">${name}</span>`).join('')}
+                </div>
+            `;
         }
 
         function handleTemplateNameKey(e, templateId) {
