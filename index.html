@@ -584,7 +584,7 @@
                             <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDateCalendar(event)">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span> <span data-type="y">${date.y}</span>
                             </div>
-                            <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1 cursor-pointer hover:text-slate-700" onclick="openDropdown(event, 'weekday')">
+                            <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1">
                                 ${date.wd}
                             </div>
                             <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
@@ -811,7 +811,6 @@
             const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
             if (!t) return;
             const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
-            card.querySelector('.weekday-value').textContent = t.weekday;
             card.querySelector('[data-type="total-time"]').value = t.totalTime;
             const list = card.querySelector('.exercise-list');
             list.innerHTML = '';
