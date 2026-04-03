@@ -291,6 +291,7 @@
         let activeSessionIdForTemplate = null;
         let workoutChart = null;
         let repoFileHandle = null;
+        let needsDomSort = false;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -725,6 +726,7 @@
                 if (val.includes('d_')) parent.querySelector('[data-type="d"]').textContent = val.replace('d_','');
                 else if (val.includes('m_')) parent.querySelector('[data-type="m"]').textContent = val.replace('m_','');
                 else parent.querySelector('[data-type="y"]').textContent = val.replace('y_','');
+                needsDomSort = true;
             }
             if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
             autoSave();
@@ -756,7 +758,10 @@
         }
 
         function autoSave() {
-            sortDayCardsInDom();
+            if (needsDomSort) {
+                sortDayCardsInDom();
+                needsDomSort = false;
+            }
             applyAlternatingThemes();
             const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
                 id: card.dataset.id,
