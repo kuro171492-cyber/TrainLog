@@ -6,6 +6,8 @@
     <title>Workout Tracker - File Storage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
         body {
@@ -336,6 +338,7 @@
         let workoutChart = null;
         let repoFileHandle = null;
         let needsDomSort = false;
+        let datePickerInstance = null;
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
