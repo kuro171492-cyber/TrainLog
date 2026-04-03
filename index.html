@@ -635,7 +635,6 @@
             const newT = {
                 id: Date.now().toString(),
                 name: "Новый шаблон",
-                weekday: card.querySelector('.weekday-value').textContent.trim(),
                 totalTime: card.querySelector('[data-type="total-time"]').value,
                 items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
             };
@@ -657,7 +656,6 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
                                 <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
                             </div>
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
@@ -762,7 +760,6 @@
             const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
             if (!t) return;
             const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
-            card.querySelector('.weekday-value').textContent = t.weekday;
             card.querySelector('[data-type="total-time"]').value = t.totalTime;
             const list = card.querySelector('.exercise-list');
             list.innerHTML = '';
