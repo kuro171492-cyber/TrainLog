@@ -742,12 +742,6 @@
         function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
         function deleteDay(id) { if(confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
-        function toggleTemplateExercises(btn) {
-            const preview = btn.closest('.template-card')?.querySelector('.template-exercises-preview');
-            if (!preview) return;
-            preview.classList.toggle('hidden');
-            btn.classList.toggle('primary', !preview.classList.contains('hidden'));
-        }
         function toggleExerciseDetails(btn) {
             const card = btn.closest('.exercise-card');
             const details = card?.querySelector('.exercise-details');
