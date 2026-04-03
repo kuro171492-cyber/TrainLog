@@ -167,9 +167,33 @@
         }
         .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
         .template-exercises-preview {
-            margin-top: 10px;
+            margin-top: 14px;
             padding-top: 10px;
             border-top: 1px dashed rgba(148, 163, 184, 0.5);
+            max-width: 68%;
+        }
+        .template-exercises-preview.hidden {
+            display: none;
+        }
+        .template-exercises-preview .template-exercise-list {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .template-exercises-preview .template-exercise-item {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.15);
+            color: #334155;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: left;
+        }
+        .template-menu-btn.is-active {
+            border-color: rgba(59, 130, 246, 0.55);
+            background: rgba(191, 219, 254, 0.65);
+            color: #1d4ed8;
         }
 
         .day-card,
@@ -630,15 +654,17 @@
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
                     </div>
-                    <div class="template-exercises-preview hidden">
-                        ${getTemplateExerciseSummary(t)}
-                    </div>
-                    <div class="template-menu">
-                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
-                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
-                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
-                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
-                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
+                    <div class="flex items-end justify-between gap-3">
+                        <div class="template-exercises-preview hidden">
+                            ${getTemplateExerciseSummary(t)}
+                        </div>
+                        <div class="template-menu mt-0 ml-auto">
+                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
+                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
+                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
+                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
+                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(card);
@@ -664,10 +690,20 @@
 
             return `
                 <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Упражнения</p>
-                <div class="flex flex-wrap gap-2">
-                    ${uniqueNames.map(name => `<span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-semibold">${name}</span>`).join('')}
+                <div class="template-exercise-list">
+                    ${uniqueNames.map(name => `<span class="template-exercise-item">${name}</span>`).join('')}
                 </div>
             `;
+        }
+
+        function toggleTemplateExercises(btn) {
+            const card = btn.closest('.template-card');
+            const preview = card?.querySelector('.template-exercises-preview');
+            if (!preview) return;
+            const isHidden = preview.classList.contains('hidden');
+            preview.classList.toggle('hidden', !isHidden);
+            btn.classList.toggle('is-active', isHidden);
+            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
         }
 
         function handleTemplateNameKey(e, templateId) {
