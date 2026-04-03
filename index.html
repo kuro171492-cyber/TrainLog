@@ -239,6 +239,37 @@
             box-shadow: 0 20px 44px rgba(148, 163, 184, 0.25);
             backdrop-filter: blur(14px);
         }
+        .month-group { margin-bottom: 14px; }
+        .month-group-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.34);
+            background: rgba(255, 255, 255, 0.92);
+            color: #334155;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .month-group-count {
+            font-size: 10px;
+            color: #64748b;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .month-group-body { margin-top: 10px; }
+        .month-group-body.hidden { display: none; }
+        .month-group-caret {
+            font-size: 12px;
+            color: #2563eb;
+            transition: transform 0.2s ease;
+        }
+        .month-group-caret.is-collapsed { transform: rotate(-90deg); }
 
         .day-card.theme-a { background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(241, 245, 249, 0.93)); border-color: rgba(148, 163, 184, 0.35); }
         .day-card.theme-b { background: linear-gradient(145deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.86)); border-color: rgba(56, 189, 248, 0.32); }
@@ -374,6 +405,7 @@
         const REPO_FILE_KEY = 'trainlog_repo_file_handle_v1';
         const REPO_FILE_NAME = 'trainlog_data.json';
         const GITHUB_SYNC_KEY = 'trainlog_github_sync_v1';
+        const MONTH_GROUP_STATE_KEY = 'trainlog_month_group_state_v1';
         const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
         const WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
@@ -384,6 +416,7 @@
         let repoFileHandle = null;
         let needsDomSort = false;
         let datePickerInstance = null;
+        let monthGroupState = {};
 
         const dropdowns = {
             date: document.getElementById('dateDropdown'),
@@ -399,6 +432,7 @@
         let mobileDateTarget = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
+            monthGroupState = JSON.parse(localStorage.getItem(MONTH_GROUP_STATE_KEY) || '{}');
             initDropdownOptions();
             initNativeDatePicker();
             initMobileDateModal();
@@ -982,6 +1016,7 @@
                 sortDayCardsInDom();
                 needsDomSort = false;
             }
+            groupDayCardsByMonth();
             applyAlternatingThemes();
             const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
                 id: card.dataset.id,
@@ -1026,6 +1061,8 @@
             document.getElementById('daysContainer').innerHTML = '';
             if (data.length > 0) data.forEach(d => addDay(d, false));
             else addDay(null, true);
+            groupDayCardsByMonth();
+            applyAlternatingThemes();
         }
 
         // Analytics (simplified for this version)
@@ -1082,6 +1119,75 @@
                 return sessionDateToTimestamp(bSession) - sessionDateToTimestamp(aSession);
             });
             cards.forEach(card => container.appendChild(card));
+            groupDayCardsByMonth();
+        }
+
+        function getMonthInfoFromCard(card) {
+            const monthLabel = card.querySelector('[data-type="m"]')?.textContent.trim();
+            const monthIndex = MONTH_INDEX[monthLabel] ?? 0;
+            const year = Number(card.querySelector('[data-type="y"]')?.textContent.trim()) || new Date().getFullYear();
+            const date = new Date(year, monthIndex, 1);
+            const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+            const label = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+            return { key, label };
+        }
+
+        function saveMonthGroupState() {
+            localStorage.setItem(MONTH_GROUP_STATE_KEY, JSON.stringify(monthGroupState));
+        }
+
+        function toggleMonthGroup(monthKey) {
+            monthGroupState[monthKey] = !monthGroupState[monthKey];
+            saveMonthGroupState();
+            const group = document.querySelector(`.month-group[data-month-key="${monthKey}"]`);
+            if (!group) return;
+            const body = group.querySelector('.month-group-body');
+            const caret = group.querySelector('.month-group-caret');
+            const isCollapsed = !!monthGroupState[monthKey];
+            body?.classList.toggle('hidden', isCollapsed);
+            caret?.classList.toggle('is-collapsed', isCollapsed);
+        }
+
+        function groupDayCardsByMonth() {
+            const container = document.getElementById('daysContainer');
+            const cards = Array.from(container.querySelectorAll('.day-card'));
+            if (cards.length === 0) return;
+
+            cards.sort((a, b) => getDayCardTimestamp(b) - getDayCardTimestamp(a));
+            container.innerHTML = '';
+
+            let currentKey = null;
+            let body = null;
+            let count = 0;
+            let countEl = null;
+
+            cards.forEach(card => {
+                const info = getMonthInfoFromCard(card);
+                if (info.key !== currentKey) {
+                    currentKey = info.key;
+                    count = 0;
+                    const isCollapsed = !!monthGroupState[info.key];
+                    const group = document.createElement('section');
+                    group.className = 'month-group';
+                    group.dataset.monthKey = info.key;
+                    group.innerHTML = `
+                        <button class="month-group-header" onclick="toggleMonthGroup('${info.key}')">
+                            <span>${info.label}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="month-group-count"></span>
+                                <span class="month-group-caret ${isCollapsed ? 'is-collapsed' : ''}">▼</span>
+                            </div>
+                        </button>
+                        <div class="month-group-body ${isCollapsed ? 'hidden' : ''}"></div>
+                    `;
+                    container.appendChild(group);
+                    body = group.querySelector('.month-group-body');
+                    countEl = group.querySelector('.month-group-count');
+                }
+                count += 1;
+                if (countEl) countEl.textContent = `${count} трен.`;
+                body?.appendChild(card);
+            });
         }
 
         function normalizeToLocalMidnight(date) {
