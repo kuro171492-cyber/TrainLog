@@ -212,23 +212,6 @@
         .day-card.status-future { border: 2px solid rgba(220, 38, 38, 0.82) !important; box-shadow: 0 16px 36px rgba(220, 38, 38, 0.22); }
         .day-card.status-today { border: 2px solid rgba(249, 115, 22, 0.9) !important; box-shadow: 0 16px 36px rgba(249, 115, 22, 0.24); }
 
-        .flatpickr-calendar {
-            border-radius: 16px;
-            border: 1px solid rgba(148, 163, 184, 0.45);
-            box-shadow: 0 28px 48px rgba(15, 23, 42, 0.28);
-            overflow: hidden;
-        }
-        .flatpickr-day.selected,
-        .flatpickr-day.startRange,
-        .flatpickr-day.endRange {
-            background: #2563eb;
-            border-color: #2563eb;
-        }
-        .flatpickr-day.today {
-            border-color: #f97316;
-            color: #f97316;
-        }
-
         .exercise-card.theme-a { background: rgba(248, 250, 252, 0.95); border-color: rgba(148, 163, 184, 0.45); }
         .exercise-card.theme-b { background: rgba(239, 246, 255, 0.92); border-color: rgba(96, 165, 250, 0.35); }
         .exercise-card.is-sub.theme-a { background: rgba(224, 242, 254, 0.75); border-color: rgba(56, 189, 248, 0.3); }
@@ -245,7 +228,7 @@
     <div id="toast">Успешно!</div>
     <!-- Hidden input for file import -->
     <input type="file" id="fileImportInput" class="hidden" accept=".json" onchange="importData(event)">
-    <input type="text" id="nativeDatePicker" class="hidden" aria-hidden="true">
+    <input type="date" id="nativeDatePicker" class="hidden" aria-hidden="true">
 
     <!-- Dropdowns -->
     <div id="dateDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 60px;" id="dayList"></div><div class="dropdown-column" style="min-width: 100px;" id="monthList"></div><div class="dropdown-column" style="min-width: 80px;" id="yearList"></div></div>
@@ -369,7 +352,7 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             initDropdownOptions();
-            initDatePickerPopup();
+            initNativeDatePicker();
             await loadPersistedFileHandle();
             await loadFromStorage();
         });
@@ -809,39 +792,20 @@
             btn.textContent = details.classList.contains('hidden') ? '✎' : '▾';
         }
 
-        function initDatePickerPopup() {
-            if (typeof flatpickr !== 'function') {
-                showToast('Календарь не загрузился');
-                return;
-            }
-            datePickerInstance = flatpickr(nativeDatePicker, {
-                dateFormat: "Y-m-d",
-                locale: {
-                    firstDayOfWeek: 1,
-                    weekdays: {
-                        shorthand: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-                        longhand: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
-                    },
-                    months: {
-                        shorthand: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-                        longhand: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
-                    }
-                },
-                disableMobile: true,
-                onChange: (selectedDates) => {
-                    if (!activeInput || selectedDates.length === 0) return;
-                    const selectedDate = selectedDates[0];
-                    const parent = activeInput.closest('.date-container');
-                    if (!parent) return;
-                    parent.querySelector('[data-type="d"]').textContent = String(selectedDate.getDate());
-                    parent.querySelector('[data-type="m"]').textContent = MONTHS[selectedDate.getMonth()];
-                    parent.querySelector('[data-type="y"]').textContent = String(selectedDate.getFullYear());
-                    const weekdayIdx = (selectedDate.getDay() + 6) % 7;
-                    const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
-                    if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
-                    needsDomSort = true;
-                    autoSave();
-                }
+        function initNativeDatePicker() {
+            nativeDatePicker.addEventListener('change', () => {
+                if (!activeInput || !nativeDatePicker.value) return;
+                const [year, month, day] = nativeDatePicker.value.split('-').map(Number);
+                const parent = activeInput.closest('.date-container');
+                if (!parent) return;
+                parent.querySelector('[data-type="d"]').textContent = String(day);
+                parent.querySelector('[data-type="m"]').textContent = MONTHS[(month || 1) - 1];
+                parent.querySelector('[data-type="y"]').textContent = String(year);
+                const weekdayIdx = (new Date(year, (month || 1) - 1, day).getDay() + 6) % 7;
+                const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
+                if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
+                needsDomSort = true;
+                autoSave();
             });
         }
 
@@ -853,10 +817,9 @@
                 m: MONTH_INDEX[activeInput.querySelector('[data-type="m"]')?.textContent?.trim()] ?? 0,
                 y: Number(activeInput.querySelector('[data-type="y"]')?.textContent || new Date().getFullYear())
             };
-            if (!datePickerInstance) return;
-            datePickerInstance.setDate(new Date(dateObj.y, dateObj.m, dateObj.d), false);
-            datePickerInstance.set('positionElement', activeInput);
-            datePickerInstance.open();
+            nativeDatePicker.value = `${dateObj.y}-${String(dateObj.m + 1).padStart(2, '0')}-${String(dateObj.d).padStart(2, '0')}`;
+            if (typeof nativeDatePicker.showPicker === 'function') nativeDatePicker.showPicker();
+            else nativeDatePicker.click();
         }
 
         function openDropdown(e, type) {
