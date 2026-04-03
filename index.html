@@ -72,6 +72,40 @@
             justify-content: center;
         }
         .modal-overlay.active { display: flex; }
+        .mobile-date-sheet {
+            width: min(420px, calc(100vw - 24px));
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22);
+            padding: 16px;
+        }
+        .mobile-date-input {
+            width: 100%;
+            font-size: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
+        }
+        .mobile-date-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .mobile-date-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 14px;
+        }
+        .mobile-date-actions button {
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 9px 12px;
+        }
 
         #toast {
             position: fixed;
@@ -322,6 +356,17 @@
             <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-slate-50/80"></div>
         </div>
     </div>
+    <div id="mobileDateModal" class="modal-overlay">
+        <div class="mobile-date-sheet">
+            <h3 class="text-base font-extrabold text-slate-900 mb-2">Выберите дату</h3>
+            <input type="date" id="mobileDateInput" class="mobile-date-input">
+            <div class="mobile-date-actions">
+                <button id="mobileDateCancelBtn" class="bg-slate-200 text-slate-700">Отмена</button>
+                <button id="mobileDateTodayBtn" class="bg-blue-100 text-blue-700">Сегодня</button>
+                <button id="mobileDateApplyBtn" class="bg-blue-600 text-white">Применить</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const STORAGE_KEY = 'workout_v4_data';
@@ -349,10 +394,14 @@
             reps: document.getElementById('repsDropdown')
         };
         const nativeDatePicker = document.getElementById('nativeDatePicker');
+        const mobileDateModal = document.getElementById('mobileDateModal');
+        const mobileDateInput = document.getElementById('mobileDateInput');
+        let mobileDateTarget = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
             initDropdownOptions();
             initNativeDatePicker();
+            initMobileDateModal();
             await loadPersistedFileHandle();
             await loadFromStorage();
         });
@@ -535,7 +584,7 @@
                             <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDateCalendar(event)">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span> <span data-type="y">${date.y}</span>
                             </div>
-                            <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1 cursor-pointer hover:text-slate-700" onclick="openDropdown(event, 'weekday')">
+                            <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1">
                                 ${date.wd}
                             </div>
                             <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
@@ -762,7 +811,6 @@
             const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
             if (!t) return;
             const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
-            card.querySelector('.weekday-value').textContent = t.weekday;
             card.querySelector('[data-type="total-time"]').value = t.totalTime;
             const list = card.querySelector('.exercise-list');
             list.innerHTML = '';
@@ -800,16 +848,52 @@
                 if (!activeInput || !nativeDatePicker.value) return;
                 const [year, month, day] = nativeDatePicker.value.split('-').map(Number);
                 const parent = activeInput.closest('.date-container');
-                if (!parent) return;
-                parent.querySelector('[data-type="d"]').textContent = String(day);
-                parent.querySelector('[data-type="m"]').textContent = MONTHS[(month || 1) - 1];
-                parent.querySelector('[data-type="y"]').textContent = String(year);
-                const weekdayIdx = (new Date(year, (month || 1) - 1, day).getDay() + 6) % 7;
-                const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
-                if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
-                needsDomSort = true;
-                autoSave();
+                applyDateToContainer(parent, year, month, day);
             });
+        }
+
+        function initMobileDateModal() {
+            document.getElementById('mobileDateCancelBtn').addEventListener('click', () => {
+                mobileDateModal.classList.remove('active');
+                mobileDateTarget = null;
+            });
+            document.getElementById('mobileDateTodayBtn').addEventListener('click', () => {
+                const now = new Date();
+                mobileDateInput.value = formatDateValue({ y: now.getFullYear(), m: now.getMonth(), d: now.getDate() });
+            });
+            document.getElementById('mobileDateApplyBtn').addEventListener('click', () => {
+                if (!mobileDateTarget || !mobileDateInput.value) return;
+                const [year, month, day] = mobileDateInput.value.split('-').map(Number);
+                applyDateToContainer(mobileDateTarget, year, month, day);
+                mobileDateModal.classList.remove('active');
+                mobileDateTarget = null;
+            });
+            mobileDateModal.addEventListener('click', (e) => {
+                if (e.target === mobileDateModal) {
+                    mobileDateModal.classList.remove('active');
+                    mobileDateTarget = null;
+                }
+            });
+        }
+
+        function isMobileDateExperience() {
+            return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+        }
+
+        function formatDateValue(dateObj) {
+            return `${dateObj.y}-${String(dateObj.m + 1).padStart(2, '0')}-${String(dateObj.d).padStart(2, '0')}`;
+        }
+
+        function applyDateToContainer(parent, year, month, day) {
+            if (!parent || !year || !month || !day) return;
+            parent.querySelector('[data-type="d"]').textContent = String(day);
+            parent.querySelector('[data-type="m"]').textContent = MONTHS[(month || 1) - 1];
+            parent.querySelector('[data-type="y"]').textContent = String(year);
+            const weekdayIdx = (new Date(year, (month || 1) - 1, day).getDay() + 6) % 7;
+            const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
+            if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
+            needsDomSort = true;
+            autoSave();
         }
 
         function openDateCalendar(e) {
@@ -820,7 +904,13 @@
                 m: MONTH_INDEX[activeInput.querySelector('[data-type="m"]')?.textContent?.trim()] ?? 0,
                 y: Number(activeInput.querySelector('[data-type="y"]')?.textContent || new Date().getFullYear())
             };
-            nativeDatePicker.value = `${dateObj.y}-${String(dateObj.m + 1).padStart(2, '0')}-${String(dateObj.d).padStart(2, '0')}`;
+            if (isMobileDateExperience()) {
+                mobileDateTarget = activeInput.closest('.date-container');
+                mobileDateInput.value = formatDateValue(dateObj);
+                mobileDateModal.classList.add('active');
+                return;
+            }
+            nativeDatePicker.value = formatDateValue(dateObj);
             if (typeof nativeDatePicker.showPicker === 'function') nativeDatePicker.showPicker();
             else nativeDatePicker.click();
         }
