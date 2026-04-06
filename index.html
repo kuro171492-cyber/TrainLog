@@ -888,12 +888,11 @@
         function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
         function deleteDay(id) { if(confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
-        function toggleExerciseDetails(btn) {
-            const card = btn.closest('.exercise-card');
+        function toggleExerciseDetails(triggerEl) {
+            const card = triggerEl.closest('.exercise-card');
             const details = card?.querySelector('.exercise-details');
             if (!details) return;
             details.classList.toggle('hidden');
-            btn.textContent = details.classList.contains('hidden') ? '✎' : '▾';
         }
 
         function initNativeDatePicker() {
