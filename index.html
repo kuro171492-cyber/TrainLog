@@ -411,7 +411,23 @@
         const MONTH_GROUP_STATE_KEY = 'trainlog_month_group_state_v1';
         const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
-        const WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        const WEEKDAY_SHORT_MAP = {
+            'Понедельник': 'Пн',
+            'Вторник': 'Вт',
+            'Среда': 'Ср',
+            'Четверг': 'Чт',
+            'Пятница': 'Пт',
+            'Суббота': 'Сб',
+            'Воскресенье': 'Вс',
+            'Пн': 'Пн',
+            'Вт': 'Вт',
+            'Ср': 'Ср',
+            'Чт': 'Чт',
+            'Пт': 'Пт',
+            'Сб': 'Сб',
+            'Вс': 'Вс'
+        };
 
         let activeInput = null;
         let activeSessionIdForTemplate = null;
@@ -610,6 +626,7 @@
             const id = data?.id || Date.now();
             const now = new Date();
             const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
+            const weekdayShort = toShortWeekday(date.wd);
 
             const card = document.createElement('div');
             card.className = "day-card rounded-[26px] border shadow-xl overflow-hidden mb-4 transition-all";
@@ -619,13 +636,12 @@
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2 bg-white/80 border border-slate-300 p-1.5 rounded-2xl flex-wrap" onclick="event.stopPropagation()">
                             <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDateCalendar(event)">
-                                <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span> <span data-type="y">${date.y}</span>
+                                <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span><span data-type="y" class="hidden">${date.y}</span>
                             </div>
                             <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1">
-                                ${date.wd}
+                                ${weekdayShort}
                             </div>
-                            <div class="flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
-                                <span class="text-[9px] font-black text-slate-500 uppercase">Время:</span>
+                            <div class="flex items-center bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
                                 <input type="text" readonly class="bg-transparent text-blue-400 font-mono font-bold text-xs w-12 text-center outline-none cursor-pointer" onclick="openDropdown(event, 'total')" data-type="total-time" value="${data?.totalTime || '01:00'}">
                             </div>
                         </div>
@@ -919,6 +935,10 @@
 
         function formatDateValue(dateObj) {
             return `${dateObj.y}-${String(dateObj.m + 1).padStart(2, '0')}-${String(dateObj.d).padStart(2, '0')}`;
+        }
+
+        function toShortWeekday(value) {
+            return WEEKDAY_SHORT_MAP[value] || value || '';
         }
 
         function applyDateToContainer(parent, year, month, day) {
