@@ -680,18 +680,18 @@
 
         function renderExercise(container, data = null, isSub = false) {
             const div = document.createElement('div');
-            div.className = `exercise-card p-3 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
+            div.className = `exercise-card relative p-3 pt-8 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
             div.innerHTML = `
+                <button onclick="toggleExerciseDetails(this)" class="absolute left-3 top-3 text-blue-500 hover:text-blue-700 text-sm font-black" title="Показать/скрыть подходы">✎</button>
                 <div class="flex items-center gap-3">
                     <div class="editable flex-1 bg-white/85 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 outline-none" contenteditable="true" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
-                    <button onclick="toggleExerciseDetails(this)" class="text-blue-500 hover:text-blue-700 text-sm font-black" title="Показать/скрыть подходы">✎</button>
-                    <button onclick="this.closest('[data-type]').remove(); autoSave();" class="text-slate-600 hover:text-red-500">&times;</button>
                 </div>
                 <div class="exercise-details hidden space-y-2">
                     <div class="sets-container space-y-2"></div>
                     <button onclick="addSetToBtn(this)" class="text-[9px] text-blue-500 font-black uppercase tracking-widest px-2 py-1">+ подход</button>
                 </div>
+                <button onclick="this.closest('[data-type]').remove(); autoSave();" class="absolute right-3 bottom-3 text-slate-600 hover:text-red-500 text-lg leading-none" title="Удалить упражнение">&times;</button>
             `;
             const sets = div.querySelector('.sets-container');
             if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
