@@ -683,7 +683,7 @@
             div.className = `exercise-card relative p-3 pt-8 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
             div.innerHTML = `
-                <button onclick="toggleExerciseDetails(this)" class="absolute left-3 top-3 text-blue-500 hover:text-blue-700 text-sm font-black" title="Показать/скрыть подходы">✎</button>
+                <button onclick="toggleExerciseDetails(this)" class="absolute left-0 right-0 top-0 h-7 rounded-t-2xl bg-blue-100/90 hover:bg-blue-200/90 transition-colors" title="Показать/скрыть подходы"></button>
                 <div class="flex items-center gap-3">
                     <div class="editable flex-1 bg-white/85 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 outline-none" contenteditable="true" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
                 </div>
