@@ -616,7 +616,7 @@
         "y": "2026",
         "wd": "Вт"
       },
-      "totalTime": "01:20",
+      "totalTime": "01:40",
       "items": [
         {
           "type": "exercise",
@@ -633,6 +633,11 @@
           "type": "exercise",
           "name": "Seated Leg Extension",
           "sets": [
+            {
+              "w": "",
+              "r": "15",
+              "t": "00:00"
+            },
             {
               "w": "",
               "r": "15",
@@ -4013,5 +4018,5 @@
       ]
     }
   ],
-  "exportDate": "2026-04-07T03:32:47.345Z"
+  "exportDate": "2026-04-07T05:02:56.753Z"
 }
