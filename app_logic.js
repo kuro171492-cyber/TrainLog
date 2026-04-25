@@ -280,6 +280,27 @@
             return `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
         }
 
+        /**
+         * Calculates which week number a given week is within a month.
+         * Used for progressive color darkening (week 1 = lightest, week 5 = darkest)
+         */
+        function getWeekNumberInMonth(weekKey, monthKey) {
+            const [year, month] = monthKey.split('-').map(Number);
+            const firstDayOfMonth = new Date(year, month - 1, 1);
+            const weekStart = new Date(weekKey);
+            
+            // Get the first week's start date in this month
+            const firstWeekStart = getWeekStartDate(firstDayOfMonth);
+            
+            // Calculate the difference in weeks
+            const diffTime = weekStart.getTime() - firstWeekStart.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const weekNumber = Math.floor(diffDays / 7) + 1;
+            
+            // Cap at 5 (for months that span 5+ weeks)
+            return Math.min(weekNumber, 5);
+        }
+
         function groupDayCardsByMonth() {
             const container = document.getElementById('daysContainer');
             const cards = Array.from(container.querySelectorAll('.day-card'));
@@ -311,6 +332,23 @@
                     const group = document.createElement('section');
                     group.className = 'month-group';
                     group.dataset.monthKey = info.key;
+                    
+                    // Determine season class based on month index
+                    const monthIndex = parseInt(info.key.split('-')[1], 10);
+                    let seasonClass = '';
+                    if (monthIndex === 1 || monthIndex === 2) {
+                        seasonClass = 'month-winter';
+                    } else if (monthIndex >= 3 && monthIndex <= 5) {
+                        seasonClass = 'month-spring';
+                    } else if (monthIndex >= 6 && monthIndex <= 8) {
+                        seasonClass = 'month-summer';
+                    } else if (monthIndex >= 9 && monthIndex <= 11) {
+                        seasonClass = 'month-autumn';
+                    } else if (monthIndex === 12) {
+                        seasonClass = 'month-december';
+                    }
+                    
+                    group.classList.add(seasonClass);
                     group.innerHTML = `
                         <button class="month-group-header" onclick="toggleMonthGroup('${info.key}')">
                             <span>${info.label}</span>
@@ -331,8 +369,12 @@
                     currentWeekKey = weekInfo.key;
                     weekCount = 0;
                     const isWeekCollapsed = weekGroupState[weekInfo.key] ?? (weekInfo.key !== currentWeekKeyNow);
+                    
+                    // Calculate week number within the month for progressive coloring
+                    const weekNumberInMonth = getWeekNumberInMonth(weekInfo.key, info.key);
+                    
                     const weekGroup = document.createElement('section');
-                    weekGroup.className = 'week-group mt-2';
+                    weekGroup.className = `week-group mt-2 week-${weekNumberInMonth}`;
                     weekGroup.dataset.weekKey = weekInfo.key;
                     weekGroup.innerHTML = `
                         <button class="w-full flex items-center justify-between rounded-xl bg-white/80 border border-slate-300 px-3 py-2 text-xs font-bold text-slate-600" onclick="toggleWeekGroup('${weekInfo.key}')">
