@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,289 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background:
-                radial-gradient(circle at 22px 22px, rgba(59, 130, 246, 0.16) 0 2px, transparent 3px),
-                radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.08) 0 1px, transparent 2px),
-                repeating-linear-gradient(60deg, rgba(148, 163, 184, 0.07) 0 2px, transparent 2px 28px),
-                repeating-linear-gradient(-60deg, rgba(148, 163, 184, 0.06) 0 2px, transparent 2px 28px),
-                linear-gradient(145deg, #111317 0%, #1b1f24 45%, #15181d 100%);
-            background-size: 44px 44px, 88px 88px, 56px 56px, 56px 56px, 100% 100%;
-            background-attachment: fixed;
-            color: #0f172a;
-        }
-
-        .editable:focus { outline: none; border-bottom: 1px solid #3b82f6; background: rgba(59, 130, 246, 0.08); }
-
-        [contenteditable]:empty:before {
-            content: attr(placeholder);
-            color: #94a3b8;
-            font-style: italic;
-        }
-
-        .set-input {
-            width: 55px;
-            text-align: center;
-            border-bottom: 1px solid #94a3b8;
-            font-size: 0.8rem;
-            color: #0f172a;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        /* Dropdowns */
-        .custom-dropdown {
-            display: none;
-            position: absolute;
-            z-index: 9999;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.9);
-            overflow: hidden;
-        }
-        .custom-dropdown.active { display: flex; }
-        .dropdown-column { max-height: 280px; overflow-y: auto; border-right: 1px solid #334155; }
-        .dropdown-item {
-            padding: 10px 15px;
-            color: #334155;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.85rem;
-        }
-        .dropdown-item:hover { background: #dbeafe; color: #1d4ed8; }
-
-        /* Modals */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(148, 163, 184, 0.28);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .mobile-date-sheet {
-            width: min(420px, calc(100vw - 24px));
-            border-radius: 24px;
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22);
-            padding: 16px;
-        }
-        .mobile-date-input {
-            width: 100%;
-            font-size: 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            padding: 12px 14px;
-            color: #0f172a;
-            background: #f8fafc;
-            outline: none;
-        }
-        .mobile-date-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .mobile-date-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            margin-top: 14px;
-        }
-        .mobile-date-actions button {
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 800;
-            padding: 9px 12px;
-        }
-
-        #toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #2563eb;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 16px;
-            font-weight: 600;
-            z-index: 2000;
-            transition: transform 0.3s ease;
-        }
-        #toast.active { transform: translateX(-50%) translateY(0); }
-
-        nav {
-            background: rgba(255, 255, 255, 0.82) !important;
-            border-bottom-color: rgba(148, 163, 184, 0.35) !important;
-            box-shadow: 0 14px 32px rgba(148, 163, 184, 0.25);
-        }
-
-        .room { display: none; }
-        .room.active { display: block; }
-
-        /* Template UI */
-        .template-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.92));
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            margin-bottom: 14px;
-            backdrop-filter: blur(14px);
-        }
-        .template-name-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #94a3b8;
-            color: #0f172a;
-            font-size: 1.1rem;
-            font-weight: 700;
-            width: 100%;
-            outline: none;
-            padding-bottom: 4px;
-        }
-        .template-name-input:focus { border-bottom-color: #3b82f6; }
-        .template-chip {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .07em;
-            padding: 4px 10px;
-            border-radius: 999px;
-            color: #1d4ed8;
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.22);
-        }
-        .template-menu {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 8px;
-            margin-top: 14px;
-            justify-content: flex-end;
-        }
-        .template-menu-btn {
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            background: rgba(255, 255, 255, 0.88);
-            color: #334155;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 8px 12px;
-            border-radius: 12px;
-            transition: 0.2s ease;
-            flex: 1;
-            min-width: 105px;
-            text-align: center;
-        }
-        .template-menu-btn.icon {
-            width: 38px;
-            min-width: 38px;
-            height: 38px;
-            padding: 0;
-            flex: 0 0 auto;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-        .template-menu-btn:hover { border-color: rgba(96, 165, 250, 0.55); background: rgba(191, 219, 254, 0.55); }
-        .template-menu-btn.primary {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            border-color: transparent;
-            color: white;
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
-        }
-        .template-menu-btn.danger:hover { border-color: rgba(248, 113, 113, 0.45); background: rgba(254, 226, 226, 0.8); color: #b91c1c; }
-        .template-exercises-preview {
-            margin-top: 14px;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(148, 163, 184, 0.5);
-            max-width: 68%;
-        }
-        .template-exercises-preview.hidden {
-            display: none;
-        }
-        .template-exercises-preview .template-exercise-list {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
-        }
-        .template-exercises-preview .template-exercise-item {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.15);
-            color: #334155;
-            font-size: 11px;
-            font-weight: 600;
-            text-align: left;
-        }
-        .template-menu-btn.is-active {
-            border-color: rgba(59, 130, 246, 0.55);
-            background: rgba(191, 219, 254, 0.65);
-            color: #1d4ed8;
-        }
-
-        .day-card,
-        #roomTable > div {
-            background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.94));
-            border-color: rgba(148, 163, 184, 0.32) !important;
-            box-shadow: 0 20px 44px rgba(148, 163, 184, 0.25);
-            backdrop-filter: blur(14px);
-        }
-        .month-group { margin-bottom: 14px; }
-        .month-group-header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(148, 163, 184, 0.34);
-            background: rgba(255, 255, 255, 0.92);
-            color: #334155;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
-        .month-group-count {
-            font-size: 10px;
-            color: #64748b;
-            text-transform: none;
-            letter-spacing: normal;
-        }
-        .month-group-body { margin-top: 10px; }
-        .month-group-body.hidden { display: none; }
-        .month-group-caret {
-            font-size: 12px;
-            color: #2563eb;
-            transition: transform 0.2s ease;
-        }
-        .month-group-caret.is-collapsed { transform: rotate(-90deg); }
-
-        .day-card.theme-a { background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(241, 245, 249, 0.93)); border-color: rgba(148, 163, 184, 0.35); }
-        .day-card.theme-b { background: linear-gradient(145deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.86)); border-color: rgba(56, 189, 248, 0.32); }
-        .day-card.status-past { border: 2px solid rgba(22, 163, 74, 0.85) !important; box-shadow: 0 16px 36px rgba(22, 163, 74, 0.22); }
-        .day-card.status-future { border: 2px solid rgba(220, 38, 38, 0.82) !important; box-shadow: 0 16px 36px rgba(220, 38, 38, 0.22); }
-        .day-card.status-today { border: 2px solid rgba(249, 115, 22, 0.9) !important; box-shadow: 0 16px 36px rgba(249, 115, 22, 0.24); }
-
-        .exercise-card.theme-a { background: rgba(248, 250, 252, 0.95); border-color: rgba(148, 163, 184, 0.45); }
-        .exercise-card.theme-b { background: rgba(239, 246, 255, 0.92); border-color: rgba(96, 165, 250, 0.35); }
-        .exercise-card.is-sub.theme-a { background: rgba(224, 242, 254, 0.75); border-color: rgba(56, 189, 248, 0.3); }
-        .exercise-card.is-sub.theme-b { background: rgba(219, 234, 254, 0.72); border-color: rgba(59, 130, 246, 0.32); }
-
-        @media (max-width: 640px) {
-            .template-card { padding: 16px; border-radius: 20px; }
-            .template-menu { gap: 6px; }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body class="min-h-screen pb-20">
 
     <div id="toast">Успешно!</div>
@@ -299,43 +20,88 @@
     <input type="date" id="nativeDatePicker" class="hidden" aria-hidden="true">
 
     <!-- Dropdowns -->
-    <div id="dateDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 60px;" id="dayList"></div><div class="dropdown-column" style="min-width: 100px;" id="monthList"></div><div class="dropdown-column" style="min-width: 80px;" id="yearList"></div></div>
-    <div id="weekdayDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 150px;" id="weekdayList"></div></div>
-    <div id="totalTimeDropdown" class="custom-dropdown"><div class="dropdown-column" id="totalHoursList"></div><div class="dropdown-column" id="totalMinList"></div></div>
-    <div id="exerciseTimeDropdown" class="custom-dropdown"><div class="dropdown-column" id="minList"></div><div class="dropdown-column" id="secList"></div></div>
-    <div id="weightDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 75px;" id="tensList"></div><div class="dropdown-column" style="min-width: 75px;" id="unitsList"></div></div>
-    <div id="repsDropdown" class="custom-dropdown"><div class="dropdown-column" style="min-width: 80px;" id="repsList"></div></div>
+    <div id="dateDropdown" class="custom-dropdown">
+        <div class="dropdown-column" style="min-width: 60px;" id="dayList"></div>
+        <div class="dropdown-column" style="min-width: 100px;" id="monthList"></div>
+        <div class="dropdown-column" style="min-width: 80px;" id="yearList"></div>
+    </div>
+    <div id="weekdayDropdown" class="custom-dropdown">
+        <div class="dropdown-column" style="min-width: 150px;" id="weekdayList"></div>
+    </div>
+    <div id="totalTimeDropdown" class="custom-dropdown">
+        <div class="dropdown-column" id="totalHoursList"></div>
+        <div class="dropdown-column" id="totalMinList"></div>
+    </div>
+    <div id="exerciseTimeDropdown" class="custom-dropdown">
+        <div class="dropdown-column" id="minList"></div>
+        <div class="dropdown-column" id="secList"></div>
+    </div>
+    <div id="weightDropdown" class="custom-dropdown">
+        <div class="dropdown-column" style="min-width: 75px;" id="tensList"></div>
+        <div class="dropdown-column" style="min-width: 75px;" id="unitsList"></div>
+    </div>
+    <div id="repsDropdown" class="custom-dropdown">
+        <div class="dropdown-column" style="min-width: 80px;" id="repsList"></div>
+    </div>
 
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-300/70 px-3 sm:px-4 py-3 sm:py-4 mb-5 sm:mb-6">
+    <nav
+        class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-300/70 px-3 sm:px-4 py-3 sm:py-4 mb-5 sm:mb-6">
         <div class="max-w-xl mx-auto flex flex-col gap-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-600/20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
+                        </svg>
                     </div>
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-slate-800">Train<span class="text-blue-600">Log</span></h1>
+                    <h1 class="text-xl font-bold uppercase tracking-tight text-slate-800">Train<span
+                            class="text-blue-600">Log</span></h1>
                 </div>
 
                 <div class="top-actions flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
                     <!-- File Actions -->
-                    <button onclick="exportData()" title="Экспорт в файл" class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <button onclick="exportData()" title="Экспорт в файл"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                     </button>
-                    <button onclick="triggerImport()" title="Импорт из файла" class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <button onclick="triggerImport()" title="Импорт из файла"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
                     </button>
-                    <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория" class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+                    <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                        </svg>
                     </button>
-                    <button onclick="configureGitHubSync()" title="Настроить GitHub Sync" class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 0 0 8.36 22.9c.58.1.8-.25.8-.57v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.7.08-.68.08-.68 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.3-5.23-1.27-5.23-5.66 0-1.25.45-2.26 1.17-3.06-.12-.29-.5-1.47.12-3.06 0 0 .96-.3 3.15 1.17a10.8 10.8 0 0 1 5.74 0c2.2-1.48 3.16-1.17 3.16-1.17.62 1.6.24 2.77.12 3.06.73.8 1.17 1.81 1.17 3.06 0 4.4-2.69 5.36-5.25 5.65.42.37.78 1.08.78 2.2v3.25c0 .32.21.68.8.57A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+                    <button onclick="configureGitHubSync()" title="Настроить GitHub Sync"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 0 0 8.36 22.9c.58.1.8-.25.8-.57v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.7.08-.68.08-.68 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.3-5.23-1.27-5.23-5.66 0-1.25.45-2.26 1.17-3.06-.12-.29-.5-1.47.12-3.06 0 0 .96-.3 3.15 1.17a10.8 10.8 0 0 1 5.74 0c2.2-1.48 3.16-1.17 3.16-1.17.62 1.6.24 2.77.12 3.06.73.8 1.17 1.81 1.17 3.06 0 4.4-2.69 5.36-5.25 5.65.42.37.78 1.08.78 2.2v3.25c0 .32.21.68.8.57A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+                        </svg>
                     </button>
-                    <button onclick="downloadFromGitHub()" title="Загрузить из GitHub" class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↓GH</button>
-                    <button onclick="uploadToGitHub()" title="Сохранить в GitHub" class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↑GH</button>
+                    <button onclick="downloadFromGitHub()" title="Загрузить из GitHub"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↓GH</button>
+                    <button onclick="uploadToGitHub()" title="Сохранить в GitHub"
+                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↑GH</button>
                     <div class="w-px h-6 bg-slate-300 mx-1 hidden sm:block"></div>
                     <div class="group-toggle flex bg-white/75 p-1 rounded-xl border border-slate-300">
-                        <button id="btnLog" onclick="switchRoom('log')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white">Лог</button>
-                        <button id="btnTable" onclick="switchRoom('table')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500">Аналитика</button>
+                        <button id="btnLog" onclick="switchRoom('log')"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white">Лог</button>
+                        <button id="btnTable" onclick="switchRoom('table')"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500">Аналитика</button>
                     </div>
                 </div>
             </div>
@@ -345,8 +111,9 @@
     <main class="max-w-xl mx-auto px-4">
         <div id="roomLog" class="room active space-y-4">
             <div class="flex justify-between items-center mb-6">
-                 <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Твоя активность</p>
-                 <button onclick="addDay()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
+                <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Твоя активность</p>
+                <button onclick="addDay()"
+                    class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
                     + Новая сессия
                 </button>
             </div>
@@ -357,18 +124,25 @@
             <div class="rounded-[32px] border border-slate-200 shadow-xl p-4 sm:p-6 light-surface">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-sm font-black uppercase tracking-widest text-blue-500">Прогресс</h2>
-                    <select id="chartExerciseSelect" onchange="updateAnalyticsChart()" class="bg-white border border-slate-300 text-slate-700 text-[11px] font-bold py-1.5 px-4 rounded-xl outline-none min-w-[140px]"></select>
+                    <select id="chartExerciseSelect" onchange="updateAnalyticsChart()"
+                        class="bg-white border border-slate-300 text-slate-700 text-[11px] font-bold py-1.5 px-4 rounded-xl outline-none min-w-[140px]"></select>
                 </div>
                 <div class="relative h-[240px] w-full">
                     <canvas id="progressionChart"></canvas>
                 </div>
             </div>
             <div class="rounded-[32px] border border-slate-200 shadow-xl overflow-hidden light-surface">
-                <div class="p-6 border-b border-slate-300/70"><h2 class="text-sm font-black uppercase tracking-widest text-slate-700">История</h2></div>
+                <div class="p-6 border-b border-slate-300/70">
+                    <h2 class="text-sm font-black uppercase tracking-widest text-slate-700">История</h2>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-100 text-slate-500 uppercase font-black">
-                            <tr><th class="p-4">Дата</th><th class="p-4">Упражнение</th><th class="p-4">Результат</th></tr>
+                            <tr>
+                                <th class="p-4">Дата</th>
+                                <th class="p-4">Упражнение</th>
+                                <th class="p-4">Результат</th>
+                            </tr>
                         </thead>
                         <tbody id="analyticsBody"></tbody>
                     </table>
@@ -379,13 +153,16 @@
 
     <!-- Template Library Modal -->
     <div id="templateModal" class="modal-overlay">
-        <div class="bg-white/95 rounded-[30px] border border-slate-200/90 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
+        <div
+            class="bg-white/95 rounded-[30px] border border-slate-200/90 max-w-2xl w-full mx-3 sm:mx-4 overflow-hidden flex flex-col max-h-[92vh] shadow-2xl backdrop-blur-xl">
             <div class="p-5 sm:p-6 border-b border-slate-200/90 flex justify-between items-start gap-4">
                 <div>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Библиотека шаблонов</h3>
-                    <p class="text-slate-500 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и применяйте.</p>
+                    <p class="text-slate-500 text-xs mt-2">Адаптивное меню: быстро редактируйте, дублируйте, удаляйте и
+                        применяйте.</p>
                 </div>
-                <button onclick="closeModal('templateModal')" class="text-slate-500 hover:text-slate-900 p-2 text-2xl leading-none">&times;</button>
+                <button onclick="closeModal('templateModal')"
+                    class="text-slate-500 hover:text-slate-900 p-2 text-2xl leading-none">&times;</button>
             </div>
             <div id="templateList" class="p-4 sm:p-5 overflow-y-auto space-y-3 bg-slate-50/80"></div>
         </div>
@@ -401,964 +178,9 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const STORAGE_KEY = 'workout_v4_data';
-        const TEMPLATE_KEY = 'workout_v4_templates';
-        const REPO_FILE_KEY = 'trainlog_repo_file_handle_v1';
-        const REPO_FILE_NAME = 'trainlog_data.json';
-        const GITHUB_SYNC_KEY = 'trainlog_github_sync_v1';
-        const MONTH_GROUP_STATE_KEY = 'trainlog_month_group_state_v1';
-        const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-        const MONTH_INDEX = Object.fromEntries(MONTHS.map((m, i) => [m, i]));
-        const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-        const WEEKDAY_SHORT_MAP = {
-            'Понедельник': 'Пн',
-            'Вторник': 'Вт',
-            'Среда': 'Ср',
-            'Четверг': 'Чт',
-            'Пятница': 'Пт',
-            'Суббота': 'Сб',
-            'Воскресенье': 'Вс',
-            'Пн': 'Пн',
-            'Вт': 'Вт',
-            'Ср': 'Ср',
-            'Чт': 'Чт',
-            'Пт': 'Пт',
-            'Сб': 'Сб',
-            'Вс': 'Вс'
-        };
-
-        let activeInput = null;
-        let activeSessionIdForTemplate = null;
-        let workoutChart = null;
-        let repoFileHandle = null;
-        let needsDomSort = false;
-        let datePickerInstance = null;
-        let monthGroupState = {};
-
-        const dropdowns = {
-            date: document.getElementById('dateDropdown'),
-            weekday: document.getElementById('weekdayDropdown'),
-            total: document.getElementById('totalTimeDropdown'),
-            exercise: document.getElementById('exerciseTimeDropdown'),
-            weight: document.getElementById('weightDropdown'),
-            reps: document.getElementById('repsDropdown')
-        };
-        const nativeDatePicker = document.getElementById('nativeDatePicker');
-        const mobileDateModal = document.getElementById('mobileDateModal');
-        const mobileDateInput = document.getElementById('mobileDateInput');
-        let mobileDateTarget = null;
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            monthGroupState = JSON.parse(localStorage.getItem(MONTH_GROUP_STATE_KEY) || '{}');
-            initDropdownOptions();
-            initNativeDatePicker();
-            initMobileDateModal();
-            await loadPersistedFileHandle();
-            await loadFromStorage();
-        });
-
-        // --- FILE STORAGE FUNCTIONS ---
-        function exportData() {
-            const data = {
-                workouts: JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'),
-                templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
-                exportDate: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `trainlog_backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast("Данные экспортированы");
-        }
-
-        function triggerImport() {
-            document.getElementById('fileImportInput').click();
-        }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.workouts || !data.templates) throw new Error("Неверный формат файла");
-
-                    if (confirm("Это заменит все текущие данные. Продолжить?")) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
-                        localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
-                        writeDataToRepoFile(data).catch(() => {});
-                        location.reload();
-                    }
-                } catch (err) {
-                    showToast("Ошибка при импорте");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function getGitHubConfig() {
-            return JSON.parse(localStorage.getItem(GITHUB_SYNC_KEY) || 'null');
-        }
-
-        function configureGitHubSync() {
-            const current = getGitHubConfig() || {};
-            const owner = prompt("GitHub owner (username/org):", current.owner || "");
-            if (!owner) return;
-            const repo = prompt("Repository name:", current.repo || "");
-            if (!repo) return;
-            const path = prompt("Path to JSON in repo:", current.path || "trainlog_data.json");
-            if (!path) return;
-            const branch = prompt("Branch:", current.branch || "main");
-            if (!branch) return;
-            const token = prompt("GitHub token (classic/fine-grained with Contents read/write):", current.token || "");
-            if (!token) return;
-
-            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({ owner, repo, path, branch, token }));
-            showToast("GitHub Sync настроен");
-        }
-
-        function getGitHubApiUrl(cfg) {
-            const safePath = cfg.path.split('/').map(encodeURIComponent).join('/');
-            return `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${safePath}?ref=${encodeURIComponent(cfg.branch)}`;
-        }
-
-        async function downloadFromGitHub() {
-            const cfg = getGitHubConfig();
-            if (!cfg) {
-                configureGitHubSync();
-                if (!getGitHubConfig()) return;
-            }
-            const activeCfg = getGitHubConfig();
-
-            try {
-                const res = await fetch(getGitHubApiUrl(activeCfg), {
-                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
-                });
-                if (!res.ok) throw new Error(`GitHub HTTP ${res.status}`);
-                const payload = await res.json();
-                const decoded = decodeURIComponent(escape(atob((payload.content || '').replace(/\n/g, ''))));
-                const data = JSON.parse(decoded);
-                if (!data.workouts || !data.templates) throw new Error('Неверный формат данных');
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data.workouts));
-                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(data.templates));
-                await loadFromStorage();
-                showToast("Загружено из GitHub");
-            } catch (err) {
-                showToast("Ошибка загрузки из GitHub");
-            }
-        }
-
-        async function uploadToGitHub() {
-            const cfg = getGitHubConfig();
-            if (!cfg) {
-                configureGitHubSync();
-                if (!getGitHubConfig()) return;
-            }
-            const activeCfg = getGitHubConfig();
-
-            try {
-                let sha = null;
-                const getRes = await fetch(getGitHubApiUrl(activeCfg), {
-                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
-                });
-                if (getRes.ok) {
-                    const existing = await getRes.json();
-                    sha = existing.sha || null;
-                } else if (getRes.status !== 404) {
-                    throw new Error(`GitHub HTTP ${getRes.status}`);
-                }
-
-                const bodyPayload = {
-                    workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
-                    templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
-                    exportDate: new Date().toISOString()
-                };
-
-                const content = btoa(unescape(encodeURIComponent(JSON.stringify(bodyPayload, null, 2))));
-                const putBody = {
-                    message: `TrainLog sync ${new Date().toISOString()}`,
-                    content,
-                    branch: activeCfg.branch
-                };
-                if (sha) putBody.sha = sha;
-
-                const putRes = await fetch(`https://api.github.com/repos/${encodeURIComponent(activeCfg.owner)}/${encodeURIComponent(activeCfg.repo)}/contents/${activeCfg.path.split('/').map(encodeURIComponent).join('/')}`, {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${activeCfg.token}`,
-                        Accept: 'application/vnd.github+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(putBody)
-                });
-                if (!putRes.ok) throw new Error(`GitHub HTTP ${putRes.status}`);
-
-                showToast("Сохранено в GitHub");
-            } catch (err) {
-                showToast("Ошибка сохранения в GitHub");
-            }
-        }
-
-        // --- CORE UI LOGIC ---
-        function switchRoom(room) {
-            document.querySelectorAll('.room').forEach(r => r.classList.remove('active'));
-            if (room === 'log') {
-                document.getElementById('roomLog').classList.add('active');
-                document.getElementById('btnLog').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white";
-                document.getElementById('btnTable').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500";
-            } else {
-                renderAnalytics();
-                document.getElementById('roomTable').classList.add('active');
-                document.getElementById('btnTable').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white";
-                document.getElementById('btnLog').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500";
-            }
-        }
-
-        function addDay(data = null, insertAtTop = true) {
-            const id = data?.id || Date.now();
-            const now = new Date();
-            const date = data?.dateObj || { d: now.getDate(), m: MONTHS[now.getMonth()], y: now.getFullYear(), wd: WEEKDAYS[(now.getDay() + 6) % 7] };
-            const weekdayShort = toShortWeekday(date.wd);
-
-            const card = document.createElement('div');
-            card.className = "day-card rounded-[26px] border shadow-xl overflow-hidden mb-4 transition-all";
-            card.dataset.id = id;
-            card.innerHTML = `
-                <div class="p-3 sm:p-4 cursor-pointer hover:bg-sky-50/70" onclick="toggleCollapse(this)">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2 bg-white/80 border border-slate-300 p-1.5 rounded-2xl flex-wrap" onclick="event.stopPropagation()">
-                            <div class="date-container flex items-center gap-1 px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700 cursor-pointer" onclick="openDateCalendar(event)">
-                                <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span><span data-type="y" class="hidden">${date.y}</span>
-                            </div>
-                            <div class="weekday-value text-xs font-bold text-slate-500 px-3 py-1">
-                                ${weekdayShort}
-                            </div>
-                            <div class="flex items-center bg-white border border-slate-300 rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">
-                                <input type="text" readonly class="bg-transparent text-blue-400 font-mono font-bold text-xs w-12 text-center outline-none cursor-pointer" onclick="openDropdown(event, 'total')" data-type="total-time" value="${data?.totalTime || '01:00'}">
-                            </div>
-                        </div>
-                        <div class="flex gap-2" onclick="event.stopPropagation()">
-                            <button onclick="saveSessionAsTemplate(${id})" class="p-2.5 bg-white/80 text-slate-500 hover:text-blue-500 rounded-xl border border-slate-300 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                            </button>
-                            <button onclick="openTemplateModal(${id})" class="p-2.5 bg-blue-600/10 text-blue-500 hover:bg-blue-600/20 rounded-xl border border-blue-500/20 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="day-content hidden p-3 sm:p-4 pt-0 border-t border-slate-300/70">
-                    <div class="exercise-list space-y-3 pt-3"></div>
-                    <div class="mt-5 flex justify-between items-center">
-                        <div class="flex gap-2">
-                            <button onclick="addExerciseByBtn(this)" class="bg-white/90 text-slate-500 border border-slate-300 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-100 transition-all">+ УПР</button>
-                            <button onclick="addSupersetByBtn(this)" class="bg-blue-600/10 text-blue-500 border border-blue-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-blue-600/20 transition-all">+ БЛОК</button>
-                        </div>
-                        <button onclick="deleteDay(${id})" class="p-2 text-slate-600 hover:text-red-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-            const container = document.getElementById('daysContainer');
-            if (insertAtTop) container.prepend(card);
-            else container.appendChild(card);
-            const list = card.querySelector('.exercise-list');
-            if (data?.items) data.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));
-            else renderExercise(list);
-            applyAlternatingThemes();
-            autoSave();
-        }
-
-        function renderExercise(container, data = null, isSub = false) {
-            const div = document.createElement('div');
-            div.className = `exercise-card relative p-3 pt-8 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
-            div.dataset.type = 'exercise';
-            div.innerHTML = `
-                <button onclick="toggleExerciseDetails(this)" class="absolute left-0 right-0 top-0 h-7 rounded-t-2xl bg-blue-100/90 hover:bg-blue-200/90 transition-colors" title="Показать/скрыть подходы"></button>
-                <div class="flex items-center gap-3">
-                    <div class="editable flex-1 bg-white/85 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 outline-none" contenteditable="true" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
-                </div>
-                <div class="exercise-details hidden space-y-2">
-                    <div class="sets-container space-y-2"></div>
-                    <button onclick="addSetToBtn(this)" class="text-[9px] text-blue-500 font-black uppercase tracking-widest px-2 py-1">+ подход</button>
-                </div>
-                <button onclick="this.closest('[data-type]').remove(); autoSave();" class="absolute right-3 bottom-3 text-slate-600 hover:text-red-500 text-lg leading-none" title="Удалить упражнение">&times;</button>
-            `;
-            const sets = div.querySelector('.sets-container');
-            if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
-            else sets.appendChild(createSet());
-            container.appendChild(div);
-            applyAlternatingThemes();
-        }
-
-        function renderSuperset(container, data = null) {
-            const div = document.createElement('div');
-            div.className = "p-4 rounded-2xl border-l-4 border-blue-600 bg-sky-50/90 space-y-4";
-            div.dataset.type = "superset";
-            div.innerHTML = `
-                <div class="flex justify-between items-center px-1"><span class="text-[9px] font-black text-blue-600 uppercase">БЛОК</span><button onclick="this.closest('[data-type]').remove(); autoSave();" class="text-slate-500 hover:text-red-500">&times;</button></div>
-                <div class="superset-inner space-y-4"></div>
-                <button onclick="addExToSuperset(this)" class="text-[9px] text-blue-400 font-black uppercase tracking-widest px-2 py-1">+ В БЛОК</button>
-            `;
-            container.appendChild(div);
-            const inner = div.querySelector('.superset-inner');
-            if (data?.exercises) data.exercises.forEach(ex => renderExercise(inner, ex, true));
-            else { renderExercise(inner, null, true); renderExercise(inner, null, true); }
-            applyAlternatingThemes();
-        }
-
-        function createSet(w = '', r = '', t = '00:00') {
-            const div = document.createElement('div');
-            div.className = "flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5 w-fit";
-            div.innerHTML = `
-                <div class="flex items-center gap-1"><input type="text" readonly class="set-input font-bold" value="${w}" onclick="openDropdown(event, 'weight')"><span class="text-slate-500 text-[9px] font-black">КГ</span></div>
-                <div class="w-px h-3 bg-slate-300"></div>
-                <div class="flex items-center gap-1"><input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')"><span class="text-slate-500 text-[9px] font-black">ПОВТ</span></div>
-                <div class="w-px h-3 bg-slate-300"></div>
-                <input type="text" readonly class="set-input font-mono text-blue-400 font-bold w-12" value="${t}" onclick="openDropdown(event, 'exercise')">
-                <button onclick="this.parentElement.remove(); autoSave();" class="text-slate-500 hover:text-red-500 ml-1">&times;</button>
-            `;
-            return div;
-        }
-
-        // --- TEMPLATES LOGIC ---
-        function saveSessionAsTemplate(sessionId) {
-            const card = document.querySelector(`.day-card[data-id="${sessionId}"]`);
-            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            const newT = {
-                id: Date.now().toString(),
-                name: "Новый шаблон",
-                weekday: card.querySelector('.weekday-value').textContent.trim(),
-                totalTime: card.querySelector('[data-type="total-time"]').value,
-                items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
-            };
-            templates.push(newT);
-            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
-            showToast("Шаблон сохранен");
-        }
-
-        function renderTemplateList() {
-            const list = document.getElementById('templateList');
-            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            list.innerHTML = '';
-            if (templates.length === 0) { list.innerHTML = '<p class="text-center text-slate-600 py-10">Библиотека пуста</p>'; return; }
-
-            templates.forEach(t => {
-                const card = document.createElement('div');
-                card.className = "template-card";
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
-                            </div>
-                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                        </div>
-                    </div>
-                    <div class="flex items-end justify-between gap-3">
-                        <div class="template-exercises-preview hidden">
-                            ${getTemplateExerciseSummary(t)}
-                        </div>
-                        <div class="template-menu mt-0 ml-auto">
-                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
-                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
-                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
-                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
-                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        function getTemplateExerciseSummary(template) {
-            const names = [];
-            (template?.items || []).forEach(item => {
-                if (item?.type === 'superset') {
-                    (item.exercises || []).forEach(ex => {
-                        const name = (ex?.name || '').trim();
-                        if (name) names.push(name);
-                    });
-                    return;
-                }
-                const name = (item?.name || '').trim();
-                if (name) names.push(name);
-            });
-
-            const uniqueNames = Array.from(new Set(names));
-            if (uniqueNames.length === 0) return '<p class="text-[11px] text-slate-500">Нет упражнений в шаблоне</p>';
-
-            return `
-                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Упражнения</p>
-                <div class="template-exercise-list">
-                    ${uniqueNames.map(name => `<span class="template-exercise-item">${name}</span>`).join('')}
-                </div>
-            `;
-        }
-
-        function toggleTemplateExercises(btn) {
-            const card = btn.closest('.template-card');
-            const preview = card?.querySelector('.template-exercises-preview');
-            if (!preview) return;
-            const isHidden = preview.classList.contains('hidden');
-            preview.classList.toggle('hidden', !isHidden);
-            btn.classList.toggle('is-active', isHidden);
-            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
-        }
-
-        function handleTemplateNameKey(e, templateId) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                saveTemplateName(e.target, templateId);
-                e.target.blur();
-            }
-        }
-
-        function saveTemplateName(inputEl, templateId) {
-            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            const idx = templates.findIndex(t => t.id === templateId);
-            if (idx === -1) return;
-            const nextName = inputEl.value.trim() || "Без названия";
-            if (templates[idx].name === nextName) return;
-            templates[idx].name = nextName;
-            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
-            showToast("Название обновлено");
-        }
-
-        function focusTemplateName(templateId) {
-            const allCards = Array.from(document.querySelectorAll('#templateList .template-card'));
-            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            const index = templates.findIndex(t => t.id === templateId);
-            const input = allCards[index]?.querySelector('.template-name-input');
-            if (!input) return;
-            input.focus();
-            input.select();
-        }
-
-        function duplicateTemplate(id) {
-            const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            const source = templates.find(x => x.id === id);
-            if (!source) return;
-            templates.push({
-                ...JSON.parse(JSON.stringify(source)),
-                id: Date.now().toString(),
-                name: `${source.name || 'Шаблон'} (копия)`
-            });
-            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
-            renderTemplateList();
-            showToast("Шаблон продублирован");
-        }
-
-        function applyTemplateById(id) {
-            const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
-            if (!t) return;
-            const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
-            card.querySelector('[data-type="total-time"]').value = t.totalTime;
-            const list = card.querySelector('.exercise-list');
-            list.innerHTML = '';
-            t.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));
-            closeModal('templateModal');
-            autoSave();
-        }
-
-        function deleteTemplate(id) {
-            let t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
-            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(t.filter(x => x.id !== id)));
-            renderTemplateList();
-        }
-
-        // --- UTILS ---
-        function toggleCollapse(el) { el.nextElementSibling.classList.toggle('hidden'); }
-        function openTemplateModal(id) { activeSessionIdForTemplate = id; renderTemplateList(); document.getElementById('templateModal').classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        function showToast(txt) { const t = document.getElementById('toast'); t.textContent = txt; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2500); }
-        function addSetToBtn(btn) { btn.previousElementSibling.appendChild(createSet()); autoSave(); }
-        function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
-        function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
-        function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
-        function deleteDay(id) { if(confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
-        function toggleExerciseDetails(triggerEl) {
-            const card = triggerEl.closest('.exercise-card');
-            const details = card?.querySelector('.exercise-details');
-            if (!details) return;
-            details.classList.toggle('hidden');
-        }
-
-        function initNativeDatePicker() {
-            nativeDatePicker.addEventListener('change', () => {
-                if (!activeInput || !nativeDatePicker.value) return;
-                const [year, month, day] = nativeDatePicker.value.split('-').map(Number);
-                const parent = activeInput.closest('.date-container');
-                applyDateToContainer(parent, year, month, day);
-            });
-        }
-
-        function initMobileDateModal() {
-            document.getElementById('mobileDateCancelBtn').addEventListener('click', () => {
-                mobileDateModal.classList.remove('active');
-                mobileDateTarget = null;
-            });
-            document.getElementById('mobileDateTodayBtn').addEventListener('click', () => {
-                const now = new Date();
-                mobileDateInput.value = formatDateValue({ y: now.getFullYear(), m: now.getMonth(), d: now.getDate() });
-            });
-            document.getElementById('mobileDateApplyBtn').addEventListener('click', () => {
-                if (!mobileDateTarget || !mobileDateInput.value) return;
-                const [year, month, day] = mobileDateInput.value.split('-').map(Number);
-                applyDateToContainer(mobileDateTarget, year, month, day);
-                mobileDateModal.classList.remove('active');
-                mobileDateTarget = null;
-            });
-            mobileDateModal.addEventListener('click', (e) => {
-                if (e.target === mobileDateModal) {
-                    mobileDateModal.classList.remove('active');
-                    mobileDateTarget = null;
-                }
-            });
-        }
-
-        function isMobileDateExperience() {
-            return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
-        }
-
-        function formatDateValue(dateObj) {
-            return `${dateObj.y}-${String(dateObj.m + 1).padStart(2, '0')}-${String(dateObj.d).padStart(2, '0')}`;
-        }
-
-        function toShortWeekday(value) {
-            return WEEKDAY_SHORT_MAP[value] || value || '';
-        }
-
-        function applyDateToContainer(parent, year, month, day) {
-            if (!parent || !year || !month || !day) return;
-            parent.querySelector('[data-type="d"]').textContent = String(day);
-            parent.querySelector('[data-type="m"]').textContent = MONTHS[(month || 1) - 1];
-            parent.querySelector('[data-type="y"]').textContent = String(year);
-            const weekdayIdx = (new Date(year, (month || 1) - 1, day).getDay() + 6) % 7;
-            const weekdayEl = parent.parentElement?.querySelector('.weekday-value');
-            if (weekdayEl) weekdayEl.textContent = WEEKDAYS[weekdayIdx];
-            needsDomSort = true;
-            autoSave();
-        }
-
-        function openDateCalendar(e) {
-            e.stopPropagation();
-            activeInput = e.currentTarget;
-            const dateObj = {
-                d: Number(activeInput.querySelector('[data-type="d"]')?.textContent || 1),
-                m: MONTH_INDEX[activeInput.querySelector('[data-type="m"]')?.textContent?.trim()] ?? 0,
-                y: Number(activeInput.querySelector('[data-type="y"]')?.textContent || new Date().getFullYear())
-            };
-            if (isMobileDateExperience()) {
-                mobileDateTarget = activeInput.closest('.date-container');
-                mobileDateInput.value = formatDateValue(dateObj);
-                mobileDateModal.classList.add('active');
-                return;
-            }
-            nativeDatePicker.value = formatDateValue(dateObj);
-            if (typeof nativeDatePicker.showPicker === 'function') nativeDatePicker.showPicker();
-            else nativeDatePicker.click();
-        }
-
-        function openDropdown(e, type) {
-            e.stopPropagation(); closeAllDropdowns();
-            activeInput = e.currentTarget;
-            const rect = activeInput.getBoundingClientRect();
-            const dd = dropdowns[type];
-            dd.style.top = `${rect.bottom + window.scrollY + 8}px`;
-            dd.style.left = `${Math.min(rect.left, window.innerWidth - 200)}px`;
-            dd.classList.add('active');
-        }
-
-        function handleSelection(val, type) {
-            if (!activeInput) return;
-            if (type === 'weekday') activeInput.textContent = val;
-            else if (type === 'total' || type === 'ex') {
-                const parts = (activeInput.value || "00:00").split(':');
-                if (val.includes('h') || val.includes('m_first')) parts[0] = val.replace(/\D/g,'');
-                else parts[1] = val.replace(/\D/g,'');
-                activeInput.value = parts.join(':');
-            } else if (type === 'w') {
-                let curr = parseFloat(activeInput.value) || 0;
-                let tens = Math.floor(curr / 10) * 10;
-                let units = curr % 10;
-                if (val.includes('tens')) tens = parseFloat(val.replace('tens',''));
-                else units = parseFloat(val.replace('units',''));
-                activeInput.value = tens + units;
-            } else if (type === 'reps') activeInput.value = val;
-            else if (type === 'date') {
-                const parent = activeInput.closest('.date-container');
-                if (val.includes('d_')) parent.querySelector('[data-type="d"]').textContent = val.replace('d_','');
-                else if (val.includes('m_')) parent.querySelector('[data-type="m"]').textContent = val.replace('m_','');
-                else parent.querySelector('[data-type="y"]').textContent = val.replace('y_','');
-                needsDomSort = true;
-            }
-            if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
-            autoSave();
-        }
-
-        function closeAllDropdowns() { Object.values(dropdowns).forEach(d => d.classList.remove('active')); }
-        document.addEventListener('click', closeAllDropdowns);
-
-        function initDropdownOptions() {
-            WEEKDAYS.forEach(w => addDDItem('weekdayList', w, 'weekday', w));
-            for(let i=1; i<=31; i++) addDDItem('dayList', i, 'date', 'd_'+i);
-            MONTHS.forEach(m => addDDItem('monthList', m, 'date', 'm_'+m));
-            for(let i=2025; i<=2026; i++) addDDItem('yearList', i, 'date', 'y_'+i);
-            for(let i=0; i<24; i++) addDDItem('totalHoursList', String(i).padStart(2,'0'), 'total', 'h'+i);
-            for(let i=0; i<60; i++) addDDItem('totalMinList', String(i).padStart(2,'0'), 'total', 'm'+i);
-            for(let i=0; i<60; i++) addDDItem('minList', String(i).padStart(2,'0'), 'ex', 'm_first'+i);
-            for(let i=0; i<60; i++) addDDItem('secList', String(i).padStart(2,'0'), 'ex', 's'+i);
-            for(let i=0; i<=250; i+=10) addDDItem('tensList', i, 'w', 'tens'+i);
-            for(let i=0; i<10; i+=0.5) addDDItem('unitsList', i, 'w', 'units'+i);
-            for(let i=1; i<=50; i++) addDDItem('repsList', i, 'reps', i);
-        }
-
-        function addDDItem(targetId, label, type, val) {
-            const div = document.createElement('div');
-            div.className = "dropdown-item";
-            div.textContent = label;
-            div.onclick = (e) => { e.stopPropagation(); handleSelection(String(val), type); };
-            document.getElementById(targetId).appendChild(div);
-        }
-
-        function autoSave(skipLayoutRefresh = false) {
-            if (!skipLayoutRefresh) {
-                if (needsDomSort) {
-                    sortDayCardsInDom();
-                    needsDomSort = false;
-                }
-                groupDayCardsByMonth();
-                applyAlternatingThemes();
-            }
-            const days = Array.from(document.querySelectorAll('.day-card')).map(card => ({
-                id: card.dataset.id,
-                dateObj: {
-                    d: card.querySelector('[data-type="d"]').textContent.trim(),
-                    m: card.querySelector('[data-type="m"]').textContent.trim(),
-                    y: card.querySelector('[data-type="y"]').textContent.trim(),
-                    wd: card.querySelector('.weekday-value').textContent.trim()
-                },
-                totalTime: card.querySelector('[data-type="total-time"]').value,
-                items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
-            }));
-            const sortedDays = sortSessionsByDate(days);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedDays));
-            writeDataToRepoFile({ workouts: sortedDays, templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]') }).catch(() => {});
-        }
-
-        function parseExerciseElement(el) {
-            if (el.dataset.type === 'superset') return { type: 'superset', exercises: Array.from(el.querySelectorAll('.superset-inner > [data-type="exercise"]')).map(ex => parseEx(ex)) };
-            return { type: 'exercise', ...parseEx(el) };
-        }
-
-        function parseEx(el) {
-            return {
-                name: el.querySelector('.editable').textContent.trim(),
-                sets: Array.from(el.querySelectorAll('.sets-container > div')).map(s => {
-                    const inputs = s.querySelectorAll('input');
-                    return { w: inputs[0].value, r: inputs[1].value, t: inputs[2].value };
-                })
-            };
-        }
-
-        async function loadFromStorage() {
-            const fileData = await readDataFromRepoFile();
-            if (fileData?.workouts && fileData?.templates) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
-                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
-                showToast("Данные загружены из trainlog_data.json");
-            }
-
-            const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-            document.getElementById('daysContainer').innerHTML = '';
-            if (data.length > 0) data.forEach(d => addDay(d, false));
-            else addDay(null, true);
-            groupDayCardsByMonth();
-            applyAlternatingThemes();
-        }
-
-        // Analytics (simplified for this version)
-        function renderAnalytics() {
-            const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-            const body = document.getElementById('analyticsBody');
-            body.innerHTML = '';
-            data.forEach(session => {
-                session.items.forEach(item => {
-                    const exercises = item.type === 'superset' ? item.exercises : [item];
-                    exercises.forEach(ex => {
-                        const row = document.createElement('tr');
-                        row.className = "border-b border-slate-200";
-                        row.innerHTML = `
-                            <td class="p-4 text-slate-500">${session.dateObj.d} ${session.dateObj.m}</td>
-                            <td class="p-4 text-slate-700 font-bold">${ex.name || '---'}</td>
-                            <td class="p-4 text-slate-500 text-[10px]">${ex.sets.map(s => `${s.w}x${s.r}`).join(', ')}</td>
-                        `;
-                        body.appendChild(row);
-                    });
-                });
-            });
-        }
-
-        function sessionDateToTimestamp(session) {
-            const d = Number(session?.dateObj?.d) || 1;
-            const m = MONTH_INDEX[session?.dateObj?.m] ?? 0;
-            const y = Number(session?.dateObj?.y) || new Date().getFullYear();
-            return new Date(y, m, d).getTime();
-        }
-
-        function sortSessionsByDate(sessions = []) {
-            return [...sessions].sort((a, b) => sessionDateToTimestamp(b) - sessionDateToTimestamp(a));
-        }
-
-        function sortDayCardsInDom() {
-            const container = document.getElementById('daysContainer');
-            const cards = Array.from(container.querySelectorAll('.day-card'));
-            cards.sort((a, b) => {
-                const aSession = {
-                    dateObj: {
-                        d: a.querySelector('[data-type="d"]').textContent.trim(),
-                        m: a.querySelector('[data-type="m"]').textContent.trim(),
-                        y: a.querySelector('[data-type="y"]').textContent.trim()
-                    }
-                };
-                const bSession = {
-                    dateObj: {
-                        d: b.querySelector('[data-type="d"]').textContent.trim(),
-                        m: b.querySelector('[data-type="m"]').textContent.trim(),
-                        y: b.querySelector('[data-type="y"]').textContent.trim()
-                    }
-                };
-                return sessionDateToTimestamp(bSession) - sessionDateToTimestamp(aSession);
-            });
-            cards.forEach(card => container.appendChild(card));
-            groupDayCardsByMonth();
-        }
-
-        function getMonthInfoFromCard(card) {
-            const monthLabel = card.querySelector('[data-type="m"]')?.textContent.trim();
-            const monthIndex = MONTH_INDEX[monthLabel] ?? 0;
-            const year = Number(card.querySelector('[data-type="y"]')?.textContent.trim()) || new Date().getFullYear();
-            const date = new Date(year, monthIndex, 1);
-            const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
-            const label = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
-            return { key, label };
-        }
-
-        function saveMonthGroupState() {
-            localStorage.setItem(MONTH_GROUP_STATE_KEY, JSON.stringify(monthGroupState));
-        }
-
-        function toggleMonthGroup(monthKey) {
-            monthGroupState[monthKey] = !monthGroupState[monthKey];
-            saveMonthGroupState();
-            const group = document.querySelector(`.month-group[data-month-key="${monthKey}"]`);
-            if (!group) return;
-            const body = group.querySelector('.month-group-body');
-            const caret = group.querySelector('.month-group-caret');
-            const isCollapsed = !!monthGroupState[monthKey];
-            body?.classList.toggle('hidden', isCollapsed);
-            caret?.classList.toggle('is-collapsed', isCollapsed);
-        }
-
-        function groupDayCardsByMonth() {
-            const container = document.getElementById('daysContainer');
-            const cards = Array.from(container.querySelectorAll('.day-card'));
-            if (cards.length === 0) return;
-
-            cards.sort((a, b) => getDayCardTimestamp(b) - getDayCardTimestamp(a));
-            container.innerHTML = '';
-
-            let currentKey = null;
-            let body = null;
-            let count = 0;
-            let countEl = null;
-
-            cards.forEach(card => {
-                const info = getMonthInfoFromCard(card);
-                if (info.key !== currentKey) {
-                    currentKey = info.key;
-                    count = 0;
-                    const isCollapsed = !!monthGroupState[info.key];
-                    const group = document.createElement('section');
-                    group.className = 'month-group';
-                    group.dataset.monthKey = info.key;
-                    group.innerHTML = `
-                        <button class="month-group-header" onclick="toggleMonthGroup('${info.key}')">
-                            <span>${info.label}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="month-group-count"></span>
-                                <span class="month-group-caret ${isCollapsed ? 'is-collapsed' : ''}">▼</span>
-                            </div>
-                        </button>
-                        <div class="month-group-body ${isCollapsed ? 'hidden' : ''}"></div>
-                    `;
-                    container.appendChild(group);
-                    body = group.querySelector('.month-group-body');
-                    countEl = group.querySelector('.month-group-count');
-                }
-                count += 1;
-                if (countEl) countEl.textContent = `${count} трен.`;
-                body?.appendChild(card);
-            });
-        }
-
-        function normalizeToLocalMidnight(date) {
-            return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-        }
-
-        function getDayCardTimestamp(card) {
-            const day = Number(card.querySelector('[data-type="d"]')?.textContent.trim()) || 1;
-            const monthLabel = card.querySelector('[data-type="m"]')?.textContent.trim();
-            const month = MONTH_INDEX[monthLabel] ?? 0;
-            const year = Number(card.querySelector('[data-type="y"]')?.textContent.trim()) || new Date().getFullYear();
-            return normalizeToLocalMidnight(new Date(year, month, day));
-        }
-
-        function applyDayStatusBorders() {
-            const todayStamp = normalizeToLocalMidnight(new Date());
-            document.querySelectorAll('#daysContainer .day-card').forEach(card => {
-                const stamp = getDayCardTimestamp(card);
-                card.classList.remove('status-past', 'status-future', 'status-today');
-                if (stamp < todayStamp) card.classList.add('status-past');
-                else if (stamp > todayStamp) card.classList.add('status-future');
-                else card.classList.add('status-today');
-            });
-        }
-
-        function applyAlternatingThemes() {
-            const dayCards = Array.from(document.querySelectorAll('#daysContainer .day-card'));
-            dayCards.forEach((card, index) => {
-                card.classList.remove('theme-a', 'theme-b');
-                card.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
-
-                const topLevelItems = Array.from(card.querySelectorAll('.exercise-list > [data-type]'));
-                applyExerciseThemes(topLevelItems);
-
-                const nestedGroups = card.querySelectorAll('.superset-inner');
-                nestedGroups.forEach(group => {
-                    const nestedExercises = Array.from(group.querySelectorAll(':scope > .exercise-card'));
-                    applyExerciseThemes(nestedExercises);
-                });
-            });
-            applyDayStatusBorders();
-        }
-
-        function applyExerciseThemes(exerciseElements) {
-            exerciseElements.forEach((exercise, index) => {
-                if (!exercise.classList.contains('exercise-card')) return;
-                exercise.classList.remove('theme-a', 'theme-b');
-                exercise.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
-            });
-        }
-
-        async function connectRepoFile() {
-            if (!window.showOpenFilePicker && !window.showSaveFilePicker) {
-                showToast("Браузер не поддерживает доступ к файлам");
-                return;
-            }
-            try {
-                if (window.showOpenFilePicker) {
-                    const [handle] = await window.showOpenFilePicker({
-                        multiple: false,
-                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-                    });
-                    repoFileHandle = handle;
-                } else {
-                    repoFileHandle = await window.showSaveFilePicker({
-                        suggestedName: REPO_FILE_NAME,
-                        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
-                    });
-                }
-
-                await persistFileHandle(repoFileHandle);
-
-                const fileData = await readDataFromRepoFile();
-                if (fileData?.workouts && fileData?.templates) {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
-                    localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
-                    await loadFromStorage();
-                    showToast("Файл подключен. История загружена");
-                    return;
-                }
-
-                await writeDataToRepoFile({
-                    workouts: sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')),
-                    templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
-                    exportDate: new Date().toISOString()
-                });
-                showToast("Файл подключен. Сохранение в репозиторий активно");
-            } catch (err) {
-                if (err?.name !== 'AbortError') showToast("Не удалось подключить файл");
-            }
-        }
-
-        async function writeDataToRepoFile(payload) {
-            if (!repoFileHandle) return;
-            const writable = await repoFileHandle.createWritable();
-            await writable.write(JSON.stringify({ ...payload, exportDate: new Date().toISOString() }, null, 2));
-            await writable.close();
-        }
-
-        async function readDataFromRepoFile() {
-            try {
-                if (!repoFileHandle) return null;
-                const file = await repoFileHandle.getFile();
-                const txt = await file.text();
-                return JSON.parse(txt);
-            } catch (err) {
-                return null;
-            }
-        }
-
-        async function persistFileHandle(handle) {
-            if (!window.indexedDB) return;
-            const db = await openRepoDb();
-            await new Promise((resolve, reject) => {
-                const tx = db.transaction(REPO_FILE_KEY, 'readwrite');
-                tx.objectStore(REPO_FILE_KEY).put(handle, 'handle');
-                tx.oncomplete = () => resolve();
-                tx.onerror = () => reject(tx.error);
-            });
-        }
-
-        async function loadPersistedFileHandle() {
-            if (!window.indexedDB) return;
-            const db = await openRepoDb();
-            repoFileHandle = await new Promise((resolve) => {
-                const tx = db.transaction(REPO_FILE_KEY, 'readonly');
-                const req = tx.objectStore(REPO_FILE_KEY).get('handle');
-                req.onsuccess = async () => {
-                    const handle = req.result || null;
-                    if (!handle) return resolve(null);
-                    const permission = await handle.queryPermission({ mode: 'readwrite' });
-                    if (permission === 'granted') return resolve(handle);
-                    resolve(null);
-                };
-                req.onerror = () => resolve(null);
-            });
-        }
-
-        function openRepoDb() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open('trainlog-repo-db', 1);
-                req.onupgradeneeded = () => req.result.createObjectStore(REPO_FILE_KEY);
-                req.onsuccess = () => resolve(req.result);
-                req.onerror = () => reject(req.error);
-            });
-        }
-        function updateAnalyticsChart() {}
-    </script>
+    <script src="globals_and_storage.js"></script>
+    <script src="ui_components.js"></script>
+    <script src="app_logic.js"></script>
 </body>
+
 </html>
