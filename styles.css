@@ -312,7 +312,14 @@
 
         .month-group-count {
             font-size: 10px;
-            color: #64748b;
+            color: inherit; /* Наследуется от month-text */
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        .week-group-count {
+            font-size: 10px;
+            color: inherit; /* Наследуется от month-text */
             text-transform: none;
             letter-spacing: normal;
         }
@@ -324,14 +331,28 @@
         .month-group-body.hidden {
             display: none;
         }
+        
+        .week-group-body.hidden {
+            display: none;
+        }
 
         .month-group-caret {
             font-size: 12px;
-            color: #2563eb;
+            color: inherit; /* Наследуется от month-text */
             transition: transform 0.2s ease;
         }
 
         .month-group-caret.is-collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .week-group-caret {
+            font-size: 10px;
+            color: inherit; /* Наследуется от month-text */
+            transition: transform 0.2s ease;
+        }
+        
+        .week-group-caret.is-collapsed {
             transform: rotate(-90deg);
         }
 

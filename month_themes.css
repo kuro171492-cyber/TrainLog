@@ -1,337 +1,244 @@
-/* 
- * Month-based color themes for TrainLog
- * Each month has a unique anchor color with progressive week darkness
- * Based on seasonal branding strategy
- */
+/* month_themes.css */
+/* Система «Месяц как бренд» */
 
-/* ============================================
-   COLOR PALETTE DEFINITIONS - EXACT HEX VALUES
-   ============================================ */
-
-/* Winter: Cold and Depth */
-/* January (#3B82F6): Classic sport blue */
-.month-january {
-    --month-base-h: 217;
-    --month-base-s: 82%;
-    --month-base-l: 60%;
-    --month-text-color: #ffffff;
+:root {
+    --bg-app: #0B0F17;
+    --text-light: #FFFFFF;
+    --text-dark: #0F172A;
 }
 
-/* February (#0047AB): Cobalt Blue - deep, strict, cold */
-.month-february {
-    --month-base-h: 215;
-    --month-base-s: 100%;
-    --month-base-l: 33%;
-    --month-text-color: #ffffff;
-}
-
-/* December (#8B5CF6): Rich purple */
-.month-december {
-    --month-base-h: 271;
-    --month-base-s: 76%;
-    --month-base-l: 67%;
-    --month-text-color: #ffffff;
-}
-
-/* Spring: Growth Progression */
-/* March (#169120): Fresh grass green */
-.month-march {
-    --month-base-h: 143;
-    --month-base-s: 73%;
-    --month-base-l: 33%;
-    --month-text-color: #f0f9ff;
-}
-
-/* April (#1B8A19): Rich forest green */
-.month-april {
-    --month-base-h: 119;
-    --month-base-s: 69%;
-    --month-base-l: 32%;
-    --month-text-color: #f0f9ff;
-}
-
-/* May (#0F7012): Deep dark green */
-.month-may {
-    --month-base-h: 122;
-    --month-base-s: 72%;
-    --month-base-l: 25%;
-    --month-text-color: #f0f9ff;
-}
-
-/* Summer: Temperature and Energy */
-/* June (#F03F2B): Bright coral red */
-.month-june {
-    --month-base-h: 6;
-    --month-base-s: 81%;
-    --month-base-l: 55%;
-    --month-text-color: #ffffff;
-}
-
-/* July (#E33719): Rich scarlet */
-.month-july {
-    --month-base-h: 9;
-    --month-base-s: 80%;
-    --month-base-l: 49%;
-    --month-text-color: #ffffff;
-}
-
-/* August (#C91902): Dark red (ruby) */
-.month-august {
-    --month-base-h: 4;
-    --month-base-s: 98%;
-    --month-base-l: 39%;
-    --month-text-color: #ffffff;
-}
-
-/* Autumn: Warmth and Coziness */
-/* September (#F28C0F): Bright orange */
-.month-september {
-    --month-base-h: 34;
-    --month-base-s: 88%;
-    --month-base-l: 50%;
-    --month-text-color: #0f172a;
-}
-
-/* October (#C76D00): Thick orange (amber) */
-.month-october {
-    --month-base-h: 34;
-    --month-base-s: 100%;
-    --month-base-l: 39%;
-    --month-text-color: #f0f9ff;
-}
-
-/* November (#9E3A14): Terracotta */
-.month-november {
-    --month-base-h: 14;
-    --month-base-s: 75%;
-    --month-base-l: 35%;
-    --month-text-color: #f0f9ff;
+body {
+    background-color: var(--bg-app);
+    color: var(--text-light);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================
-   WEEK PROGRESSIVE DARKNESS (OPACITY-BASED)
-   Week 1: 25% color intensity (pastel)
-   Week 2: 45% color intensity
-   Week 3: 65% color intensity
-   Week 4: 85% color intensity
-   Week 5: 100% color intensity (full brand)
+   БРЕНДОВЫЕ ЦВЕТА МЕСЯЦЕВ (HEX из ТЗ)
    ============================================ */
 
-/* Week lightness adjustments - higher = lighter */
-.week-1 { --week-intensity: 0.25; --week-bg-lightness-mod: 35; }
-.week-2 { --week-intensity: 0.45; --week-bg-lightness-mod: 25; }
-.week-3 { --week-intensity: 0.65; --week-bg-lightness-mod: 15; }
-.week-4 { --week-intensity: 0.85; --week-bg-lightness-mod: 5; }
-.week-5 { --week-intensity: 1.00; --week-bg-lightness-mod: 0; }
+/* Зима: Холод и Глубина */
+.month-january { 
+    --month-main: #3B82F6; 
+    --month-text: var(--text-light); 
+}
+
+.month-february { 
+    --month-main: #0047AB; 
+    --month-text: var(--text-light); 
+}
+
+.month-december { 
+    --month-main: #8B5CF6; 
+    --month-text: var(--text-light); 
+}
+
+/* Весна: Прогрессия Роста */
+.month-march { 
+    --month-main: #169120; 
+    --month-text: var(--text-dark); /* Светлый зелёный → тёмный текст */
+}
+
+.month-april { 
+    --month-main: #1B8A19; 
+    --month-text: var(--text-light); 
+}
+
+.month-may { 
+    --month-main: #0F7012; 
+    --month-text: var(--text-light); 
+}
+
+/* Лето: Температура и Энергия */
+.month-june { 
+    --month-main: #F03F2B; 
+    --month-text: var(--text-light); 
+}
+
+.month-july { 
+    --month-main: #E33719; 
+    --month-text: var(--text-light); 
+}
+
+.month-august { 
+    --month-main: #C91902; 
+    --month-text: var(--text-light); 
+}
+
+/* Осень: Тепло и Уют */
+.month-september { 
+    --month-main: #F28C0F; 
+    --month-text: var(--text-dark); /* Светлый оранжевый → тёмный текст */
+}
+
+.month-october { 
+    --month-main: #C76D00; 
+    --month-text: var(--text-light); 
+}
+
+.month-november { 
+    --month-main: #9E3A14; 
+    --month-text: var(--text-light); 
+}
 
 /* ============================================
-   MONTH GROUP STYLING
+   ЗАГОЛОВКИ МЕСЯЦЕВ
    ============================================ */
-
 .month-group-header {
-    border-left: 4px solid hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) + 5%));
-    background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), var(--month-base-s), var(--month-base-l)), 
-        hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) - 8%)));
-    color: var(--month-text-color);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    background-color: var(--month-main);
+    color: var(--month-text);
+    border-radius: 20px;
+    font-weight: 800; /* Extra Bold */
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 }
 
-.month-group-caret {
-    color: var(--month-text-color);
+.month-group-header:hover {
+    opacity: 0.95;
+}
+
+/* ============================================
+   КОНТЕЙНЕР МЕСЯЦА
+   ============================================ */
+.month-section {
+    margin-bottom: 3rem;
+}
+
+/* ============================================
+   КАРТОЧКИ НЕДЕЛЬ — ГРАДИЕНТ ПО ЯРКОСТИ
+   Неделя 1: +75% света (пастельный)
+   Неделя 2: +45% света
+   Неделя 3: +15% света
+   Неделя 4: -10% света (насыщенный)
+   Неделя 5: 0% (чистый Main)
+   ============================================ */
+.week-1 {
+    background-color: var(--month-main);
+    filter: brightness(1.75) saturate(0.9);
+}
+
+.week-2 {
+    background-color: var(--month-main);
+    filter: brightness(1.45) saturate(0.95);
+}
+
+.week-3 {
+    background-color: var(--month-main);
+    filter: brightness(1.15) saturate(1.0);
+}
+
+.week-4 {
+    background-color: var(--month-main);
+    filter: brightness(0.9) saturate(1.1);
+}
+
+.week-5 {
+    background-color: var(--month-main);
+    filter: none;
+}
+
+.week-card {
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--month-text); /* Динамический контрастный текст */
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s ease;
+}
+
+/* Специфичные стили для week-group как карточки недели */
+.week-group.week-card {
+    padding: 0;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+.week-group.week-card .action-btn {
+    margin-top: 0;
+    border-radius: 16px;
+}
+
+.week-card:hover {
+    transform: translateY(-2px);
+}
+
+.week-title {
+    font-size: 1.25rem;
+    font-weight: 800; /* Bold */
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   КНОПКИ ДЕЙСТВИЙ — ИНВЕРСИЯ
+   Для светлых месяцев (Март, Сентябрь): тёмная кнопка
+   Для тёмных месяцев: белая кнопка с цветным текстом
+   ============================================ */
+.action-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Светлые месяцы → тёмная кнопка */
+.month-march .action-btn,
+.month-september .action-btn {
+    background-color: var(--text-dark);
+    color: #FFFFFF;
+}
+
+/* Тёмные месяцы → белая кнопка с цветным текстом бренда */
+.month-january .action-btn,
+.month-february .action-btn,
+.month-april .action-btn,
+.month-may .action-btn,
+.month-june .action-btn,
+.month-july .action-btn,
+.month-august .action-btn,
+.month-october .action-btn,
+.month-november .action-btn,
+.month-december .action-btn {
+    background-color: #FFFFFF;
+    color: var(--month-main);
+}
+
+.action-btn:hover {
     opacity: 0.9;
+    transform: scale(1.02);
 }
 
 /* ============================================
-   WEEK GROUP STYLING
+   АДАПТИВНОСТЬ
    ============================================ */
-
-.week-group > button {
-    background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * var(--week-intensity)), calc(var(--month-base-l) + var(--week-bg-lightness-mod))), 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 3)))) !important;
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8))) !important;
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.3), calc(var(--month-base-l) - 20));
-}
-
-.week-group > button:hover {
-    background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5))), 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.25)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)))) !important;
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * var(--week-intensity)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 12))) !important;
-}
-
-.week-group-caret {
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.6), calc(var(--month-base-l) - 15));
-}
-
-/* ============================================
-   DAY CARD STYLING WITHIN WEEKS
-   ============================================ */
-
-/* Theme A (even cards) - lighter variant */
-.day-card.theme-a {
-    background: linear-gradient(145deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 3))), 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 1))));
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)));
-}
-
-/* Theme B (odd cards) - slightly different tint */
-.day-card.theme-b {
-    background: linear-gradient(145deg, 
-        hsl(calc(var(--month-base-h) + 8), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 2))), 
-        hsl(calc(var(--month-base-h) + 4), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.07)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod)))));
-    border-color: hsl(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 4)));
-}
-
-/* Day header within cards */
-.day-header {
-    background: linear-gradient(140deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 2))), 
-        hsl(calc(var(--month-base-h) + 10), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.08)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5))));
-    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)));
-}
-
-/* Day collapse button */
-.day-collapse-btn {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 3)), 0.85);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.4), calc(var(--month-base-l) - 15));
-}
-
-.day-collapse-btn:hover {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)), 0.95);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 12)));
-}
-
-.day-collapse-caret {
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.5), calc(var(--month-base-l) - 12));
-}
-
-/* ============================================
-   EXERCISE CARD STYLING
-   ============================================ */
-
-.exercise-card.theme-a {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 2)), 0.95);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.2)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)));
-}
-
-.exercise-card.theme-b {
-    background: hsla(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 4)), 0.92);
-    border-color: hsl(calc(var(--month-base-h) + 4), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.22)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 7)));
-}
-
-.exercise-card.is-sub.theme-a {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)), 0.75);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
-}
-
-.exercise-card.is-sub.theme-b {
-    background: hsla(calc(var(--month-base-h) + 8), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 7)), 0.72);
-    border-color: hsl(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.2)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 9)));
-}
-
-/* Exercise header toggle */
-.exercise-header-toggle {
-    background: linear-gradient(90deg, 
-        hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 6)), 0.22), 
-        hsla(calc(var(--month-base-h) + 12), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.08)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)), 0.24));
-    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
-}
-
-.exercise-header-toggle:hover {
-    background: linear-gradient(90deg, 
-        hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)), 0.28), 
-        hsla(calc(var(--month-base-h) + 10), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.03)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)), 0.3));
-}
-
-/* ============================================
-   STATUS BORDERS (past, today, future)
-   These override the month colors for status indication
-   ============================================ */
-
-.day-card.status-past {
-    border: 2px solid hsla(142, 76%, 36%, 0.85) !important;
-    box-shadow: 0 16px 36px hsla(142, 76%, 36%, 0.22);
-}
-
-.day-card.status-future {
-    border: 2px solid hsla(348, 83%, 50%, 0.82) !important;
-    box-shadow: 0 16px 36px hsla(348, 83%, 50%, 0.22);
-}
-
-.day-card.status-today {
-    border: 2px solid hsla(24, 94%, 50%, 0.9) !important;
-    box-shadow: 0 16px 36px hsla(24, 94%, 50%, 0.24);
-}
-
-/* ============================================
-   TEMPLATE UI (keeps existing blue theme)
-   ============================================ */
-
-.template-chip {
-    color: hsl(221, 83%, 53%);
-    background: hsla(221, 83%, 53%, 0.12);
-    border: 1px solid hsla(221, 83%, 53%, 0.22);
-}
-
-.template-name-input:focus {
-    border-bottom-color: hsl(221, 83%, 53%);
-}
-
-.template-menu-btn.primary {
-    background: linear-gradient(135deg, hsl(221, 83%, 53%), hsl(217, 91%, 60%));
-    box-shadow: 0 10px 24px hsla(221, 83%, 53%, 0.28);
-}
-
-.template-menu-btn:hover {
-    border-color: hsla(214, 95%, 70%, 0.55);
-    background: hsla(214, 95%, 70%, 0.55);
-}
-
-.template-menu-btn.is-active {
-    border-color: hsla(221, 83%, 53%, 0.55);
-    background: hsla(221, 83%, 53%, 0.65);
-    color: hsl(221, 83%, 43%);
-}
-
-/* ============================================
-   MOBILE DATE SHEET
-   ============================================ */
-
-.mobile-date-sheet {
-    border-color: hsla(214, 32%, 61%, 0.35);
-}
-
-.mobile-date-input:focus {
-    border-color: hsl(221, 83%, 53%);
-    box-shadow: 0 0 0 3px hsla(221, 83%, 53%, 0.15);
-}
-
-/* ============================================
-   TOAST NOTIFICATION
-   ============================================ */
-
-#toast {
-    background: hsl(221, 83%, 53%);
-}
-
-/* ============================================
-   DROPDOWN HOVER STATE
-   ============================================ */
-
-.dropdown-item:hover {
-    background: hsl(214, 95%, 90%);
-    color: hsl(221, 83%, 43%);
-}
-
-/* ============================================
-   EDITABLE FOCUS STATE
-   ============================================ */
-
-.editable:focus {
-    border-bottom-color: hsl(221, 83%, 53%);
-    background: hsla(221, 83%, 53%, 0.08);
+@media (max-width: 768px) {
+    .month-header {
+        border-radius: 16px;
+        padding: 0.75rem 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .week-card {
+        padding: 1rem;
+    }
 }
