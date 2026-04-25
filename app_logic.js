@@ -333,22 +333,25 @@
                     group.className = 'month-group';
                     group.dataset.monthKey = info.key;
                     
-                    // Determine season class based on month index
+                    // Determine month-specific class based on month index
                     const monthIndex = parseInt(info.key.split('-')[1], 10);
-                    let seasonClass = '';
-                    if (monthIndex === 1 || monthIndex === 2) {
-                        seasonClass = 'month-winter';
-                    } else if (monthIndex >= 3 && monthIndex <= 5) {
-                        seasonClass = 'month-spring';
-                    } else if (monthIndex >= 6 && monthIndex <= 8) {
-                        seasonClass = 'month-summer';
-                    } else if (monthIndex >= 9 && monthIndex <= 11) {
-                        seasonClass = 'month-autumn';
-                    } else if (monthIndex === 12) {
-                        seasonClass = 'month-december';
+                    let monthClass = '';
+                    switch (monthIndex) {
+                        case 1: monthClass = 'month-january'; break;
+                        case 2: monthClass = 'month-february'; break;
+                        case 3: monthClass = 'month-march'; break;
+                        case 4: monthClass = 'month-april'; break;
+                        case 5: monthClass = 'month-may'; break;
+                        case 6: monthClass = 'month-june'; break;
+                        case 7: monthClass = 'month-july'; break;
+                        case 8: monthClass = 'month-august'; break;
+                        case 9: monthClass = 'month-september'; break;
+                        case 10: monthClass = 'month-october'; break;
+                        case 11: monthClass = 'month-november'; break;
+                        case 12: monthClass = 'month-december'; break;
                     }
                     
-                    group.classList.add(seasonClass);
+                    group.classList.add(monthClass);
                     group.innerHTML = `
                         <button class="month-group-header" onclick="toggleMonthGroup('${info.key}')">
                             <span>${info.label}</span>

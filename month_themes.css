@@ -1,91 +1,145 @@
 /* 
  * Month-based color themes for TrainLog
- * Colors are organized by seasons with progressive darkness per week
+ * Each month has a unique anchor color with progressive week darkness
+ * Based on seasonal branding strategy
  */
 
 /* ============================================
-   COLOR PALETTE DEFINITIONS
+   COLOR PALETTE DEFINITIONS - EXACT HEX VALUES
    ============================================ */
 
-/* Winter: Blue tones (January, February) */
-.month-winter {
-    --month-base-h: 210;
-    --month-base-s: 70%;
-    --month-base-l: 92%;
+/* Winter: Cold and Depth */
+/* January (#3B82F6): Classic sport blue */
+.month-january {
+    --month-base-h: 217;
+    --month-base-s: 82%;
+    --month-base-l: 60%;
+    --month-text-color: #ffffff;
 }
 
-.month-winter .week-1 { --week-lightness: 94%; }
-.month-winter .week-2 { --week-lightness: 88%; }
-.month-winter .week-3 { --week-lightness: 82%; }
-.month-winter .week-4 { --week-lightness: 76%; }
-.month-winter .week-5 { --week-lightness: 70%; }
-
-/* Spring: Green tones (March, April, May) */
-.month-spring {
-    --month-base-h: 150;
-    --month-base-s: 55%;
-    --month-base-l: 91%;
+/* February (#0047AB): Cobalt Blue - deep, strict, cold */
+.month-february {
+    --month-base-h: 215;
+    --month-base-s: 100%;
+    --month-base-l: 33%;
+    --month-text-color: #ffffff;
 }
 
-.month-spring .week-1 { --week-lightness: 93%; }
-.month-spring .week-2 { --week-lightness: 87%; }
-.month-spring .week-3 { --week-lightness: 81%; }
-.month-spring .week-4 { --week-lightness: 75%; }
-.month-spring .week-5 { --week-lightness: 69%; }
-
-/* Summer: Red tones (June, July, August) */
-.month-summer {
-    --month-base-h: 350;
-    --month-base-s: 65%;
-    --month-base-l: 92%;
-}
-
-.month-summer .week-1 { --week-lightness: 94%; }
-.month-summer .week-2 { --week-lightness: 88%; }
-.month-summer .week-3 { --week-lightness: 82%; }
-.month-summer .week-4 { --week-lightness: 76%; }
-.month-summer .week-5 { --week-lightness: 70%; }
-
-/* Autumn: Orange tones (September, October, November) */
-.month-autumn {
-    --month-base-h: 30;
-    --month-base-s: 75%;
-    --month-base-l: 91%;
-}
-
-.month-autumn .week-1 { --week-lightness: 93%; }
-.month-autumn .week-2 { --week-lightness: 87%; }
-.month-autumn .week-3 { --week-lightness: 81%; }
-.month-autumn .week-4 { --week-lightness: 75%; }
-.month-autumn .week-5 { --week-lightness: 69%; }
-
-/* December: Purple/Violet tones */
+/* December (#8B5CF6): Rich purple */
 .month-december {
-    --month-base-h: 270;
-    --month-base-s: 60%;
-    --month-base-l: 91%;
+    --month-base-h: 271;
+    --month-base-s: 76%;
+    --month-base-l: 67%;
+    --month-text-color: #ffffff;
 }
 
-.month-december .week-1 { --week-lightness: 93%; }
-.month-december .week-2 { --week-lightness: 87%; }
-.month-december .week-3 { --week-lightness: 81%; }
-.month-december .week-4 { --week-lightness: 75%; }
-.month-december .week-5 { --week-lightness: 69%; }
+/* Spring: Growth Progression */
+/* March (#169120): Fresh grass green */
+.month-march {
+    --month-base-h: 143;
+    --month-base-s: 73%;
+    --month-base-l: 33%;
+    --month-text-color: #f0f9ff;
+}
+
+/* April (#1B8A19): Rich forest green */
+.month-april {
+    --month-base-h: 119;
+    --month-base-s: 69%;
+    --month-base-l: 32%;
+    --month-text-color: #f0f9ff;
+}
+
+/* May (#0F7012): Deep dark green */
+.month-may {
+    --month-base-h: 122;
+    --month-base-s: 72%;
+    --month-base-l: 25%;
+    --month-text-color: #f0f9ff;
+}
+
+/* Summer: Temperature and Energy */
+/* June (#F03F2B): Bright coral red */
+.month-june {
+    --month-base-h: 6;
+    --month-base-s: 81%;
+    --month-base-l: 55%;
+    --month-text-color: #ffffff;
+}
+
+/* July (#E33719): Rich scarlet */
+.month-july {
+    --month-base-h: 9;
+    --month-base-s: 80%;
+    --month-base-l: 49%;
+    --month-text-color: #ffffff;
+}
+
+/* August (#C91902): Dark red (ruby) */
+.month-august {
+    --month-base-h: 4;
+    --month-base-s: 98%;
+    --month-base-l: 39%;
+    --month-text-color: #ffffff;
+}
+
+/* Autumn: Warmth and Coziness */
+/* September (#F28C0F): Bright orange */
+.month-september {
+    --month-base-h: 34;
+    --month-base-s: 88%;
+    --month-base-l: 50%;
+    --month-text-color: #0f172a;
+}
+
+/* October (#C76D00): Thick orange (amber) */
+.month-october {
+    --month-base-h: 34;
+    --month-base-s: 100%;
+    --month-base-l: 39%;
+    --month-text-color: #f0f9ff;
+}
+
+/* November (#9E3A14): Terracotta */
+.month-november {
+    --month-base-h: 14;
+    --month-base-s: 75%;
+    --month-base-l: 35%;
+    --month-text-color: #f0f9ff;
+}
+
+/* ============================================
+   WEEK PROGRESSIVE DARKNESS (OPACITY-BASED)
+   Week 1: 25% color intensity (pastel)
+   Week 2: 45% color intensity
+   Week 3: 65% color intensity
+   Week 4: 85% color intensity
+   Week 5: 100% color intensity (full brand)
+   ============================================ */
+
+/* Week lightness adjustments - higher = lighter */
+.week-1 { --week-intensity: 0.25; --week-bg-lightness-mod: 35; }
+.week-2 { --week-intensity: 0.45; --week-bg-lightness-mod: 25; }
+.week-3 { --week-intensity: 0.65; --week-bg-lightness-mod: 15; }
+.week-4 { --week-intensity: 0.85; --week-bg-lightness-mod: 5; }
+.week-5 { --week-intensity: 1.00; --week-bg-lightness-mod: 0; }
 
 /* ============================================
    MONTH GROUP STYLING
    ============================================ */
 
 .month-group-header {
-    border-left: 4px solid hsl(var(--month-base-h), var(--month-base-s), 65%);
+    border-left: 4px solid hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) + 5%));
     background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) - 2%)), 
-        hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) - 5%)));
-    color: hsl(var(--month-base-h), var(--month-base-s), 35%);
+        hsl(var(--month-base-h), var(--month-base-s), var(--month-base-l)), 
+        hsl(var(--month-base-h), var(--month-base-s), calc(var(--month-base-l) - 8%)));
+    color: var(--month-text-color);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .month-group-caret {
-    color: hsl(var(--month-base-h), var(--month-base-s), 55%);
+    color: var(--month-text-color);
+    opacity: 0.9;
 }
 
 /* ============================================
@@ -94,21 +148,21 @@
 
 .week-group > button {
     background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 10%), var(--week-lightness)), 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 5%), calc(var(--week-lightness) - 2%))) !important;
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 20%), calc(var(--week-lightness) - 15%)) !important;
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) - 30%), 40%);
+        hsl(var(--month-base-h), calc(var(--month-base-s) * var(--week-intensity)), calc(var(--month-base-l) + var(--week-bg-lightness-mod))), 
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 3)))) !important;
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8))) !important;
+    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.3), calc(var(--month-base-l) - 20));
 }
 
 .week-group > button:hover {
     background: linear-gradient(135deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 5%), calc(var(--week-lightness) - 3%)), 
-        hsl(var(--month-base-h), var(--month-base-s), calc(var(--week-lightness) - 5%))) !important;
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 15%), calc(var(--week-lightness) - 20%)) !important;
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5))), 
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) + 0.25)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)))) !important;
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * var(--week-intensity)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 12))) !important;
 }
 
 .week-group-caret {
-    color: hsl(var(--month-base-h), var(--month-base-s), 50%);
+    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.6), calc(var(--month-base-l) - 15));
 }
 
 /* ============================================
@@ -118,41 +172,41 @@
 /* Theme A (even cards) - lighter variant */
 .day-card.theme-a {
     background: linear-gradient(145deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) + 2%)), 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 25%), var(--week-lightness)));
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 35%), calc(var(--week-lightness) - 12%));
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 3))), 
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 1))));
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)));
 }
 
 /* Theme B (odd cards) - slightly different tint */
 .day-card.theme-b {
     background: linear-gradient(145deg, 
-        hsl(calc(var(--month-base-h) + 10), calc(var(--month-base-s) - 35%), calc(var(--week-lightness) + 1%)), 
-        hsl(calc(var(--month-base-h) + 5), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) - 1%)));
-    border-color: hsl(calc(var(--month-base-h) + 8), calc(var(--month-base-s) - 40%), calc(var(--week-lightness) - 10%));
+        hsl(calc(var(--month-base-h) + 8), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) + 2))), 
+        hsl(calc(var(--month-base-h) + 4), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.07)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod)))));
+    border-color: hsl(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 4)));
 }
 
 /* Day header within cards */
 .day-header {
     background: linear-gradient(140deg, 
-        hsl(var(--month-base-h), calc(var(--month-base-s) - 20%), calc(var(--week-lightness) - 3%)), 
-        hsl(calc(var(--month-base-h) + 15), calc(var(--month-base-s) - 25%), calc(var(--week-lightness) - 8%)));
-    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) - 15%));
+        hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 2))), 
+        hsl(calc(var(--month-base-h) + 10), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.08)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5))));
+    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)));
 }
 
 /* Day collapse button */
 .day-collapse-btn {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) - 5%), 0.78);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 35%), calc(var(--week-lightness) - 18%));
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) - 40%), 35%);
+    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 3)), 0.85);
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
+    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.4), calc(var(--month-base-l) - 15));
 }
 
 .day-collapse-btn:hover {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) - 25%), calc(var(--week-lightness) - 8%), 0.95);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) - 22%));
+    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)), 0.95);
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 12)));
 }
 
 .day-collapse-caret {
-    color: hsl(var(--month-base-h), calc(var(--month-base-s) - 35%), 45%);
+    color: hsl(var(--month-base-h), calc(var(--month-base-s) * 0.5), calc(var(--month-base-l) - 12));
 }
 
 /* ============================================
@@ -160,37 +214,37 @@
    ============================================ */
 
 .exercise-card.theme-a {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) - 40%), calc(var(--week-lightness) - 3%), 0.95);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 45%), calc(var(--week-lightness) - 18%));
+    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 2)), 0.95);
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.2)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)));
 }
 
 .exercise-card.theme-b {
-    background: hsla(calc(var(--month-base-h) + 8), calc(var(--month-base-s) - 45%), calc(var(--week-lightness) - 5%), 0.92);
-    border-color: hsl(calc(var(--month-base-h) + 5), calc(var(--month-base-s) - 50%), calc(var(--week-lightness) - 16%));
+    background: hsla(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 4)), 0.92);
+    border-color: hsl(calc(var(--month-base-h) + 4), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.22)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 7)));
 }
 
 .exercise-card.is-sub.theme-a {
-    background: hsla(var(--month-base-h), calc(var(--month-base-s) - 35%), calc(var(--week-lightness) - 8%), 0.75);
-    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 40%), calc(var(--week-lightness) - 20%));
+    background: hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.12)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 5)), 0.75);
+    border-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.18)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
 }
 
 .exercise-card.is-sub.theme-b {
-    background: hsla(calc(var(--month-base-h) + 10), calc(var(--month-base-s) - 40%), calc(var(--week-lightness) - 10%), 0.72);
-    border-color: hsl(calc(var(--month-base-h) + 8), calc(var(--month-base-s) - 45%), calc(var(--week-lightness) - 18%));
+    background: hsla(calc(var(--month-base-h) + 8), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 7)), 0.72);
+    border-color: hsl(calc(var(--month-base-h) + 6), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.2)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 9)));
 }
 
 /* Exercise header toggle */
 .exercise-header-toggle {
     background: linear-gradient(90deg, 
-        hsla(var(--month-base-h), calc(var(--month-base-s) - 30%), calc(var(--week-lightness) - 10%), 0.22), 
-        hsla(calc(var(--month-base-h) + 15), calc(var(--month-base-s) - 25%), calc(var(--week-lightness) - 12%), 0.24));
-    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) - 35%), calc(var(--week-lightness) - 15%));
+        hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.1)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 6)), 0.22), 
+        hsla(calc(var(--month-base-h) + 12), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.08)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)), 0.24));
+    border-bottom-color: hsl(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.15)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)));
 }
 
 .exercise-header-toggle:hover {
     background: linear-gradient(90deg, 
-        hsla(var(--month-base-h), calc(var(--month-base-s) - 25%), calc(var(--week-lightness) - 15%), 0.28), 
-        hsla(calc(var(--month-base-h) + 12), calc(var(--month-base-s) - 20%), calc(var(--week-lightness) - 18%), 0.3));
+        hsla(var(--month-base-h), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.05)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 8)), 0.28), 
+        hsla(calc(var(--month-base-h) + 10), calc(var(--month-base-s) * calc(var(--week-intensity) - 0.03)), calc(var(--month-base-l) + calc(var(--week-bg-lightness-mod) - 10)), 0.3));
 }
 
 /* ============================================
