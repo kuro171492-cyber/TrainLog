@@ -1,244 +1,243 @@
-/* month_themes.css */
-/* Система «Месяц как бренд» */
+/* month_themes.css - Система «Месяц как бренд» */
 
 :root {
-    --bg-app: #0B0F17;
-    --text-light: #FFFFFF;
+    /* Базовый фон приложения */
+    --app-bg: #0B0F17;
     --text-dark: #0F172A;
+    --text-light: #FFFFFF;
+
+    /* Брендовые цвета месяцев (HEX) */
+    --jan-main: #3B82F6;
+    --feb-main: #0047AB;
+    --mar-main: #169120;
+    --apr-main: #1B8A19;
+    --may-main: #0F7012;
+    --jun-main: #F03F2B;
+    --jul-main: #E33719;
+    --aug-main: #C91902;
+    --sep-main: #F28C0F;
+    --oct-main: #C76D00;
+    --nov-main: #9E3A14;
+    --dec-main: #8B5CF6;
 }
 
 body {
-    background-color: var(--bg-app);
+    background-color: var(--app-bg);
     color: var(--text-light);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================
-   БРЕНДОВЫЕ ЦВЕТА МЕСЯЦЕВ (HEX из ТЗ)
+   ГРАДИЕНТ НЕДЕЛЬ (смешивание с белым/черным)
+   Неделя 1: Main + 75% White (пастель)
+   Неделя 2: Main + 55% White
+   Неделя 3: Main + 35% White
+   Неделя 4: Main + 15% White
+   Неделя 5: Чистый Main
    ============================================ */
 
-/* Зима: Холод и Глубина */
-.month-january { 
-    --month-main: #3B82F6; 
-    --month-text: var(--text-light); 
-}
+/* === ЯНВАРЬ #3B82F6 === */
+.month-january .week-1 { background-color: #d6e6fc; color: var(--text-dark); }
+.month-january .week-2 { background-color: #adcdf9; color: var(--text-dark); }
+.month-january .week-3 { background-color: #85b4f6; color: var(--text-dark); }
+.month-january .week-4 { background-color: #5c9bf3; color: var(--text-light); }
+.month-january .week-5 { background-color: var(--jan-main); color: var(--text-light); }
+.month-january .month-header { background-color: var(--jan-main); color: var(--text-light); }
 
-.month-february { 
-    --month-main: #0047AB; 
-    --month-text: var(--text-light); 
-}
+/* === ФЕВРАЛЬ #0047AB === */
+.month-february .week-1 { background-color: #ccd9f5; color: var(--text-dark); }
+.month-february .week-2 { background-color: #99b3eb; color: var(--text-dark); }
+.month-february .week-3 { background-color: #668de0; color: var(--text-light); }
+.month-february .week-4 { background-color: #3366d6; color: var(--text-light); }
+.month-february .week-5 { background-color: var(--feb-main); color: var(--text-light); }
+.month-february .month-header { background-color: var(--feb-main); color: var(--text-light); }
 
-.month-december { 
-    --month-main: #8B5CF6; 
-    --month-text: var(--text-light); 
-}
+/* === МАРТ #169120 (Светлый зеленый - темный текст!) === */
+.month-march .week-1 { background-color: #c7e8ca; color: var(--text-dark); }
+.month-march .week-2 { background-color: #8fd194; color: var(--text-dark); }
+.month-march .week-3 { background-color: #57ba5e; color: var(--text-dark); }
+.month-march .week-4 { background-color: #36a33e; color: var(--text-dark); }
+.month-march .week-5 { background-color: var(--mar-main); color: var(--text-light); }
+.month-march .month-header { background-color: var(--mar-main); color: var(--text-light); }
 
-/* Весна: Прогрессия Роста */
-.month-march { 
-    --month-main: #169120; 
-    --month-text: var(--text-dark); /* Светлый зелёный → тёмный текст */
-}
+/* === АПРЕЛЬ #1B8A19 === */
+.month-april .week-1 { background-color: #c8e8c7; color: var(--text-dark); }
+.month-april .week-2 { background-color: #91d18f; color: var(--text-dark); }
+.month-april .week-3 { background-color: #5aba57; color: var(--text-dark); }
+.month-april .week-4 { background-color: #39a335; color: var(--text-light); }
+.month-april .week-5 { background-color: var(--apr-main); color: var(--text-light); }
+.month-april .month-header { background-color: var(--apr-main); color: var(--text-light); }
 
-.month-april { 
-    --month-main: #1B8A19; 
-    --month-text: var(--text-light); 
-}
+/* === МАЙ #0F7012 (Очень темный) === */
+.month-may .week-1 { background-color: #c7e0c8; color: var(--text-dark); }
+.month-may .week-2 { background-color: #8fc191; color: var(--text-dark); }
+.month-may .week-3 { background-color: #57a25a; color: var(--text-light); }
+.month-may .week-4 { background-color: #2e8332; color: var(--text-light); }
+.month-may .week-5 { background-color: var(--may-main); color: var(--text-light); }
+.month-may .month-header { background-color: var(--may-main); color: var(--text-light); }
 
-.month-may { 
-    --month-main: #0F7012; 
-    --month-text: var(--text-light); 
-}
+/* === ИЮНЬ #F03F2B === */
+.month-june .week-1 { background-color: #fbcfc9; color: var(--text-dark); }
+.month-june .week-2 { background-color: #f79f93; color: var(--text-dark); }
+.month-june .week-3 { background-color: #f36f5d; color: var(--text-light); }
+.month-june .week-4 { background-color: #ef3f27; color: var(--text-light); }
+.month-june .week-5 { background-color: var(--jun-main); color: var(--text-light); }
+.month-june .month-header { background-color: var(--jun-main); color: var(--text-light); }
 
-/* Лето: Температура и Энергия */
-.month-june { 
-    --month-main: #F03F2B; 
-    --month-text: var(--text-light); 
-}
+/* === ИЮЛЬ #E33719 === */
+.month-july .week-1 { background-color: #f9cdc7; color: var(--text-dark); }
+.month-july .week-2 { background-color: #f3978f; color: var(--text-dark); }
+.month-july .week-3 { background-color: #ed6157; color: var(--text-light); }
+.month-july .week-4 { background-color: #e72b1f; color: var(--text-light); }
+.month-july .week-5 { background-color: var(--jul-main); color: var(--text-light); }
+.month-july .month-header { background-color: var(--jul-main); color: var(--text-light); }
 
-.month-july { 
-    --month-main: #E33719; 
-    --month-text: var(--text-light); 
-}
+/* === АВГУСТ #C91902 === */
+.month-august .week-1 { background-color: #f5c7c1; color: var(--text-dark); }
+.month-august .week-2 { background-color: #eb8f83; color: var(--text-dark); }
+.month-august .week-3 { background-color: #e15745; color: var(--text-light); }
+.month-august .week-4 { background-color: #d71f07; color: var(--text-light); }
+.month-august .week-5 { background-color: var(--aug-main); color: var(--text-light); }
+.month-august .month-header { background-color: var(--aug-main); color: var(--text-light); }
 
-.month-august { 
-    --month-main: #C91902; 
-    --month-text: var(--text-light); 
-}
+/* === СЕНТЯБРЬ #F28C0F (Оранжевый - темный текст на светлых) === */
+.month-september .week-1 { background-color: #fce4c7; color: var(--text-dark); }
+.month-september .week-2 { background-color: #f9c98f; color: var(--text-dark); }
+.month-september .week-3 { background-color: #f6ae57; color: var(--text-dark); }
+.month-september .week-4 { background-color: #f3931f; color: var(--text-dark); }
+.month-september .week-5 { background-color: var(--sep-main); color: var(--text-light); }
+.month-september .month-header { background-color: var(--sep-main); color: var(--text-light); }
 
-/* Осень: Тепло и Уют */
-.month-september { 
-    --month-main: #F28C0F; 
-    --month-text: var(--text-dark); /* Светлый оранжевый → тёмный текст */
-}
+/* === ОКТЯБРЬ #C76D00 === */
+.month-october .week-1 { background-color: #f5d9c0; color: var(--text-dark); }
+.month-october .week-2 { background-color: #ebb380; color: var(--text-dark); }
+.month-october .week-3 { background-color: #e18d40; color: var(--text-dark); }
+.month-october .week-4 { background-color: #d76700; color: var(--text-dark); }
+.month-october .week-5 { background-color: var(--oct-main); color: var(--text-light); }
+.month-october .month-header { background-color: var(--oct-main); color: var(--text-light); }
 
-.month-october { 
-    --month-main: #C76D00; 
-    --month-text: var(--text-light); 
-}
+/* === НОЯБРЬ #9E3A14 (Терракот) === */
+.month-november .week-1 { background-color: #efdcd4; color: var(--text-dark); }
+.month-november .week-2 { background-color: #dfb9a9; color: var(--text-dark); }
+.month-november .week-3 { background-color: #cf967e; color: var(--text-dark); }
+.month-november .week-4 { background-color: #bf7353; color: var(--text-light); }
+.month-november .week-5 { background-color: var(--nov-main); color: var(--text-light); }
+.month-november .month-header { background-color: var(--nov-main); color: var(--text-light); }
 
-.month-november { 
-    --month-main: #9E3A14; 
-    --month-text: var(--text-light); 
-}
+/* === ДЕКАБРЬ #8B5CF6 === */
+.month-december .week-1 { background-color: #e8dffc; color: var(--text-dark); }
+.month-december .week-2 { background-color: #d1bff9; color: var(--text-dark); }
+.month-december .week-3 { background-color: #ba9ff6; color: var(--text-dark); }
+.month-december .week-4 { background-color: #a37ff3; color: var(--text-light); }
+.month-december .week-5 { background-color: var(--dec-main); color: var(--text-light); }
+.month-december .month-header { background-color: var(--dec-main); color: var(--text-light); }
 
 /* ============================================
-   ЗАГОЛОВКИ МЕСЯЦЕВ
+   АРХИТЕКТУРА ЭЛЕМЕНТОВ
    ============================================ */
-.month-group-header {
-    background-color: var(--month-main);
-    color: var(--month-text);
+
+/* Заголовок месяца - сплошная заливка, скругление 20px */
+.month-header {
     border-radius: 20px;
-    font-weight: 800; /* Extra Bold */
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 15px 20px;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-    width: 100%;
+}
+
+/* Контейнер недели */
+.week-container {
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+/* Заголовок недели */
+.week-header {
+    font-weight: 700;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
 }
 
-.month-group-header:hover {
-    opacity: 0.95;
-}
-
-/* ============================================
-   КОНТЕЙНЕР МЕСЯЦА
-   ============================================ */
-.month-section {
-    margin-bottom: 3rem;
-}
-
-/* ============================================
-   КАРТОЧКИ НЕДЕЛЬ — ГРАДИЕНТ ПО ЯРКОСТИ
-   Неделя 1: +75% света (пастельный)
-   Неделя 2: +45% света
-   Неделя 3: +15% света
-   Неделя 4: -10% света (насыщенный)
-   Неделя 5: 0% (чистый Main)
-   ============================================ */
-.week-1 {
-    background-color: var(--month-main);
-    filter: brightness(1.75) saturate(0.9);
-}
-
-.week-2 {
-    background-color: var(--month-main);
-    filter: brightness(1.45) saturate(0.95);
-}
-
-.week-3 {
-    background-color: var(--month-main);
-    filter: brightness(1.15) saturate(1.0);
-}
-
-.week-4 {
-    background-color: var(--month-main);
-    filter: brightness(0.9) saturate(1.1);
-}
-
-.week-5 {
-    background-color: var(--month-main);
-    filter: none;
-}
-
-.week-card {
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    color: var(--month-text); /* Динамический контрастный текст */
-    font-weight: 600;
+/* Карточка упражнения - наследует палитру, но чуть темнее фона недели */
+.exercise-card {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.2s ease;
 }
 
-/* Специфичные стили для week-group как карточки недели */
-.week-group.week-card {
-    padding: 0;
-    margin-bottom: 1rem;
-    border: none;
-}
-
-.week-group.week-card .action-btn {
-    margin-top: 0;
-    border-radius: 16px;
-}
-
-.week-card:hover {
-    transform: translateY(-2px);
-}
-
-.week-title {
-    font-size: 1.25rem;
-    font-weight: 800; /* Bold */
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* ============================================
-   КНОПКИ ДЕЙСТВИЙ — ИНВЕРСИЯ
-   Для светлых месяцев (Март, Сентябрь): тёмная кнопка
-   Для тёмных месяцев: белая кнопка с цветным текстом
-   ============================================ */
-.action-btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
+.exercise-title {
     font-weight: 700;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    text-align: center;
-    margin-top: 1rem;
+    font-size: 1rem;
+    margin-bottom: 5px;
 }
 
-/* Светлые месяцы → тёмная кнопка */
-.month-march .action-btn,
-.month-september .action-btn {
-    background-color: var(--text-dark);
-    color: #FFFFFF;
-}
-
-/* Тёмные месяцы → белая кнопка с цветным текстом бренда */
-.month-january .action-btn,
-.month-february .action-btn,
-.month-april .action-btn,
-.month-may .action-btn,
-.month-june .action-btn,
-.month-july .action-btn,
-.month-august .action-btn,
-.month-october .action-btn,
-.month-november .action-btn,
-.month-december .action-btn {
-    background-color: #FFFFFF;
-    color: var(--month-main);
-}
-
-.action-btn:hover {
+.exercise-body {
+    font-size: 0.9rem;
     opacity: 0.9;
-    transform: scale(1.02);
+    font-weight: 500;
 }
 
-/* ============================================
-   АДАПТИВНОСТЬ
-   ============================================ */
-@media (max-width: 768px) {
-    .month-header {
-        border-radius: 16px;
-        padding: 0.75rem 1rem;
-        font-size: 1.1rem;
-    }
-    
-    .week-card {
-        padding: 1rem;
-    }
+/* Кнопки действий - сплошной цвет, высокая контрастность */
+.action-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-btn:active {
+    transform: scale(0.96);
+}
+
+/* Кнопка переключения (свернуть/развернуть) */
+.toggle-btn {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Для очень светлых недель (Март, Сентябрь 1-2 неделя) - темная кнопка */
+.month-march .week-1 .toggle-btn,
+.month-march .week-2 .toggle-btn,
+.month-september .week-1 .toggle-btn,
+.month-september .week-2 .toggle-btn,
+.month-june .week-1 .toggle-btn,
+.month-july .week-1 .toggle-btn {
+    background-color: var(--text-dark);
+    color: white;
+    border: none;
+}
+
+/* Аккордеон */
+.scroll-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+}
+
+.scroll-container.open {
+    max-height: 2000px;
+    transition: max-height 0.5s ease-in-out;
+}
+
+/* Принудительно убираем белые фоны */
+.card, .workout-item, .exercise-item {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    color: inherit !important;
 }
