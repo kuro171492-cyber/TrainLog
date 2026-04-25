@@ -289,27 +289,6 @@
             backdrop-filter: blur(14px);
         }
 
-        .month-group {
-            margin-bottom: 14px;
-        }
-
-        .month-group-header {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(148, 163, 184, 0.34);
-            background: rgba(255, 255, 255, 0.92);
-            color: #334155;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
-
         .month-group-count {
             font-size: 10px;
             color: inherit; /* Наследуется от month-text */

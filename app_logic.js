@@ -232,9 +232,14 @@
             if (!group) return;
             const body = group.querySelector('.month-group-body');
             const caret = group.querySelector('.month-group-caret');
+            const header = group.querySelector('.month-group-header');
             const isCollapsed = !!monthGroupState[monthKey];
             body?.classList.toggle('hidden', isCollapsed);
             caret?.classList.toggle('is-collapsed', isCollapsed);
+            if (header) {
+                header.classList.toggle('is-collapsed', isCollapsed);
+                header.setAttribute('aria-expanded', !isCollapsed);
+            }
         }
 
         function toggleWeekGroup(weekKey) {
