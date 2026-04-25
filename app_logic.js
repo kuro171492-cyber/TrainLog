@@ -377,10 +377,10 @@
                     const weekNumberInMonth = getWeekNumberInMonth(weekInfo.key, info.key);
                     
                     const weekGroup = document.createElement('section');
-                    weekGroup.className = `week-group mt-2 week-${weekNumberInMonth}`;
+                    weekGroup.className = `week-group mt-2 week-${weekNumberInMonth} week-card`;
                     weekGroup.dataset.weekKey = weekInfo.key;
                     weekGroup.innerHTML = `
-                        <button class="w-full flex items-center justify-between rounded-xl bg-white/80 border border-slate-300 px-3 py-2 text-xs font-bold text-slate-600" onclick="toggleWeekGroup('${weekInfo.key}')">
+                        <button class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold action-btn" onclick="toggleWeekGroup('${weekInfo.key}')">
                             <span>${weekInfo.label}</span>
                             <div class="flex items-center gap-2">
                                 <span class="week-group-count text-[10px] uppercase tracking-wide"></span>
