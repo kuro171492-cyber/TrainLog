@@ -16,6 +16,9 @@
             const div = document.createElement('div');
             div.className = "dropdown-item";
             div.textContent = label;
+            div.dataset.value = String(val);
+            div.dataset.label = String(label);
+            div.dataset.selectionType = String(type);
             div.onclick = (e) => { e.stopPropagation(); handleSelection(String(val), type); };
             document.getElementById(targetId).appendChild(div);
         }

@@ -369,14 +369,23 @@ const STORAGE_KEY = 'workout_v4_data';
 
         function createSet(w = '', r = '', t = '00:00') {
             const div = document.createElement('div');
-            div.className = "flex items-center gap-2 bg-white border border-slate-300 rounded-xl px-3 py-1.5 w-fit";
+            div.className = "set-row";
             div.innerHTML = `
-                <div class="flex items-center gap-1"><input type="text" readonly class="set-input font-bold" value="${w}" onclick="openDropdown(event, 'weight')"><span class="text-slate-500 text-[9px] font-black">КГ</span></div>
-                <div class="w-px h-3 bg-slate-300"></div>
-                <div class="flex items-center gap-1"><input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')"><span class="text-slate-500 text-[9px] font-black">ПОВТ</span></div>
-                <div class="w-px h-3 bg-slate-300"></div>
-                <input type="text" readonly class="set-input font-mono text-blue-400 font-bold w-12" value="${t}" onclick="openDropdown(event, 'exercise')">
-                <button onclick="this.parentElement.remove(); autoSave();" class="text-slate-500 hover:text-red-500 ml-1">&times;</button>
+                <div class="set-field set-field-weight">
+                    <span class="set-field-icon" aria-hidden="true">🏋</span>
+                    <input type="text" readonly class="set-input font-bold" value="${w}" onclick="openDropdown(event, 'weight')">
+                </div>
+                <div class="set-field-divider" aria-hidden="true"></div>
+                <div class="set-field set-field-reps">
+                    <span class="set-field-icon" aria-hidden="true">↻</span>
+                    <input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')">
+                </div>
+                <div class="set-field-divider" aria-hidden="true"></div>
+                <div class="set-field set-field-time">
+                    <span class="set-field-icon" aria-hidden="true">⏱</span>
+                    <input type="text" readonly class="set-input set-input-time font-mono text-blue-400 font-bold" value="${t}" onclick="openDropdown(event, 'exercise')">
+                </div>
+                <button onclick="this.parentElement.remove(); autoSave();" class="set-remove-btn" title="Удалить подход">&times;</button>
             `;
             return div;
         }

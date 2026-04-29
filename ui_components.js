@@ -282,6 +282,7 @@
             dd.style.top = `${rect.bottom + window.scrollY + 8}px`;
             dd.style.left = `${Math.min(rect.left, window.innerWidth - 200)}px`;
             dd.classList.add('active');
+            requestAnimationFrame(() => syncDropdownState(type, dd));
         }
 
         function handleSelection(val, type) {
@@ -313,3 +314,54 @@
 
         function closeAllDropdowns() { Object.values(dropdowns).forEach(d => d.classList.remove('active')); }
         document.addEventListener('click', closeAllDropdowns);
+
+        function syncDropdownState(type, dropdownEl) {
+            if (!dropdownEl) return;
+            const selectedValues = getDropdownSelectedValues(type);
+            const columns = Array.from(dropdownEl.querySelectorAll('.dropdown-column'));
+            columns.forEach((column, index) => {
+                const items = Array.from(column.querySelectorAll('.dropdown-item'));
+                let selectedItem = null;
+                items.forEach(item => {
+                    const isSelected = item.dataset.value === selectedValues[index] || item.dataset.label === selectedValues[index];
+                    item.classList.toggle('is-selected', isSelected);
+                    if (isSelected) selectedItem = item;
+                });
+                if (selectedItem) {
+                    const targetTop = selectedItem.offsetTop - Math.max(0, (column.clientHeight - selectedItem.offsetHeight) / 2);
+                    column.scrollTop = targetTop;
+                } else {
+                    column.scrollTop = 0;
+                }
+            });
+        }
+
+        function getDropdownSelectedValues(type) {
+            if (!activeInput) return [];
+            if (type === 'total' || type === 'ex') {
+                const parts = (activeInput.value || '00:00').split(':');
+                return [parts[0] || '00', parts[1] || '00'];
+            }
+            if (type === 'reps') {
+                return [String(activeInput.value || '')];
+            }
+            if (type === 'w') {
+                const numeric = parseFloat(activeInput.value) || 0;
+                const tens = Math.floor(numeric / 10) * 10;
+                const units = numeric % 10;
+                return [String(tens), String(units)];
+            }
+            if (type === 'weekday') {
+                return [String(activeInput.textContent || '').trim()];
+            }
+            if (type === 'date') {
+                const parent = activeInput.closest('.date-container');
+                if (!parent) return [];
+                return [
+                    String(parent.querySelector('[data-type="d"]')?.textContent || '').trim(),
+                    String(parent.querySelector('[data-type="m"]')?.textContent || '').trim(),
+                    String(parent.querySelector('[data-type="y"]')?.textContent || '').trim()
+                ];
+            }
+            return [];
+        }
