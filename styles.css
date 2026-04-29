@@ -518,15 +518,14 @@
         }
 
         .day-toolbar {
-            align-items: flex-start;
+            align-items: stretch;
         }
 
         .day-meta-strip {
             position: relative;
-            flex: 1;
             align-items: center;
             gap: 10px;
-            padding: 10px 12px 10px 14px;
+            padding: 10px 12px;
             border-radius: 20px;
             border: 1px solid color-mix(in srgb, var(--weekday-accent, #3b82f6) 26%, rgba(148, 163, 184, 0.35));
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), color-mix(in srgb, var(--weekday-accent, #3b82f6) 10%, rgba(248, 250, 252, 0.96)));
@@ -536,14 +535,13 @@
         .day-meta-strip::before {
             content: "";
             position: absolute;
-            inset: 10px auto 10px 10px;
+            inset: 10px auto 10px 52px;
             width: 4px;
             border-radius: 999px;
             background: linear-gradient(180deg, var(--weekday-accent, #3b82f6), color-mix(in srgb, var(--weekday-accent, #3b82f6) 42%, white));
         }
 
         .day-date-chip {
-            margin-left: 8px;
             min-height: 34px;
             border-radius: 12px;
             border: 1px solid rgba(148, 163, 184, 0.32);
@@ -577,14 +575,39 @@
         }
 
         .day-actions {
-            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 100%;
+        }
+
+        .day-toggle-btn {
+            min-width: 42px;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            justify-content: center;
+            flex: 0 0 auto;
         }
 
         .day-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             border: 1px solid rgba(148, 163, 184, 0.35);
             background: rgba(255, 255, 255, 0.84);
             color: #64748b;
             box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .day-action-wide {
+            width: 100%;
+            min-height: 42px;
+            padding: 0 14px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
         }
 
         .day-icon-btn:hover {
@@ -599,19 +622,15 @@
             border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 24%, rgba(148, 163, 184, 0.35));
         }
 
-        .day-collapse-btn {
-            background: rgba(255, 255, 255, 0.82);
-            color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 78%, #7c2d12);
-            border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 24%, rgba(245, 158, 11, 0.35));
-        }
-
-        .day-collapse-btn:hover {
-            background: rgba(255, 255, 255, 0.96);
-            border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 38%, rgba(217, 119, 6, 0.45));
-        }
-
         .day-collapse-caret {
             color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 68%, #b45309);
+            font-size: 12px;
+            line-height: 1;
+            transition: transform 0.2s ease;
+        }
+
+        .day-toggle-btn.is-open .day-collapse-caret {
+            transform: rotate(180deg);
         }
 
         .day-content {
@@ -642,6 +661,8 @@
             border-width: 1px;
             border-style: solid;
             box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+            cursor: pointer;
+            overflow: hidden;
         }
 
         .exercise-card::before {
@@ -654,6 +675,12 @@
             opacity: 0.85;
         }
 
+        .exercise-card-shell {
+            position: relative;
+            padding-right: 40px;
+            min-height: 44px;
+        }
+
         .exercise-main {
             padding-left: 8px;
         }
@@ -663,10 +690,42 @@
             border: 1px solid rgba(148, 163, 184, 0.28);
             color: #334155;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+            user-select: none;
+            cursor: default;
         }
 
         .exercise-details {
             padding-left: 8px;
+        }
+
+        .exercise-card-controls {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .exercise-edit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            background: rgba(255, 255, 255, 0.92);
+            color: #64748b;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+        }
+
+        .exercise-edit-btn:hover,
+        .exercise-edit-btn.is-active {
+            color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 82%, black);
+            border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 22%, rgba(148, 163, 184, 0.28));
+            background: color-mix(in srgb, var(--weekday-accent, #3b82f6) 10%, white);
         }
 
         .exercise-add-set {
@@ -701,13 +760,28 @@
             border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 12%, rgba(59, 130, 246, 0.32));
         }
 
-        .exercise-header-toggle {
-            background: linear-gradient(90deg, color-mix(in srgb, var(--weekday-accent, #3b82f6) 18%, white), color-mix(in srgb, var(--weekday-accent, #3b82f6) 34%, rgba(14, 165, 233, 0.24)));
-            border-bottom: 1px solid color-mix(in srgb, var(--weekday-accent, #3b82f6) 24%, rgba(59, 130, 246, 0.3));
+        .exercise-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.1);
         }
 
-        .exercise-header-toggle:hover {
-            background: linear-gradient(90deg, color-mix(in srgb, var(--weekday-accent, #3b82f6) 26%, white), color-mix(in srgb, var(--weekday-accent, #3b82f6) 40%, rgba(2, 132, 199, 0.3)));
+        .exercise-card.is-open {
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        .exercise-card.is-open::before {
+            background: linear-gradient(180deg, var(--weekday-accent, #3b82f6), color-mix(in srgb, var(--weekday-accent, #3b82f6) 35%, white));
+        }
+
+        .exercise-card.is-editing {
+            cursor: default;
+        }
+
+        .exercise-card.is-editing .exercise-name {
+            user-select: text;
+            cursor: text;
+            border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 36%, rgba(59, 130, 246, 0.3));
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--weekday-accent, #3b82f6) 12%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.96);
         }
 
         .superset-card {

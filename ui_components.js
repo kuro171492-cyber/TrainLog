@@ -180,8 +180,6 @@
             content?.classList.toggle('hidden');
             el.classList.toggle('is-open', !!willOpen);
             el.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-            const label = el.querySelector('.day-collapse-label');
-            if (label) label.textContent = willOpen ? 'Скрыть тренировку' : 'Показать тренировку';
             if (willOpen) applyAlternatingThemes();
         }
         function openTemplateModal(id) { activeSessionIdForTemplate = id; renderTemplateList(); document.getElementById('templateModal').classList.add('active'); }
@@ -193,10 +191,11 @@
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
         function deleteDay(id) { if (confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
         function toggleExerciseDetails(triggerEl) {
-            const card = triggerEl.closest('.exercise-card');
+            const card = triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
             const details = card?.querySelector('.exercise-details');
             if (!details) return;
             details.classList.toggle('hidden');
+            card.classList.toggle('is-open', !details.classList.contains('hidden'));
         }
 
         function initNativeDatePicker() {

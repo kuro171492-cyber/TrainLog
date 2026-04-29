@@ -237,8 +237,11 @@ const STORAGE_KEY = 'workout_v4_data';
             if (hasDeferredItems) card.dataset.itemsJson = encodeURIComponent(JSON.stringify(data.items));
             card.innerHTML = `
                 <div class="day-header p-3 sm:p-4">
-                    <div class="day-toolbar flex items-center justify-between gap-3">
+                    <div class="day-toolbar flex flex-col gap-3">
                         <div class="day-meta-strip flex items-center gap-2 flex-wrap" onclick="event.stopPropagation()">
+                            <button type="button" onclick="toggleCollapse(this)" class="day-toggle-btn day-icon-btn rounded-xl transition-all" aria-expanded="false" title="Показать/скрыть тренировку">
+                                <span class="day-collapse-caret">▼</span>
+                            </button>
                             <div class="date-container day-date-chip flex items-center gap-1 px-3 py-1 text-xs font-bold cursor-pointer" onclick="openDateCalendar(event)">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span><span data-type="y" class="hidden">${date.y}</span>
                             </div>
@@ -250,18 +253,16 @@ const STORAGE_KEY = 'workout_v4_data';
                             </div>
                         </div>
                         <div class="day-actions flex gap-2" onclick="event.stopPropagation()">
-                            <button onclick="saveSessionAsTemplate(${id})" class="day-icon-btn p-2.5 rounded-xl transition-all">
+                            <button onclick="saveSessionAsTemplate(${id})" class="day-action-wide day-icon-btn rounded-xl transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                <span>Сохранить шаблон</span>
                             </button>
-                            <button onclick="openTemplateModal(${id})" class="day-icon-btn day-icon-btn-primary p-2.5 rounded-xl transition-all">
+                            <button onclick="openTemplateModal(${id})" class="day-action-wide day-icon-btn day-icon-btn-primary rounded-xl transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                <span>Выбрать шаблон</span>
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="day-collapse-btn mt-3" onclick="toggleCollapse(this)" aria-expanded="false">
-                        <span class="day-collapse-label">Показать тренировку</span>
-                        <span class="day-collapse-caret">▼</span>
-                    </button>
                 </div>
                 <div class="day-content hidden p-3 sm:p-4 pt-0 border-t border-slate-300/70">
                     <div class="exercise-list space-y-3 pt-3"></div>
@@ -292,12 +293,19 @@ const STORAGE_KEY = 'workout_v4_data';
 
         function renderExercise(container, data = null, isSub = false) {
             const div = document.createElement('div');
-            div.className = `exercise-card relative p-3 pt-8 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
+            div.className = `exercise-card relative p-3 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
+            div.setAttribute('onclick', 'handleExerciseCardClick(event, this)');
             div.innerHTML = `
-                <button onclick="toggleExerciseDetails(this)" class="exercise-header-toggle absolute left-0 right-0 top-0 h-7 rounded-t-2xl transition-colors" title="Показать/скрыть подходы"></button>
-                <div class="exercise-main flex items-center gap-3">
-                    <div class="editable exercise-name flex-1 rounded-xl px-3 py-2 text-sm font-bold outline-none" contenteditable="true" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
+                <div class="exercise-card-shell">
+                    <div class="exercise-main flex items-center gap-3">
+                        <div class="editable exercise-name flex-1 rounded-xl px-3 py-2 text-sm font-bold outline-none" contenteditable="false" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
+                    </div>
+                    <div class="exercise-card-controls">
+                        <button type="button" onclick="toggleExerciseEdit(this, event)" class="exercise-edit-btn" title="Редактировать упражнение">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6.768-6.768a2.5 2.5 0 113.536 3.536L12.536 14.536A4 4 0 019.707 15.707L6 16l.293-3.707A4 4 0 017.464 9.464L9 11z" /></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="exercise-details hidden space-y-2">
                     <div class="sets-container space-y-2"></div>
@@ -326,6 +334,37 @@ const STORAGE_KEY = 'workout_v4_data';
             if (data?.exercises) data.exercises.forEach(ex => renderExercise(inner, ex, true));
             else { renderExercise(inner, null, true); renderExercise(inner, null, true); }
             applyAlternatingThemes();
+        }
+
+        function handleExerciseCardClick(event, card) {
+            if (!card) return;
+            if (event.target.closest('button, input, .set-input')) return;
+            const editable = card.querySelector('.exercise-name');
+            if (editable?.getAttribute('contenteditable') === 'true') return;
+            toggleExerciseDetails(card);
+        }
+
+        function toggleExerciseEdit(btn, event) {
+            event?.stopPropagation();
+            const card = btn.closest('.exercise-card');
+            const name = card?.querySelector('.exercise-name');
+            if (!card || !name) return;
+            const willEdit = !card.classList.contains('is-editing');
+            card.classList.toggle('is-editing', willEdit);
+            btn.classList.toggle('is-active', willEdit);
+            name.setAttribute('contenteditable', willEdit ? 'true' : 'false');
+            if (willEdit) {
+                name.focus();
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(name);
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                name.blur();
+                autoSave(true);
+            }
         }
 
         function createSet(w = '', r = '', t = '00:00') {
