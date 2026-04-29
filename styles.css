@@ -308,6 +308,13 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: .04em;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .month-group-header:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.2);
         }
 
         .month-group-count {
@@ -326,6 +333,38 @@
 
         .month-group-body {
             margin-top: 10px;
+        }
+
+        .week-group {
+            margin-top: 10px;
+            margin-left: 12px;
+            background: transparent;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .week-group > button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .week-group-body {
+            margin-top: 8px;
+            background: transparent;
+        }
+
+        .week-group > button:hover {
+            transform: translateX(2px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+            border-color: rgba(15, 23, 42, 0.16);
         }
 
         .month-group-body.hidden {
