@@ -240,14 +240,19 @@
             caret?.classList.toggle('is-collapsed', isCollapsed);
         }
 
-        function toggleWeekGroup(weekKey) {
-            weekGroupState[weekKey] = !weekGroupState[weekKey];
+        function getWeekGroupStateKey(monthKey, weekKey) {
+            return `${monthKey}__${weekKey}`;
+        }
+
+        function toggleWeekGroup(monthKey, weekKey) {
+            const stateKey = getWeekGroupStateKey(monthKey, weekKey);
+            weekGroupState[stateKey] = !weekGroupState[stateKey];
             saveWeekGroupState();
-            const group = document.querySelector(`.week-group[data-week-key="${weekKey}"]`);
+            const group = document.querySelector(`.week-group[data-month-key="${monthKey}"][data-week-key="${weekKey}"]`);
             if (!group) return;
             const body = group.querySelector('.week-group-body');
             const caret = group.querySelector('.week-group-caret');
-            const isCollapsed = !!weekGroupState[weekKey];
+            const isCollapsed = !!weekGroupState[stateKey];
             body?.classList.toggle('hidden', isCollapsed);
             caret?.classList.toggle('is-collapsed', isCollapsed);
         }
@@ -374,7 +379,8 @@
                 if (weekInfo.key !== currentWeekKey) {
                     currentWeekKey = weekInfo.key;
                     weekCount = 0;
-                    const isWeekCollapsed = weekGroupState[weekInfo.key] ?? (weekInfo.key !== currentWeekKeyNow);
+                    const weekStateKey = getWeekGroupStateKey(info.key, weekInfo.key);
+                    const isWeekCollapsed = weekGroupState[weekStateKey] ?? (weekInfo.key !== currentWeekKeyNow);
                     
                     // Calculate week number within the month for progressive coloring
                     const weekNumberInMonth = getWeekNumberInMonth(weekInfo.key, info.key);
@@ -382,8 +388,9 @@
                     const weekGroup = document.createElement('section');
                     weekGroup.className = `week-group mt-2 week-${weekNumberInMonth} week-card`;
                     weekGroup.dataset.weekKey = weekInfo.key;
+                    weekGroup.dataset.monthKey = info.key;
                     weekGroup.innerHTML = `
-                        <button class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold action-btn" onclick="toggleWeekGroup('${weekInfo.key}')">
+                        <button class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold action-btn" onclick="toggleWeekGroup('${info.key}', '${weekInfo.key}')">
                             <span>${weekInfo.label}</span>
                             <div class="flex items-center gap-2">
                                 <span class="week-group-count text-[10px] uppercase tracking-wide"></span>
