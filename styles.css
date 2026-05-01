@@ -13,6 +13,26 @@
             color: #0f172a;
         }
 
+        /* Mobile GPU perf: avoid heavy repaints that can cause icon flicker/disappearing while scrolling */
+        @media (max-width: 768px), (pointer: coarse) {
+            body {
+                background-attachment: scroll;
+            }
+
+            nav.sticky {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: rgba(255, 255, 255, 0.97) !important;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+            }
+        }
+
+        .top-actions > button,
+        .top-actions > .group-toggle {
+            flex-shrink: 0;
+        }
+
         .editable:focus {
             outline: none;
             border-bottom: 1px solid #3b82f6;
