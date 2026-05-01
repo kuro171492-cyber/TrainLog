@@ -118,8 +118,18 @@ const STORAGE_KEY = 'workout_v4_data';
             const token = prompt("GitHub token (classic/fine-grained with Contents read/write):", current.token || "");
             if (!token) return;
 
-            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({ owner, repo, path, branch, token }));
+            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({ owner: owner.trim(), repo: repo.trim(), path: path.trim(), branch: branch.trim(), token: token.trim() }));
             showToast("GitHub Sync настроен");
+        }
+
+
+        async function parseGitHubError(res) {
+            let details = `GitHub HTTP ${res.status}`;
+            try {
+                const data = await res.json();
+                if (data?.message) details += `: ${data.message}`;
+            } catch (_) { }
+            return details;
         }
 
         function getGitHubApiUrl(cfg) {
@@ -139,7 +149,7 @@ const STORAGE_KEY = 'workout_v4_data';
                 const res = await fetch(getGitHubApiUrl(activeCfg), {
                     headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
                 });
-                if (!res.ok) throw new Error(`GitHub HTTP ${res.status}`);
+                if (!res.ok) throw new Error(await parseGitHubError(res));
                 const payload = await res.json();
                 const decoded = decodeURIComponent(escape(atob((payload.content || '').replace(/\n/g, ''))));
                 const data = JSON.parse(decoded);
@@ -150,7 +160,8 @@ const STORAGE_KEY = 'workout_v4_data';
                 await loadFromStorage();
                 showToast("Загружено из GitHub");
             } catch (err) {
-                showToast("Ошибка загрузки из GitHub");
+                console.error('GitHub download failed:', err);
+                showToast(`Ошибка загрузки: ${err?.message || 'проверьте настройки GitHub'}`);
             }
         }
 
@@ -171,7 +182,7 @@ const STORAGE_KEY = 'workout_v4_data';
                     const existing = await getRes.json();
                     sha = existing.sha || null;
                 } else if (getRes.status !== 404) {
-                    throw new Error(`GitHub HTTP ${getRes.status}`);
+                    throw new Error(await parseGitHubError(getRes));
                 }
 
                 const bodyPayload = {
@@ -197,11 +208,12 @@ const STORAGE_KEY = 'workout_v4_data';
                     },
                     body: JSON.stringify(putBody)
                 });
-                if (!putRes.ok) throw new Error(`GitHub HTTP ${putRes.status}`);
+                if (!putRes.ok) throw new Error(await parseGitHubError(putRes));
 
                 showToast("Сохранено в GitHub");
             } catch (err) {
-                showToast("Ошибка сохранения в GitHub");
+                console.error('GitHub upload failed:', err);
+                showToast(`Ошибка сохранения: ${err?.message || 'проверьте настройки GitHub'}`);
             }
         }
 
