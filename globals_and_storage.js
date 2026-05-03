@@ -105,6 +105,50 @@ const STORAGE_KEY = 'workout_v4_data';
             return JSON.parse(localStorage.getItem(GITHUB_SYNC_KEY) || 'null');
         }
 
+        function sanitizeGitHubToken(rawToken) {
+            return String(rawToken || '')
+                .trim()
+                .replace(/^['"]|['"]$/g, '')
+                .replace(/^(Bearer|token)\s+/i, '');
+        }
+
+        function getGitHubHeaders(token, extraHeaders = {}) {
+            return {
+                Authorization: `token ${sanitizeGitHubToken(token)}`,
+                Accept: 'application/vnd.github+json',
+                ...extraHeaders
+            };
+        }
+
+        function getGitHubHeadersWithScheme(token, scheme, extraHeaders = {}) {
+            return {
+                Authorization: `${scheme} ${sanitizeGitHubToken(token)}`,
+                Accept: 'application/vnd.github+json',
+                ...extraHeaders
+            };
+        }
+
+        async function githubFetchWithAuthFallback(url, options = {}) {
+            const token = sanitizeGitHubToken(options.token || '');
+            const extraHeaders = { ...(options.headers || {}) };
+            delete extraHeaders.Authorization;
+
+            const requestOptions = {
+                method: options.method || 'GET',
+                body: options.body,
+                headers: getGitHubHeadersWithScheme(token, 'Bearer', extraHeaders)
+            };
+
+            let res = await fetch(url, requestOptions);
+            if (res.status !== 401) return res;
+
+            res = await fetch(url, {
+                ...requestOptions,
+                headers: getGitHubHeadersWithScheme(token, 'token', extraHeaders)
+            });
+            return res;
+        }
+
         function configureGitHubSync() {
             const current = getGitHubConfig() || {};
             const owner = prompt("GitHub owner (username/org):", current.owner || "");
@@ -115,10 +159,16 @@ const STORAGE_KEY = 'workout_v4_data';
             if (!path) return;
             const branch = prompt("Branch:", current.branch || "main");
             if (!branch) return;
-            const token = prompt("GitHub token (classic/fine-grained with Contents read/write):", current.token || "");
+            const token = prompt("GitHub token (classic/fine-grained with Contents read/write):", sanitizeGitHubToken(current.token || ""));
             if (!token) return;
 
-            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({ owner: owner.trim(), repo: repo.trim(), path: path.trim(), branch: branch.trim(), token: token.trim() }));
+            localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify({
+                owner: owner.trim(),
+                repo: repo.trim(),
+                path: path.trim(),
+                branch: branch.trim(),
+                token: sanitizeGitHubToken(token)
+            }));
             showToast("GitHub Sync настроен");
         }
 
@@ -129,12 +179,72 @@ const STORAGE_KEY = 'workout_v4_data';
                 const data = await res.json();
                 if (data?.message) details += `: ${data.message}`;
             } catch (_) { }
+            if (res.status === 401) {
+                details += `. Проверьте PAT, доступ к репозиторию и права Contents read/write`;
+            }
             return details;
         }
 
         function getGitHubApiUrl(cfg) {
             const safePath = cfg.path.split('/').map(encodeURIComponent).join('/');
             return `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${safePath}?ref=${encodeURIComponent(cfg.branch)}`;
+        }
+
+        function handleGitHubAuthFailure(actionLabel) {
+            const shouldReconfigure = confirm(
+                `${actionLabel}: GitHub отклонил токен (401 Bad credentials).\n\n` +
+                `Нажмите OK, чтобы заново ввести owner/repo/branch/path/token.`
+            );
+            if (shouldReconfigure) configureGitHubSync();
+        }
+
+        async function validateGitHubSync() {
+            let cfg = getGitHubConfig();
+            if (!cfg) {
+                const shouldConfigure = confirm("GitHub Sync еще не настроен. Нажмите OK, чтобы ввести owner/repo/branch/path/token.");
+                if (!shouldConfigure) return;
+                configureGitHubSync();
+                cfg = getGitHubConfig();
+                if (!cfg) return;
+            }
+
+            try {
+                const repoMetaUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}`;
+                const repoRes = await githubFetchWithAuthFallback(repoMetaUrl, { token: cfg.token });
+                if (repoRes.status === 401) {
+                    handleGitHubAuthFailure("Проверка GitHub Sync");
+                    throw new Error("Токен отклонен GitHub (401 Bad credentials)");
+                }
+                if (repoRes.status === 404) {
+                    throw new Error(`Репозиторий ${cfg.owner}/${cfg.repo} не найден или недоступен`);
+                }
+                if (!repoRes.ok) {
+                    throw new Error(await parseGitHubError(repoRes));
+                }
+
+                const branchUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/branches/${encodeURIComponent(cfg.branch)}`;
+                const branchRes = await githubFetchWithAuthFallback(branchUrl, { token: cfg.token });
+                if (branchRes.status === 404) {
+                    throw new Error(`Ветка ${cfg.branch} не найдена в ${cfg.owner}/${cfg.repo}`);
+                }
+                if (!branchRes.ok) {
+                    throw new Error(await parseGitHubError(branchRes));
+                }
+
+                const contentRes = await githubFetchWithAuthFallback(getGitHubApiUrl(cfg), { token: cfg.token });
+                if (contentRes.status === 404) {
+                    showToast(`GitHub Sync OK: repo и ветка доступны, файл ${cfg.path} пока не найден`);
+                    return;
+                }
+                if (!contentRes.ok) {
+                    throw new Error(await parseGitHubError(contentRes));
+                }
+
+                showToast(`GitHub Sync OK: ${cfg.owner}/${cfg.repo}@${cfg.branch}`);
+            } catch (err) {
+                console.error('GitHub sync validation failed:', err);
+                showToast(`Проверка GitHub Sync: ${err?.message || 'неизвестная ошибка'}`);
+            }
         }
 
         async function downloadFromGitHub() {
@@ -146,9 +256,13 @@ const STORAGE_KEY = 'workout_v4_data';
             const activeCfg = getGitHubConfig();
 
             try {
-                const res = await fetch(getGitHubApiUrl(activeCfg), {
-                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
+                const res = await githubFetchWithAuthFallback(getGitHubApiUrl(activeCfg), {
+                    token: activeCfg.token
                 });
+                if (res.status === 401) {
+                    handleGitHubAuthFailure("Ошибка загрузки");
+                    throw new Error("GitHub HTTP 401: Bad credentials");
+                }
                 if (!res.ok) throw new Error(await parseGitHubError(res));
                 const payload = await res.json();
                 const decoded = decodeURIComponent(escape(atob((payload.content || '').replace(/\n/g, ''))));
@@ -175,12 +289,15 @@ const STORAGE_KEY = 'workout_v4_data';
 
             try {
                 let sha = null;
-                const getRes = await fetch(getGitHubApiUrl(activeCfg), {
-                    headers: { Authorization: `Bearer ${activeCfg.token}`, Accept: 'application/vnd.github+json' }
+                const getRes = await githubFetchWithAuthFallback(getGitHubApiUrl(activeCfg), {
+                    token: activeCfg.token
                 });
                 if (getRes.ok) {
                     const existing = await getRes.json();
                     sha = existing.sha || null;
+                } else if (getRes.status === 401) {
+                    handleGitHubAuthFailure("Ошибка сохранения");
+                    throw new Error("GitHub HTTP 401: Bad credentials");
                 } else if (getRes.status !== 404) {
                     throw new Error(await parseGitHubError(getRes));
                 }
@@ -199,15 +316,18 @@ const STORAGE_KEY = 'workout_v4_data';
                 };
                 if (sha) putBody.sha = sha;
 
-                const putRes = await fetch(`https://api.github.com/repos/${encodeURIComponent(activeCfg.owner)}/${encodeURIComponent(activeCfg.repo)}/contents/${activeCfg.path.split('/').map(encodeURIComponent).join('/')}`, {
+                const putRes = await githubFetchWithAuthFallback(`https://api.github.com/repos/${encodeURIComponent(activeCfg.owner)}/${encodeURIComponent(activeCfg.repo)}/contents/${activeCfg.path.split('/').map(encodeURIComponent).join('/')}`, {
                     method: 'PUT',
+                    token: activeCfg.token,
                     headers: {
-                        Authorization: `Bearer ${activeCfg.token}`,
-                        Accept: 'application/vnd.github+json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(putBody)
                 });
+                if (putRes.status === 401) {
+                    handleGitHubAuthFailure("Ошибка сохранения");
+                    throw new Error("GitHub HTTP 401: Bad credentials");
+                }
                 if (!putRes.ok) throw new Error(await parseGitHubError(putRes));
 
                 showToast("Сохранено в GitHub");
