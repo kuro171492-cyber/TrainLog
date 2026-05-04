@@ -371,15 +371,16 @@ const STORAGE_KEY = 'workout_v4_data';
                 <div class="day-header p-3 sm:p-4">
                     <div class="day-toolbar flex flex-col gap-3">
                         <div class="day-toggle-strip" onclick="event.stopPropagation()">
-                            <button type="button" onclick="toggleCollapse(this)" class="day-toggle-btn day-icon-btn rounded-xl transition-all" aria-expanded="false" title="Показать/скрыть тренировку">
+                            <button type="button" onclick="toggleCollapse(this)" class="day-toggle-btn day-icon-btn rounded-xl transition-all" aria-expanded="false" title="Развернуть тренировку">
+                                <span class="day-toggle-label">Развернуть</span>
                                 <span class="day-collapse-caret">▼</span>
                             </button>
                         </div>
-                        <div class="day-meta-strip flex items-center gap-2 flex-wrap" onclick="event.stopPropagation()">
+                        <div class="day-meta-strip flex items-center gap-2" onclick="event.stopPropagation()">
                             <div class="date-container day-date-chip flex items-center gap-1 px-3 py-1 text-xs font-bold cursor-pointer" onclick="openDateCalendar(event)">
                                 <span data-type="d">${date.d}</span> <span data-type="m">${date.m}</span><span data-type="y" class="hidden">${date.y}</span>
                             </div>
-                            <div class="weekday-value day-weekday-badge text-xs font-bold px-3 py-1">
+                            <div class="weekday-value day-weekday-badge text-xs font-bold">
                                 ${weekdayShort}
                             </div>
                             <div class="day-total-chip flex items-center rounded-xl px-3 py-1.5" onclick="event.stopPropagation()">

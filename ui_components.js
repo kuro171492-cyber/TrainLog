@@ -179,7 +179,11 @@
             if (willOpen) ensureDayCardContentLoaded(card);
             content?.classList.toggle('hidden');
             el.classList.toggle('is-open', !!willOpen);
+            card?.classList.toggle('is-expanded', !!willOpen);
             el.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            el.setAttribute('title', willOpen ? 'Свернуть тренировку' : 'Развернуть тренировку');
+            const label = el.querySelector('.day-toggle-label');
+            if (label) label.textContent = willOpen ? 'Свернуть' : 'Развернуть';
             if (willOpen) applyAlternatingThemes();
         }
         function openTemplateModal(id) { activeSessionIdForTemplate = id; renderTemplateList(); document.getElementById('templateModal').classList.add('active'); }

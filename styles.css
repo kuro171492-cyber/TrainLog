@@ -1128,11 +1128,12 @@
         .day-card {
             border: 1px solid rgba(71, 85, 105, 0.46) !important;
             border-radius: 28px;
-            box-shadow: 0 24px 64px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(59, 130, 246, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            box-shadow: 0 24px 64px rgba(2, 6, 23, 0.36), 0 0 0 1px rgba(59, 130, 246, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             background:
-                radial-gradient(circle at top right, rgba(56, 189, 248, 0.16), transparent 30%),
-                radial-gradient(circle at top left, rgba(20, 184, 166, 0.14), transparent 28%),
-                linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.98));
+                radial-gradient(circle at top right, rgba(96, 165, 250, 0.22), transparent 32%),
+                radial-gradient(circle at top left, rgba(45, 212, 191, 0.2), transparent 28%),
+                radial-gradient(circle at bottom center, rgba(125, 211, 252, 0.12), transparent 36%),
+                linear-gradient(180deg, rgba(32, 46, 74, 0.95), rgba(20, 33, 58, 0.97) 54%, rgba(15, 23, 42, 0.98));
             backdrop-filter: blur(18px);
             transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
         }
@@ -1163,56 +1164,86 @@
             box-shadow: 0 34px 78px rgba(2, 6, 23, 0.5), 0 0 0 1px rgba(56, 189, 248, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
+        .day-card.is-expanded {
+            border-color: rgba(103, 232, 249, 0.34) !important;
+            box-shadow: 0 34px 84px rgba(2, 6, 23, 0.54), 0 0 0 1px rgba(34, 211, 238, 0.16), 0 0 26px rgba(14, 165, 233, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
         .day-header {
-            background: linear-gradient(180deg, rgba(51, 65, 85, 0.34), rgba(30, 41, 59, 0.08));
-            border-bottom: 1px solid rgba(71, 85, 105, 0.34);
-            padding-bottom: 14px !important;
+            background:
+                radial-gradient(circle at left top, rgba(34, 211, 238, 0.16), transparent 36%),
+                linear-gradient(135deg, rgba(18, 48, 84, 0.94), rgba(27, 58, 99, 0.92) 48%, rgba(22, 78, 99, 0.9));
+            border-bottom: 1px solid rgba(103, 232, 249, 0.22);
+            padding-bottom: 12px !important;
         }
 
         .day-toggle-btn {
-            height: 28px;
+            min-height: 32px;
+            padding: 0 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             border-radius: 999px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.86), rgba(15, 23, 42, 0.92));
-            border: 1px solid rgba(71, 85, 105, 0.44);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 22px rgba(2, 6, 23, 0.22);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+                linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(56, 189, 248, 0.18) 56%, rgba(29, 78, 216, 0.2));
+            border: 1px solid rgba(103, 232, 249, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 26px rgba(2, 6, 23, 0.2);
         }
 
         .day-toggle-btn::before {
+            display: none;
             left: 14px;
             width: 18px;
             background: rgba(45, 212, 191, 0.42);
             box-shadow: 0 -5px 0 rgba(56, 189, 248, 0.22), 0 5px 0 rgba(34, 197, 94, 0.18);
         }
 
+        .day-toggle-label {
+            font-size: 0.64rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #c7d2fe;
+            transition: color 0.18s ease, opacity 0.18s ease;
+        }
+
         .day-collapse-caret {
-            color: #38bdf8;
+            color: #7dd3fc;
+            font-size: 0.8rem;
+            transition: transform 0.18s ease, color 0.18s ease;
         }
 
         .day-meta-strip {
+            position: relative;
+            align-items: center;
+            flex-wrap: nowrap;
             gap: 10px;
-            padding: 14px 14px 14px 18px;
+            padding: 12px 14px;
             border-radius: 22px;
-            border: 1px solid rgba(71, 85, 105, 0.42);
+            border: 1px solid rgba(103, 232, 249, 0.16);
             background:
-                linear-gradient(135deg, rgba(30, 41, 59, 0.82), rgba(15, 23, 42, 0.76)),
-                rgba(15, 23, 42, 0.3);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 30px rgba(2, 6, 23, 0.26);
+                radial-gradient(circle at left center, rgba(45, 212, 191, 0.12), transparent 32%),
+                linear-gradient(135deg, rgba(24, 42, 73, 0.72), rgba(20, 34, 61, 0.58));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 30px rgba(2, 6, 23, 0.2);
             backdrop-filter: blur(16px);
         }
 
         .day-meta-strip::before {
-            inset: 12px auto 12px 10px;
-            width: 3px;
-            background: linear-gradient(180deg, #2dd4bf, #60a5fa);
+            display: none;
+        }
+
+        .day-meta-strip > * {
+            flex-shrink: 0;
         }
 
         .day-date-chip,
         .day-total-chip {
             min-height: 38px;
             border-radius: 14px;
-            background: linear-gradient(180deg, rgba(51, 65, 85, 0.78), rgba(30, 41, 59, 0.92));
-            border-color: rgba(71, 85, 105, 0.54);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 20px rgba(2, 6, 23, 0.18);
+            background: linear-gradient(180deg, rgba(47, 65, 98, 0.74), rgba(28, 43, 71, 0.86));
+            border-color: rgba(125, 211, 252, 0.14);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 20px rgba(2, 6, 23, 0.14);
         }
 
         .day-date-chip {
@@ -1220,11 +1251,25 @@
         }
 
         .day-weekday-badge {
-            min-width: 50px;
-            min-height: 34px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #14b8a6, #0ea5e9 58%, #2563eb);
-            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            min-width: 38px;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            align-self: center;
+            padding: 0 2px;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            color: #67e8f9;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transform: translateY(0.5px);
+            text-shadow: 0 0 14px rgba(103, 232, 249, 0.18);
+        }
+
+        .day-total-chip {
+            margin-left: auto;
         }
 
         .day-total-input {
@@ -1241,17 +1286,19 @@
             border-radius: 16px;
             font-size: 10px;
             letter-spacing: 0.06em;
-            background: linear-gradient(180deg, rgba(51, 65, 85, 0.84), rgba(30, 41, 59, 0.96));
-            border: 1px solid rgba(71, 85, 105, 0.54);
-            color: #cbd5e1;
-            box-shadow: 0 18px 30px rgba(2, 6, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            background: linear-gradient(180deg, rgba(52, 69, 102, 0.78), rgba(34, 48, 79, 0.9));
+            border: 1px solid rgba(125, 211, 252, 0.16);
+            color: #dbeafe;
+            box-shadow: 0 18px 30px rgba(2, 6, 23, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.06);
             transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
         }
 
         .day-icon-btn-primary.day-action-wide {
-            background: linear-gradient(135deg, rgba(8, 145, 178, 0.28), rgba(37, 99, 235, 0.3));
-            color: #7dd3fc;
-            border-color: rgba(56, 189, 248, 0.34);
+            background:
+                radial-gradient(circle at top center, rgba(103, 232, 249, 0.14), transparent 55%),
+                linear-gradient(135deg, rgba(8, 145, 178, 0.34), rgba(37, 99, 235, 0.34));
+            color: #a5f3fc;
+            border-color: rgba(103, 232, 249, 0.3);
         }
 
         .day-action-wide:hover {
@@ -1259,13 +1306,115 @@
             box-shadow: 0 22px 38px rgba(2, 6, 23, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
+        .day-toggle-btn:hover {
+            border-color: rgba(103, 232, 249, 0.34);
+            box-shadow: 0 16px 28px rgba(2, 6, 23, 0.22), 0 0 0 1px rgba(56, 189, 248, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .day-toggle-btn.is-open {
+            background:
+                radial-gradient(circle at left center, rgba(45, 212, 191, 0.24), transparent 38%),
+                linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(14, 165, 233, 0.28) 52%, rgba(37, 99, 235, 0.22));
+            border-color: rgba(103, 232, 249, 0.36);
+            box-shadow: 0 18px 30px rgba(2, 6, 23, 0.2), 0 0 0 1px rgba(56, 189, 248, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .day-toggle-btn.is-open .day-toggle-label {
+            color: #67e8f9;
+        }
+
+        .day-toggle-btn.is-open .day-collapse-caret {
+            color: #a5f3fc;
+        }
+
         .day-content {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.44), rgba(15, 23, 42, 0.18));
+            background:
+                radial-gradient(circle at top center, rgba(103, 232, 249, 0.08), transparent 34%),
+                linear-gradient(180deg, rgba(31, 48, 80, 0.54), rgba(22, 37, 63, 0.28));
             padding-top: 2px !important;
+        }
+
+        .day-footer {
+            gap: 12px;
+            align-items: center;
+        }
+
+        .day-footer-actions {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .day-footer-btn {
+            flex: 1 1 0;
+            min-height: 44px;
+            padding: 0 14px !important;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(71, 85, 105, 0.52);
+            box-shadow: 0 16px 28px rgba(2, 6, 23, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            font-size: 11px !important;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+        }
+
+        .day-footer-btn-muted {
+            background: linear-gradient(180deg, rgba(51, 65, 85, 0.78), rgba(30, 41, 59, 0.94));
+            color: #cbd5e1;
+        }
+
+        .day-footer-btn-muted:hover {
+            transform: translateY(-1px);
+            color: #f8fafc;
+            border-color: rgba(125, 211, 252, 0.28);
+            box-shadow: 0 20px 34px rgba(2, 6, 23, 0.28), 0 0 0 1px rgba(56, 189, 248, 0.08);
+        }
+
+        .day-footer-btn-primary {
+            background:
+                radial-gradient(circle at top center, rgba(56, 189, 248, 0.16), transparent 58%),
+                linear-gradient(135deg, rgba(8, 145, 178, 0.24), rgba(37, 99, 235, 0.28));
+            border-color: rgba(56, 189, 248, 0.28);
+            color: #7dd3fc;
+        }
+
+        .day-footer-btn-primary:hover {
+            transform: translateY(-1px);
+            color: #e0f2fe;
+            border-color: rgba(103, 232, 249, 0.4);
+            box-shadow: 0 20px 34px rgba(2, 6, 23, 0.32), 0 0 0 1px rgba(56, 189, 248, 0.14);
+        }
+
+        .day-footer-btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .day-delete-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.84), rgba(15, 23, 42, 0.94));
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            box-shadow: 0 12px 22px rgba(2, 6, 23, 0.22);
         }
 
         .exercise-list {
             padding-left: 0;
+        }
+
+        .day-card.is-expanded .day-content {
+            border-top-color: rgba(103, 232, 249, 0.2) !important;
+            background:
+                radial-gradient(circle at top center, rgba(45, 212, 191, 0.12), transparent 38%),
+                radial-gradient(circle at bottom center, rgba(96, 165, 250, 0.08), transparent 36%),
+                linear-gradient(180deg, rgba(35, 54, 88, 0.56), rgba(22, 37, 63, 0.32));
         }
 
         .exercise-list::before {
@@ -1433,6 +1582,47 @@
         }
 
         @media (max-width: 640px) {
+            .day-meta-strip {
+                gap: 8px;
+                padding: 11px 12px;
+            }
+
+            .day-toggle-btn {
+                min-height: 30px;
+                padding: 0 10px;
+                gap: 6px;
+            }
+
+            .day-toggle-label {
+                font-size: 0.58rem;
+                letter-spacing: 0.1em;
+            }
+
+            .day-date-chip,
+            .day-total-chip {
+                min-height: 36px;
+            }
+
+            .day-weekday-badge {
+                min-width: 32px;
+                min-height: 36px;
+                font-size: 0.72rem;
+            }
+
+            .day-footer {
+                gap: 10px;
+            }
+
+            .day-footer-actions {
+                gap: 8px;
+            }
+
+            .day-footer-btn {
+                min-height: 42px;
+                font-size: 10px !important;
+                padding: 0 10px !important;
+            }
+
             .set-row {
                 gap: 6px;
                 padding: 8px;
