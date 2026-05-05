@@ -171,6 +171,135 @@
             renderTemplateList();
         }
 
+        let templateSearchQuery = '';
+        let templateRenderLimit = 0;
+
+        function initTemplateSearch() {
+            ensureTemplateControls();
+        }
+
+        function ensureTemplateControls() {
+            const list = document.getElementById('templateList');
+            if (!list || document.getElementById('templateToolbar')) return;
+            const toolbar = document.createElement('div');
+            toolbar.id = 'templateToolbar';
+            toolbar.className = 'px-4 sm:px-5 pt-4 pb-3 border-b border-slate-200/70 bg-slate-50/70';
+            toolbar.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="templateSearchInput" type="search" class="flex-1 bg-white border border-slate-300 text-slate-700 text-sm font-semibold py-2.5 px-4 rounded-xl outline-none">
+                    <div id="templateListMeta" class="min-h-[42px] px-4 rounded-xl border border-slate-300 bg-white/80 text-[11px] font-bold uppercase tracking-wide text-slate-500 flex items-center"></div>
+                </div>
+            `;
+            list.parentElement.insertBefore(toolbar, list);
+            const searchInput = document.getElementById('templateSearchInput');
+            if (searchInput) {
+                searchInput.placeholder = 'Поиск шаблонов и упражнений';
+                searchInput.addEventListener('input', () => {
+                    templateSearchQuery = searchInput.value.trim().toLocaleLowerCase('ru');
+                    templateRenderLimit = LOW_PERF_UI ? 18 : 36;
+                    renderTemplateList();
+                });
+            }
+        }
+
+        function getFilteredTemplates(templates) {
+            if (!templateSearchQuery) return templates;
+            return templates.filter(t => {
+                const haystack = [
+                    t?.name || '',
+                    t?.weekday || '',
+                    ...(t?.items || []).flatMap(item => item?.type === 'superset'
+                        ? (item.exercises || []).map(ex => ex?.name || '')
+                        : [item?.name || ''])
+                ].join(' ').toLocaleLowerCase('ru');
+                return haystack.includes(templateSearchQuery);
+            });
+        }
+
+        renderTemplateList = function renderTemplateListOptimized() {
+            ensureTemplateControls();
+            const list = document.getElementById('templateList');
+            const meta = document.getElementById('templateListMeta');
+            const searchInput = document.getElementById('templateSearchInput');
+            const templates = sortTemplatesAlphabetically(JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'));
+            const filteredTemplates = getFilteredTemplates(templates);
+            if (searchInput && searchInput.value.trim().toLocaleLowerCase('ru') !== templateSearchQuery) {
+                searchInput.value = templateSearchQuery;
+            }
+            if (!templateRenderLimit) templateRenderLimit = LOW_PERF_UI ? 18 : 36;
+            const visibleTemplates = filteredTemplates.slice(0, templateRenderLimit);
+            list.innerHTML = '';
+
+            if (meta) {
+                meta.textContent = filteredTemplates.length > visibleTemplates.length
+                    ? `Показано ${visibleTemplates.length} из ${filteredTemplates.length}`
+                    : `${filteredTemplates.length} шаблонов`;
+            }
+
+            if (filteredTemplates.length === 0) {
+                list.innerHTML = '<p class="text-center text-slate-600 py-10">Ничего не найдено</p>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            visibleTemplates.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.dataset.templateId = t.id;
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-3 flex-wrap">
+                                <span class="template-chip">${t.weekday}</span>
+                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
+                            </div>
+                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
+                        </div>
+                    </div>
+                    <div class="flex items-end justify-between gap-3">
+                        <div class="template-exercises-preview hidden" data-loaded="0"></div>
+                        <div class="template-menu mt-0 ml-auto">
+                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
+                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
+                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
+                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
+                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
+                        </div>
+                    </div>
+                `;
+                fragment.appendChild(card);
+            });
+            list.appendChild(fragment);
+
+            if (filteredTemplates.length > visibleTemplates.length) {
+                const moreBtn = document.createElement('button');
+                moreBtn.type = 'button';
+                moreBtn.className = 'template-load-more';
+                moreBtn.textContent = 'Показать еще';
+                moreBtn.onclick = () => {
+                    templateRenderLimit += LOW_PERF_UI ? 18 : 36;
+                    renderTemplateList();
+                };
+                list.appendChild(moreBtn);
+            }
+        };
+
+        toggleTemplateExercises = function toggleTemplateExercisesOptimized(btn) {
+            const card = btn.closest('.template-card');
+            const preview = card?.querySelector('.template-exercises-preview');
+            if (!preview) return;
+            const isHidden = preview.classList.contains('hidden');
+            if (isHidden && preview.dataset.loaded !== '1') {
+                const templateId = card?.dataset?.templateId;
+                const template = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === templateId);
+                preview.innerHTML = getTemplateExerciseSummary(template);
+                preview.dataset.loaded = '1';
+            }
+            preview.classList.toggle('hidden', !isHidden);
+            btn.classList.toggle('is-active', isHidden);
+            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
+        };
+
         // --- UTILS ---
         function toggleCollapse(el) {
             const card = el.closest('.day-card');
@@ -186,7 +315,13 @@
             if (label) label.textContent = willOpen ? 'Свернуть' : 'Развернуть';
             if (willOpen) applyAlternatingThemes();
         }
-        function openTemplateModal(id) { activeSessionIdForTemplate = id; renderTemplateList(); document.getElementById('templateModal').classList.add('active'); }
+        function openTemplateModal(id) {
+            activeSessionIdForTemplate = id;
+            ensureTemplateControls();
+            templateRenderLimit = LOW_PERF_UI ? 18 : 36;
+            renderTemplateList();
+            document.getElementById('templateModal').classList.add('active');
+        }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function showToast(txt) { const t = document.getElementById('toast'); t.textContent = txt; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2500); }
         function addSetToBtn(btn) { btn.previousElementSibling.appendChild(createSet()); autoSave(); }

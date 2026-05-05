@@ -12,6 +12,8 @@
         let localSaveTimer = null;
         let repoSaveTimer = null;
         let latestSavePayload = null;
+        let analyticsOptionSignature = '';
+        const ANALYTICS_RENDER_LIMIT = LOW_PERF_UI ? 120 : 320;
 
         function scheduleStatePersistence(workouts, templates) {
             latestSavePayload = {
@@ -201,26 +203,99 @@
             applyAlternatingThemes();
         }
 
-        // Analytics (simplified for this version)
-        function renderAnalytics() {
+        function getAnalyticsRows() {
             const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-            const body = document.getElementById('analyticsBody');
-            body.innerHTML = '';
+            const rows = [];
             data.forEach(session => {
+                const dateLabel = `${session.dateObj.d} ${session.dateObj.m}`;
                 session.items.forEach(item => {
                     const exercises = item.type === 'superset' ? item.exercises : [item];
                     exercises.forEach(ex => {
-                        const row = document.createElement('tr');
-                        row.className = "border-b border-slate-200";
-                        row.innerHTML = `
-                            <td class="p-4 text-slate-500">${session.dateObj.d} ${session.dateObj.m}</td>
-                            <td class="p-4 text-slate-700 font-bold">${ex.name || '---'}</td>
-                            <td class="p-4 text-slate-500 text-[10px]">${ex.sets.map(s => `${s.w}x${s.r}`).join(', ')}</td>
-                        `;
-                        body.appendChild(row);
+                        rows.push({
+                            dateLabel,
+                            exercise: ex.name || '---',
+                            result: ex.sets.map(s => `${s.w}x${s.r}`).join(', '),
+                            timestamp: sessionDateToTimestamp(session)
+                        });
                     });
                 });
             });
+            return rows;
+        }
+
+        function ensureAnalyticsControls(rows) {
+            const analyticsPanel = document.querySelector('#roomTable .light-surface .flex.flex-col.gap-3.mb-6');
+            const select = document.getElementById('chartExerciseSelect');
+            let searchInput = document.getElementById('analyticsSearchInput');
+            let summary = document.getElementById('analyticsSummary');
+            if (analyticsPanel) {
+                analyticsPanel.querySelectorAll(':scope > h2, :scope > select').forEach(el => el.remove());
+                if (!searchInput || !summary) {
+                    const filtersRow = document.createElement('div');
+                    filtersRow.className = 'flex flex-col sm:flex-row gap-2';
+                    filtersRow.innerHTML = `
+                        <input id="analyticsSearchInput" type="search" class="flex-1 bg-white border border-slate-300 text-slate-700 text-sm font-semibold py-2.5 px-4 rounded-xl outline-none">
+                        <div id="analyticsSummary" class="min-h-[42px] px-4 rounded-xl border border-slate-300 bg-white/80 text-[11px] font-bold uppercase tracking-wide text-slate-500 flex items-center"></div>
+                    `;
+                    analyticsPanel.appendChild(filtersRow);
+                    searchInput = filtersRow.querySelector('#analyticsSearchInput');
+                    summary = filtersRow.querySelector('#analyticsSummary');
+                    searchInput?.addEventListener('input', updateAnalyticsChart);
+                }
+            }
+            if (searchInput) searchInput.placeholder = 'Фильтр по упражнению';
+            const names = Array.from(new Set(rows.map(row => row.exercise).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'ru', { sensitivity: 'base' }));
+            const signature = names.join('||');
+            if (select && analyticsOptionSignature !== signature) {
+                const currentValue = select.value || '__all__';
+                select.innerHTML = `<option value="__all__">Все упражнения</option>${names.map(name => `<option value="${name}">${name}</option>`).join('')}`;
+                select.value = names.includes(currentValue) ? currentValue : '__all__';
+                analyticsOptionSignature = signature;
+            }
+            return { select, searchInput, summary };
+        }
+
+        // Analytics (simplified for this version)
+        function renderAnalytics() {
+            const body = document.getElementById('analyticsBody');
+            const rows = getAnalyticsRows();
+            const { select, searchInput, summary } = ensureAnalyticsControls(rows);
+            const selectedExercise = select?.value || '__all__';
+            const query = (searchInput?.value || '').trim().toLocaleLowerCase('ru');
+            let filteredRows = rows.filter(row => selectedExercise === '__all__' || row.exercise === selectedExercise);
+            if (query) {
+                filteredRows = filteredRows.filter(row =>
+                    row.exercise.toLocaleLowerCase('ru').includes(query) ||
+                    row.result.toLocaleLowerCase('ru').includes(query) ||
+                    row.dateLabel.toLocaleLowerCase('ru').includes(query)
+                );
+            }
+
+            const visibleRows = filteredRows.slice(0, ANALYTICS_RENDER_LIMIT);
+            body.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            visibleRows.forEach(rowData => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-200";
+                row.innerHTML = `
+                    <td class="p-4 text-slate-500">${rowData.dateLabel}</td>
+                    <td class="p-4 text-slate-700 font-bold">${rowData.exercise}</td>
+                    <td class="p-4 text-slate-500 text-[10px]">${rowData.result}</td>
+                `;
+                fragment.appendChild(row);
+            });
+            if (!visibleRows.length) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="3" class="p-6 text-center text-slate-500 font-semibold">Ничего не найдено</td>`;
+                fragment.appendChild(row);
+            }
+            body.appendChild(fragment);
+            if (summary) {
+                const isLimited = filteredRows.length > visibleRows.length;
+                summary.textContent = isLimited
+                    ? `Показано ${visibleRows.length} из ${filteredRows.length}`
+                    : `${filteredRows.length} записей`;
+            }
         }
 
         function sessionDateToTimestamp(session) {
@@ -611,4 +686,4 @@
                 req.onerror = () => reject(req.error);
             });
         }
-        function updateAnalyticsChart() { }
+        function updateAnalyticsChart() { renderAnalytics(); }

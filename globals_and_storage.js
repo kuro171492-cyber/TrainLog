@@ -53,6 +53,7 @@ const STORAGE_KEY = 'workout_v4_data';
             initDropdownOptions();
             initNativeDatePicker();
             initMobileDateModal();
+            if (typeof initTemplateSearch === 'function') initTemplateSearch();
             await loadPersistedFileHandle();
             await loadFromStorage();
         });

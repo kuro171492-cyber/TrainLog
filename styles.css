@@ -115,6 +115,22 @@
             transform: none !important;
         }
 
+        .low-perf-ui .month-group,
+        .low-perf-ui .week-group,
+        .low-perf-ui .day-card,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .template-card,
+        .low-perf-ui #roomTable > div {
+            content-visibility: auto;
+            contain-intrinsic-size: 1px 280px;
+        }
+
+        #roomTable .light-surface > .flex.flex-col.gap-3.mb-6 > h2,
+        #roomTable .light-surface > .flex.flex-col.gap-3.mb-6 > select {
+            display: none;
+        }
+
         .top-actions > button,
         .top-actions > .group-toggle {
             flex-shrink: 0;
@@ -558,6 +574,19 @@
             border-color: rgba(59, 130, 246, 0.55);
             background: rgba(191, 219, 254, 0.65);
             color: #1d4ed8;
+        }
+
+        .template-load-more {
+            width: 100%;
+            min-height: 44px;
+            border-radius: 16px;
+            border: 1px dashed rgba(96, 165, 250, 0.4);
+            background: rgba(255, 255, 255, 0.88);
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
         .day-card,
