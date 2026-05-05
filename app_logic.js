@@ -1,3 +1,52 @@
+        const LOW_PERF_UI = (() => {
+            const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false;
+            const narrowViewport = window.matchMedia?.('(max-width: 768px)').matches ?? false;
+            const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+            const cpuCores = navigator.hardwareConcurrency || 8;
+            const deviceMemory = navigator.deviceMemory || 8;
+            return reducedMotion || ((coarsePointer || narrowViewport) && (cpuCores <= 6 || deviceMemory <= 4));
+        })();
+
+        document.documentElement.classList.toggle('low-perf-ui', LOW_PERF_UI);
+
+        let localSaveTimer = null;
+        let repoSaveTimer = null;
+        let latestSavePayload = null;
+
+        function scheduleStatePersistence(workouts, templates) {
+            latestSavePayload = {
+                workouts,
+                templates,
+                exportDate: new Date().toISOString()
+            };
+
+            clearTimeout(localSaveTimer);
+            localSaveTimer = setTimeout(() => {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(workouts));
+                localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
+            }, LOW_PERF_UI ? 220 : 120);
+
+            clearTimeout(repoSaveTimer);
+            repoSaveTimer = setTimeout(() => {
+                if (!latestSavePayload) return;
+                writeDataToRepoFile(latestSavePayload).catch(() => { });
+            }, LOW_PERF_UI ? 1600 : 900);
+        }
+
+        function flushPendingStatePersistence() {
+            if (!latestSavePayload) return;
+            clearTimeout(localSaveTimer);
+            clearTimeout(repoSaveTimer);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(latestSavePayload.workouts));
+            localStorage.setItem(TEMPLATE_KEY, JSON.stringify(latestSavePayload.templates));
+            writeDataToRepoFile(latestSavePayload).catch(() => { });
+        }
+
+        window.addEventListener('pagehide', flushPendingStatePersistence);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') flushPendingStatePersistence();
+        });
+
         function initDropdownOptions() {
             WEEKDAYS.forEach(w => addDDItem('weekdayList', w, 'weekday', w));
             for (let i = 1; i <= 31; i++) addDDItem('dayList', i, 'date', 'd_' + i);
@@ -46,8 +95,7 @@
             }));
             const sortedDays = sortSessionsByDate(days);
             const syncedTemplates = syncTemplatesFromLatestSessions(sortedDays);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedDays));
-            writeDataToRepoFile({ workouts: sortedDays, templates: syncedTemplates }).catch(() => { });
+            scheduleStatePersistence(sortedDays, syncedTemplates);
         }
 
         function syncTemplatesFromLatestSessions(sortedSessions = []) {
@@ -440,7 +488,14 @@
             dayCards.forEach((card, index) => {
                 card.classList.remove('theme-a', 'theme-b');
                 card.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
+            });
 
+            if (LOW_PERF_UI) {
+                applyDayStatusBorders();
+                return;
+            }
+
+            dayCards.forEach((card) => {
                 const topLevelItems = Array.from(card.querySelectorAll('.exercise-list > [data-type]'));
                 applyExerciseThemes(topLevelItems);
 

@@ -28,6 +28,93 @@
             }
         }
 
+        .low-perf-ui body {
+            background:
+                linear-gradient(180deg, #141920 0%, #1a2230 55%, #151b24 100%);
+            background-size: 100% 100%;
+            background-attachment: scroll;
+        }
+
+        .low-perf-ui nav,
+        .low-perf-ui .custom-dropdown,
+        .low-perf-ui .day-card,
+        .low-perf-ui .day-meta-strip,
+        .low-perf-ui .day-footer-btn,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .template-card,
+        .low-perf-ui .modal-overlay > div {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .low-perf-ui .day-card,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .custom-dropdown,
+        .low-perf-ui .template-card {
+            box-shadow: 0 10px 22px rgba(2, 6, 23, 0.18) !important;
+        }
+
+        .low-perf-ui .day-card::after,
+        .low-perf-ui .exercise-card::after,
+        .low-perf-ui .custom-dropdown::before,
+        .low-perf-ui .dropdown-column::before,
+        .low-perf-ui .dropdown-column::after,
+        .low-perf-ui .exercise-list::before {
+            display: none !important;
+        }
+
+        .low-perf-ui .day-card,
+        .low-perf-ui .day-header,
+        .low-perf-ui .day-meta-strip,
+        .low-perf-ui .day-content,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .day-action-wide,
+        .low-perf-ui .day-footer-btn,
+        .low-perf-ui .custom-dropdown {
+            background-image: none !important;
+        }
+
+        .low-perf-ui .day-card {
+            background: linear-gradient(180deg, rgba(29, 40, 61, 0.98), rgba(18, 27, 43, 0.98)) !important;
+        }
+
+        .low-perf-ui .day-header {
+            background: linear-gradient(135deg, rgba(24, 55, 92, 0.94), rgba(19, 92, 110, 0.9)) !important;
+        }
+
+        .low-perf-ui .day-meta-strip,
+        .low-perf-ui .day-content,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .day-action-wide,
+        .low-perf-ui .day-footer-btn,
+        .low-perf-ui .custom-dropdown {
+            background: rgba(22, 31, 48, 0.96) !important;
+        }
+
+        .low-perf-ui .day-card,
+        .low-perf-ui .day-toggle-btn,
+        .low-perf-ui .day-meta-strip,
+        .low-perf-ui .day-action-wide,
+        .low-perf-ui .day-footer-btn,
+        .low-perf-ui .exercise-card,
+        .low-perf-ui .set-row,
+        .low-perf-ui .superset-card,
+        .low-perf-ui .dropdown-item {
+            transition: none !important;
+        }
+
+        .low-perf-ui .day-card:hover,
+        .low-perf-ui .exercise-card:hover,
+        .low-perf-ui .set-row:hover,
+        .low-perf-ui .day-action-wide:hover,
+        .low-perf-ui .day-footer-btn:hover {
+            transform: none !important;
+        }
+
         .top-actions > button,
         .top-actions > .group-toggle {
             flex-shrink: 0;

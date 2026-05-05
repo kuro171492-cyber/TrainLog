@@ -454,7 +454,6 @@ const STORAGE_KEY = 'workout_v4_data';
             if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
             else sets.appendChild(createSet());
             container.appendChild(div);
-            applyAlternatingThemes();
         }
 
         function renderSuperset(container, data = null) {
@@ -470,7 +469,6 @@ const STORAGE_KEY = 'workout_v4_data';
             const inner = div.querySelector('.superset-inner');
             if (data?.exercises) data.exercises.forEach(ex => renderExercise(inner, ex, true));
             else { renderExercise(inner, null, true); renderExercise(inner, null, true); }
-            applyAlternatingThemes();
         }
 
         function handleExerciseCardClick(event, card) {

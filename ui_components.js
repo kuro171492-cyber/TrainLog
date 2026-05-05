@@ -313,7 +313,7 @@
                 needsDomSort = true;
             }
             if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
-            autoSave();
+            autoSave(type === 'date' ? false : true);
         }
 
         function closeAllDropdowns() { Object.values(dropdowns).forEach(d => d.classList.remove('active')); }
