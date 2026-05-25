@@ -324,10 +324,10 @@
         }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function showToast(txt) { const t = document.getElementById('toast'); t.textContent = txt; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2500); }
-        function addSetToBtn(btn) { btn.previousElementSibling.appendChild(createSet()); autoSave(); }
-        function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
-        function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); autoSave(); }
-        function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); autoSave(); }
+        function addSetToBtn(btn) { btn.previousElementSibling.appendChild(createSet()); applyAlternatingThemes(); autoSave(true); }
+        function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
+        function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
+        function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); applyAlternatingThemes(); autoSave(true); }
         function deleteDay(id) { if (confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
         function toggleExerciseDetails(triggerEl) {
             const card = triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
@@ -415,8 +415,13 @@
 
         function openDropdown(e, type) {
             e.stopPropagation(); closeAllDropdowns();
-            activeInput = e.currentTarget;
-            const rect = activeInput.getBoundingClientRect();
+            let target = e.currentTarget;
+            if (type === 'weight' || type === 'reps' || type === 'exercise') {
+                const input = target.querySelector('.set-input');
+                if (input) target = input;
+            }
+            activeInput = target;
+            const rect = target.getBoundingClientRect();
             const dd = dropdowns[type];
             dd.style.top = `${rect.bottom + window.scrollY + 8}px`;
             dd.style.left = `${Math.min(rect.left, window.innerWidth - 200)}px`;
@@ -446,6 +451,10 @@
                 else if (val.includes('m_')) parent.querySelector('[data-type="m"]').textContent = val.replace('m_', '');
                 else parent.querySelector('[data-type="y"]').textContent = val.replace('y_', '');
                 needsDomSort = true;
+            }
+            if (type === 'w' || type === 'ex' || type === 'reps') {
+                const setRow = activeInput.closest('.set-row');
+                if (setRow && typeof updateSetLayout === 'function') updateSetLayout(setRow);
             }
             if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
             autoSave(type === 'date' ? false : true);

@@ -272,24 +272,17 @@
             }
 
             const visibleRows = filteredRows.slice(0, ANALYTICS_RENDER_LIMIT);
-            body.innerHTML = '';
-            const fragment = document.createDocumentFragment();
-            visibleRows.forEach(rowData => {
-                const row = document.createElement('tr');
-                row.className = "border-b border-slate-200";
-                row.innerHTML = `
-                    <td class="p-4 text-slate-500">${rowData.dateLabel}</td>
-                    <td class="p-4 text-slate-700 font-bold">${rowData.exercise}</td>
-                    <td class="p-4 text-slate-500 text-[10px]">${rowData.result}</td>
-                `;
-                fragment.appendChild(row);
-            });
-            if (!visibleRows.length) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="3" class="p-6 text-center text-slate-500 font-semibold">Ничего не найдено</td>`;
-                fragment.appendChild(row);
+            if (visibleRows.length) {
+                body.innerHTML = visibleRows.map(rowData => `
+                    <tr class="border-b border-slate-200">
+                        <td class="p-4 text-slate-500">${rowData.dateLabel}</td>
+                        <td class="p-4 text-slate-700 font-bold">${rowData.exercise}</td>
+                        <td class="p-4 text-slate-500 text-[10px]">${rowData.result}</td>
+                    </tr>
+                `).join('');
+            } else {
+                body.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-500 font-semibold">Ничего не найдено</td></tr>';
             }
-            body.appendChild(fragment);
             if (summary) {
                 const isLimited = filteredRows.length > visibleRows.length;
                 summary.textContent = isLimited
@@ -437,6 +430,11 @@
             const cards = Array.from(container.querySelectorAll('.day-card'));
             if (cards.length === 0) return;
 
+            const scrollY = window.scrollY;
+            const scrollTarget = document.querySelector('.day-card.is-expanded');
+            let scrollOffset = 0;
+            if (scrollTarget) scrollOffset = scrollTarget.getBoundingClientRect().top;
+
             cards.sort((a, b) => getDayCardTimestamp(b) - getDayCardTimestamp(a));
             container.innerHTML = '';
 
@@ -533,6 +531,15 @@
                 if (monthCountEl) monthCountEl.textContent = `${monthCount} трен.`;
                 weekBody?.appendChild(card);
             });
+
+            requestAnimationFrame(() => {
+                if (scrollTarget && scrollTarget.isConnected) {
+                    const newTop = scrollTarget.getBoundingClientRect().top;
+                    window.scrollBy(0, newTop - scrollOffset);
+                } else {
+                    window.scrollTo(0, scrollY);
+                }
+            });
         }
 
         function normalizeToLocalMidnight(date) {
@@ -559,36 +566,38 @@
         }
 
         function applyAlternatingThemes() {
-            const dayCards = Array.from(document.querySelectorAll('#daysContainer .day-card'));
-            dayCards.forEach((card, index) => {
+            const dayCards = document.querySelectorAll('#daysContainer .day-card');
+            let i = 0;
+            for (const card of dayCards) {
                 card.classList.remove('theme-a', 'theme-b');
-                card.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
-            });
+                card.classList.add(i++ % 2 === 0 ? 'theme-a' : 'theme-b');
+            }
 
             if (LOW_PERF_UI) {
                 applyDayStatusBorders();
                 return;
             }
 
-            dayCards.forEach((card) => {
-                const topLevelItems = Array.from(card.querySelectorAll('.exercise-list > [data-type]'));
+            for (const card of dayCards) {
+                const topLevelItems = card.querySelectorAll('.exercise-list > [data-type]');
                 applyExerciseThemes(topLevelItems);
 
                 const nestedGroups = card.querySelectorAll('.superset-inner');
-                nestedGroups.forEach(group => {
-                    const nestedExercises = Array.from(group.querySelectorAll(':scope > .exercise-card'));
+                for (const group of nestedGroups) {
+                    const nestedExercises = group.querySelectorAll(':scope > .exercise-card');
                     applyExerciseThemes(nestedExercises);
-                });
-            });
+                }
+            }
             applyDayStatusBorders();
         }
 
         function applyExerciseThemes(exerciseElements) {
-            exerciseElements.forEach((exercise, index) => {
-                if (!exercise.classList.contains('exercise-card')) return;
+            let i = 0;
+            for (const exercise of exerciseElements) {
+                if (!exercise.classList.contains('exercise-card')) continue;
                 exercise.classList.remove('theme-a', 'theme-b');
-                exercise.classList.add(index % 2 === 0 ? 'theme-a' : 'theme-b');
-            });
+                exercise.classList.add(i++ % 2 === 0 ? 'theme-a' : 'theme-b');
+            }
         }
 
         async function connectRepoFile() {
@@ -687,3 +696,5 @@
             });
         }
         function updateAnalyticsChart() { renderAnalytics(); }
+
+

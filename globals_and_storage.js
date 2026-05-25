@@ -506,12 +506,14 @@ const STORAGE_KEY = 'workout_v4_data';
         function createSet(w = '', r = '', t = '00:00') {
             const div = document.createElement('div');
             div.className = "set-row";
+            const weightEmpty = !w.trim();
+            const timeEmpty = !t.trim() || t === '00:00';
             div.innerHTML = `
-                <div class="set-field set-field-weight">
+                <div class="set-field set-field-weight${weightEmpty ? ' is-empty' : ''}" onclick="openDropdown(event, 'weight')">
                     <span class="set-field-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 10v4M7 8v8M10 7v10M14 7v10M17 8v8M20 10v4M7 12h10" /></svg>
                     </span>
-                    <input type="text" readonly class="set-input font-bold" value="${w}" onclick="openDropdown(event, 'weight')">
+                    <input type="text" readonly class="set-input font-bold" value="${w}" onclick="event.stopPropagation(); openDropdown(event, 'weight')">
                 </div>
                 <div class="set-field-divider" aria-hidden="true"></div>
                 <div class="set-field set-field-reps">
@@ -521,15 +523,65 @@ const STORAGE_KEY = 'workout_v4_data';
                     <input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')">
                 </div>
                 <div class="set-field-divider" aria-hidden="true"></div>
-                <div class="set-field set-field-time">
+                <div class="set-field set-field-time${timeEmpty ? ' is-empty' : ''}" onclick="openDropdown(event, 'exercise')">
                     <span class="set-field-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 3h6M12 8v4l2.5 2.5M7 5l-1.5 1.5M17 5l1.5 1.5M12 21a8 8 0 100-16 8 8 0 000 16z" /></svg>
                     </span>
-                    <input type="text" readonly class="set-input set-input-time font-mono text-blue-400 font-bold" value="${t}" onclick="openDropdown(event, 'exercise')">
+                    <input type="text" readonly class="set-input set-input-time font-mono text-blue-400 font-bold" value="${t}" onclick="event.stopPropagation(); openDropdown(event, 'exercise')">
                 </div>
                 <button onclick="this.parentElement.remove(); autoSave();" class="set-remove-btn" title="Удалить подход">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg>
                 </button>
             `;
+            updateSetLayout(div);
             return div;
+        }
+
+        function updateSetLayout(setRow) {
+            const fields = {
+                weight: setRow.querySelector('.set-field-weight'),
+                reps: setRow.querySelector('.set-field-reps'),
+                time: setRow.querySelector('.set-field-time')
+            };
+            const getVal = (field) => {
+                const inp = field?.querySelector('.set-input');
+                return inp ? inp.value.trim() : '';
+            };
+            if (!fields.weight || !fields.reps || !fields.time) return;
+
+            const v = {
+                weight: getVal(fields.weight),
+                reps: getVal(fields.reps),
+                time: getVal(fields.time)
+            };
+            const isFilled = {
+                weight: !!v.weight && v.weight !== '0',
+                reps: !!v.reps,
+                time: v.time !== '00:00' && !!v.time
+            };
+            const filledCount = [isFilled.weight, isFilled.reps, isFilled.time].filter(Boolean).length;
+
+            const setFlex = (field, flex) => { field.style.flex = flex; };
+            const toggleEmpty = (field, empty) => field.classList.toggle('is-empty', empty);
+
+            if (filledCount === 0 || filledCount === 3) {
+                setFlex(fields.weight, '1 1 0');
+                setFlex(fields.reps, '1 1 0');
+                setFlex(fields.time, '1 1 0');
+                toggleEmpty(fields.weight, false);
+                toggleEmpty(fields.time, false);
+                return;
+            }
+
+            if (filledCount === 1) {
+                setFlex(fields.weight, isFilled.weight ? '0 1 20%' : '0 1 40%');
+                setFlex(fields.reps,   isFilled.reps   ? '0 1 20%' : '0 1 40%');
+                setFlex(fields.time,   isFilled.time   ? '0 1 20%' : '0 1 40%');
+            } else {
+                setFlex(fields.weight, isFilled.weight ? '0 1 25%' : '0 1 50%');
+                setFlex(fields.reps,   isFilled.reps   ? '0 1 25%' : '0 1 50%');
+                setFlex(fields.time,   isFilled.time   ? '0 1 25%' : '0 1 50%');
+            }
+            toggleEmpty(fields.weight, !isFilled.weight);
+            toggleEmpty(fields.time, !isFilled.time);
         }

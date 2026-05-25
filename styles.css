@@ -148,22 +148,10 @@
             font-style: italic;
         }
 
-        .set-input {
-            width: 100%;
-            min-width: 0;
-            text-align: center;
-            border-bottom: 1px solid #94a3b8;
-            font-size: 0.8rem;
-            color: #0f172a;
-            background: transparent;
-            cursor: pointer;
-        }
-
         .set-row {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
@@ -176,8 +164,9 @@
         .set-field {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             min-width: 0;
+            cursor: pointer;
         }
 
         .set-field-icon {
@@ -185,12 +174,67 @@
             font-size: 12px;
             line-height: 1;
             opacity: 0.8;
+            pointer-events: none;
         }
 
         .set-field-divider {
+            flex-shrink: 0;
             width: 1px;
             height: 16px;
             background: rgba(148, 163, 184, 0.55);
+        }
+
+        .set-field-weight,
+        .set-field-time {
+            flex: 0 1 auto;
+            min-width: 0;
+            transition: flex 0.12s ease, min-width 0.12s ease;
+            overflow: hidden;
+        }
+
+        .set-field-reps {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .set-field-weight .set-input,
+        .set-field-time .set-input {
+            width: 100%;
+            transition: opacity 0.12s ease;
+        }
+
+        .set-field-weight.is-empty,
+        .set-field-time.is-empty {
+            flex: 0 0 28px !important;
+            min-width: 28px;
+        }
+
+        .set-field-weight.is-empty .set-input,
+        .set-field-time.is-empty .set-input {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .set-field-weight.is-empty + .set-field-divider,
+        .set-field-time.is-empty + .set-field-divider {
+            display: none;
+        }
+
+        .set-field-reps .set-input {
+            width: 100%;
+        }
+
+        .set-input {
+            width: 100%;
+            min-width: 0;
+            text-align: center;
+            border-bottom: 1px solid #94a3b8;
+            font-size: 0.75rem;
+            color: #0f172a;
+            background: transparent;
+            cursor: pointer;
+            box-sizing: border-box;
         }
 
         .set-input-time {
@@ -198,6 +242,7 @@
         }
 
         .set-remove-btn {
+            flex-shrink: 0;
             border: none;
             background: transparent;
             color: #64748b;
@@ -1113,13 +1158,6 @@
             box-shadow: 0 0 0 3px color-mix(in srgb, var(--weekday-accent, #3b82f6) 12%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.96);
         }
 
-        .superset-card {
-            border: 1px solid color-mix(in srgb, var(--weekday-accent, #3b82f6) 18%, rgba(59, 130, 246, 0.3));
-            border-left: 4px solid color-mix(in srgb, var(--weekday-accent, #3b82f6) 72%, black);
-            background: linear-gradient(180deg, color-mix(in srgb, var(--weekday-accent, #3b82f6) 8%, white), rgba(240, 249, 255, 0.88));
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
         .superset-label,
         .superset-add-btn {
             color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 84%, black);
@@ -1644,6 +1682,18 @@
             background: rgba(71, 85, 105, 0.7);
         }
 
+        .set-field-weight.is-empty .set-field-icon,
+        .set-field-time.is-empty .set-field-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .set-field-weight.is-empty,
+        .set-field-time.is-empty {
+            flex: 0 0 28px !important;
+            min-width: 28px;
+        }
+
         .set-input {
             color: #e2e8f0;
             border-bottom-color: rgba(100, 116, 139, 0.72);
@@ -1666,9 +1716,7 @@
             border-radius: 22px;
             border: 1px solid rgba(71, 85, 105, 0.52);
             border-left: 3px solid #22c55e;
-            background:
-                radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 26%),
-                linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.98));
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.94), rgba(17, 24, 39, 0.98));
             box-shadow: 0 16px 30px rgba(2, 6, 23, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
@@ -1698,6 +1746,44 @@
         }
 
         @media (max-width: 640px) {
+            .max-w-xl {
+                max-width: 100%;
+            }
+
+            main.max-w-xl,
+            main.mx-auto {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            nav .max-w-xl {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .day-card {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+                margin-bottom: 8px !important;
+            }
+
+            .day-card::after {
+                border-radius: 0 !important;
+            }
+
+            .exercise-card {
+                border-radius: 16px !important;
+            }
+
+            .superset-card {
+                border-radius: 16px !important;
+            }
+
+            .month-group {
+                padding: 0 8px;
+            }
+
             .day-meta-strip {
                 gap: 8px;
                 padding: 11px 12px;
@@ -1740,21 +1826,39 @@
             }
 
             .set-row {
-                gap: 6px;
-                padding: 8px;
-                grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+                gap: 3px;
+                padding: 5px 6px;
+                border-radius: 12px;
             }
 
             .set-field {
-                gap: 4px;
+                gap: 2px;
             }
 
             .set-field-icon {
-                font-size: 11px;
+                font-size: 10px;
+                width: 14px;
+                height: 14px;
+            }
+
+            .set-field-weight.is-empty,
+            .set-field-time.is-empty {
+                flex: 0 0 22px !important;
+                min-width: 22px;
             }
 
             .set-input {
-                font-size: 0.75rem;
+                font-size: 0.65rem;
+            }
+
+            .set-remove-btn {
+                width: 18px;
+                height: 18px;
+            }
+
+            .set-remove-btn svg {
+                width: 14px;
+                height: 14px;
             }
 
             .template-card {
@@ -1766,3 +1870,130 @@
                 gap: 6px;
             }
         }
+
+/* ===== FLAT DESIGN OVERRIDES ===== */
+/* Day cards */
+.day-card {
+    background: rgba(22, 31, 48, 0.96) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: none !important;
+    border: 1px solid rgba(71, 85, 105, 0.46) !important;
+    padding: 0 12px !important;
+}
+.day-card::before,
+.day-card::after {
+    display: none !important;
+}
+.day-card.theme-a,
+.day-card.theme-b {
+    background: rgba(22, 31, 48, 0.96) !important;
+    border-color: rgba(71, 85, 105, 0.46) !important;
+}
+.day-card.status-past,
+.day-card.status-future,
+.day-card.status-today {
+    border-color: rgba(71, 85, 105, 0.46) !important;
+    box-shadow: none !important;
+}
+.day-card:hover,
+.day-card.is-expanded {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Day content */
+.day-content {
+    background: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.day-card.is-expanded .day-content {
+    background: none !important;
+    border-top-color: rgba(71, 85, 105, 0.3) !important;
+}
+
+/* Day header */
+.day-header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Exercise cards */
+.exercise-card {
+    background: rgba(30, 41, 59, 0.94) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: none !important;
+    border: 1px solid rgba(71, 85, 105, 0.52) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.exercise-card::before,
+.exercise-card::after {
+    display: none !important;
+}
+.exercise-card.theme-a,
+.exercise-card.theme-b {
+    background: rgba(30, 41, 59, 0.94) !important;
+    border-color: rgba(71, 85, 105, 0.52) !important;
+}
+.exercise-card.is-sub.theme-a,
+.exercise-card.is-sub.theme-b {
+    background: rgba(30, 41, 59, 0.94) !important;
+}
+.exercise-card:hover,
+.exercise-card.is-open {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Superset cards */
+.superset-card {
+    background: rgba(30, 41, 59, 0.94) !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Same width - remove all nesting margins */
+.week-group {
+    margin-left: 0 !important;
+}
+.exercise-list {
+    padding-left: 0 !important;
+}
+
+/* Flatten remaining surfaces */
+.day-meta-strip,
+.day-action-wide,
+.day-footer-btn,
+.day-footer-actions,
+.custom-dropdown,
+.day-toggle-btn {
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Mobile flat adjustments */
+@media (max-width: 640px) {
+    .day-card {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+}
+
+/* Flat month/week headers (keep colors from month_themes.css, remove shadows/transitions) */
+.month-group-header,
+.week-group > button {
+    box-shadow: none !important;
+    transition: none !important;
+}
+.month-group-header:hover,
+.week-group > button:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}

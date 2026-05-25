@@ -1,0 +1,6 @@
+#!/usr/bin/env pwsh
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
+Push-Location $ProjectRoot
+icm.exe extract-pending --limit 10 --no-embeddings 2>&1 | Out-Null
+icm.exe embed 2>&1 | Out-Null
+Pop-Location
