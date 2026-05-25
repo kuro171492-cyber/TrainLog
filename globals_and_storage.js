@@ -341,16 +341,8 @@ const STORAGE_KEY = 'workout_v4_data';
         // --- CORE UI LOGIC ---
         function switchRoom(room) {
             document.querySelectorAll('.room').forEach(r => r.classList.remove('active'));
-            if (room === 'log') {
-                document.getElementById('roomLog').classList.add('active');
-                document.getElementById('btnLog').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white";
-                document.getElementById('btnTable').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500";
-            } else {
-                renderAnalytics();
-                document.getElementById('roomTable').classList.add('active');
-                document.getElementById('btnTable').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white";
-                document.getElementById('btnLog').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500";
-            }
+            const target = document.getElementById(room === 'log' ? 'roomLog' : 'roomTemplates');
+            if (target) target.classList.add('active');
         }
 
         function addDay(data = null, insertAtTop = true, triggerAutoSave = true) {
@@ -506,10 +498,8 @@ const STORAGE_KEY = 'workout_v4_data';
         function createSet(w = '', r = '', t = '00:00') {
             const div = document.createElement('div');
             div.className = "set-row";
-            const weightEmpty = !w.trim();
-            const timeEmpty = !t.trim() || t === '00:00';
             div.innerHTML = `
-                <div class="set-field set-field-weight${weightEmpty ? ' is-empty' : ''}" onclick="openDropdown(event, 'weight')">
+                <div class="set-field set-field-weight" onclick="openDropdown(event, 'weight')">
                     <span class="set-field-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 10v4M7 8v8M10 7v10M14 7v10M17 8v8M20 10v4M7 12h10" /></svg>
                     </span>
@@ -523,7 +513,7 @@ const STORAGE_KEY = 'workout_v4_data';
                     <input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')">
                 </div>
                 <div class="set-field-divider" aria-hidden="true"></div>
-                <div class="set-field set-field-time${timeEmpty ? ' is-empty' : ''}" onclick="openDropdown(event, 'exercise')">
+                <div class="set-field set-field-time" onclick="openDropdown(event, 'exercise')">
                     <span class="set-field-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 3h6M12 8v4l2.5 2.5M7 5l-1.5 1.5M17 5l1.5 1.5M12 21a8 8 0 100-16 8 8 0 000 16z" /></svg>
                     </span>
@@ -538,50 +528,10 @@ const STORAGE_KEY = 'workout_v4_data';
         }
 
         function updateSetLayout(setRow) {
-            const fields = {
-                weight: setRow.querySelector('.set-field-weight'),
-                reps: setRow.querySelector('.set-field-reps'),
-                time: setRow.querySelector('.set-field-time')
-            };
-            const getVal = (field) => {
-                const inp = field?.querySelector('.set-input');
-                return inp ? inp.value.trim() : '';
-            };
-            if (!fields.weight || !fields.reps || !fields.time) return;
-
-            const v = {
-                weight: getVal(fields.weight),
-                reps: getVal(fields.reps),
-                time: getVal(fields.time)
-            };
-            const isFilled = {
-                weight: !!v.weight && v.weight !== '0',
-                reps: !!v.reps,
-                time: v.time !== '00:00' && !!v.time
-            };
-            const filledCount = [isFilled.weight, isFilled.reps, isFilled.time].filter(Boolean).length;
-
-            const setFlex = (field, flex) => { field.style.flex = flex; };
-            const toggleEmpty = (field, empty) => field.classList.toggle('is-empty', empty);
-
-            if (filledCount === 0 || filledCount === 3) {
-                setFlex(fields.weight, '1 1 0');
-                setFlex(fields.reps, '1 1 0');
-                setFlex(fields.time, '1 1 0');
-                toggleEmpty(fields.weight, false);
-                toggleEmpty(fields.time, false);
-                return;
-            }
-
-            if (filledCount === 1) {
-                setFlex(fields.weight, isFilled.weight ? '0 1 20%' : '0 1 40%');
-                setFlex(fields.reps,   isFilled.reps   ? '0 1 20%' : '0 1 40%');
-                setFlex(fields.time,   isFilled.time   ? '0 1 20%' : '0 1 40%');
-            } else {
-                setFlex(fields.weight, isFilled.weight ? '0 1 25%' : '0 1 50%');
-                setFlex(fields.reps,   isFilled.reps   ? '0 1 25%' : '0 1 50%');
-                setFlex(fields.time,   isFilled.time   ? '0 1 25%' : '0 1 50%');
-            }
-            toggleEmpty(fields.weight, !isFilled.weight);
-            toggleEmpty(fields.time, !isFilled.time);
+            const fields = [
+                setRow.querySelector('.set-field-weight'),
+                setRow.querySelector('.set-field-reps'),
+                setRow.querySelector('.set-field-time')
+            ];
+            fields.forEach(f => { if (f) f.style.flex = '1 1 0'; });
         }

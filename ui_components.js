@@ -154,6 +154,7 @@
             const t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]').find(x => x.id === id);
             if (!t) return;
             const card = document.querySelector(`.day-card[data-id="${activeSessionIdForTemplate}"]`);
+            if (!card) return;
             card.dataset.templateId = String(id);
             card.dataset.itemsLoaded = '1';
             delete card.dataset.itemsJson;
@@ -161,7 +162,7 @@
             const list = card.querySelector('.exercise-list');
             list.innerHTML = '';
             t.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));
-            closeModal('templateModal');
+            switchRoom('log');
             autoSave();
         }
 
@@ -183,17 +184,13 @@
             if (!list || document.getElementById('templateToolbar')) return;
             const toolbar = document.createElement('div');
             toolbar.id = 'templateToolbar';
-            toolbar.className = 'px-4 sm:px-5 pt-4 pb-3 border-b border-slate-200/70 bg-slate-50/70';
             toolbar.innerHTML = `
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <input id="templateSearchInput" type="search" class="flex-1 bg-white border border-slate-300 text-slate-700 text-sm font-semibold py-2.5 px-4 rounded-xl outline-none">
-                    <div id="templateListMeta" class="min-h-[42px] px-4 rounded-xl border border-slate-300 bg-white/80 text-[11px] font-bold uppercase tracking-wide text-slate-500 flex items-center"></div>
-                </div>
+                <input id="templateSearchInput" type="search" class="w-full bg-transparent border border-slate-600/50 text-slate-300 text-sm font-semibold py-2 px-4 rounded-xl outline-none placeholder-slate-500" placeholder="Поиск...">
+                <div id="templateListMeta" class="text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-2"></div>
             `;
             list.parentElement.insertBefore(toolbar, list);
             const searchInput = document.getElementById('templateSearchInput');
             if (searchInput) {
-                searchInput.placeholder = 'Поиск шаблонов и упражнений';
                 searchInput.addEventListener('input', () => {
                     templateSearchQuery = searchInput.value.trim().toLocaleLowerCase('ru');
                     templateRenderLimit = LOW_PERF_UI ? 18 : 36;
@@ -237,7 +234,7 @@
             }
 
             if (filteredTemplates.length === 0) {
-                list.innerHTML = '<p class="text-center text-slate-600 py-10">Ничего не найдено</p>';
+                list.innerHTML = '<p class="text-center text-slate-500 py-10 text-sm">Ничего не найдено</p>';
                 return;
             }
 
@@ -247,24 +244,27 @@
                 card.className = 'template-card';
                 card.dataset.templateId = t.id;
                 card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
-                            </div>
-                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                        </div>
+                    <div class="template-menu template-menu-top">
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary" title="Применить">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </button>
+                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn" title="Показать упражнения">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
                     </div>
-                    <div class="flex items-end justify-between gap-3">
-                        <div class="template-exercises-preview hidden" data-loaded="0"></div>
-                        <div class="template-menu mt-0 ml-auto">
-                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
-                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
-                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
-                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
-                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
-                        </div>
+                    <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase">${t.totalTime || '00:00'}</span>
+                    <div class="template-exercises-preview hidden mt-2" data-loaded="0"></div>
+                    <div class="template-menu">
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn" title="Переименовать">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn" title="Дублировать">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger" title="Удалить">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
                     </div>
                 `;
                 fragment.appendChild(card);
@@ -320,9 +320,8 @@
             ensureTemplateControls();
             templateRenderLimit = LOW_PERF_UI ? 18 : 36;
             renderTemplateList();
-            document.getElementById('templateModal').classList.add('active');
+            switchRoom('templates');
         }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function showToast(txt) { const t = document.getElementById('toast'); t.textContent = txt; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2500); }
         function addSetToBtn(btn) { btn.previousElementSibling.appendChild(createSet()); applyAlternatingThemes(); autoSave(true); }
         function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
@@ -456,7 +455,8 @@
                 const setRow = activeInput.closest('.set-row');
                 if (setRow && typeof updateSetLayout === 'function') updateSetLayout(setRow);
             }
-            if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
+            if (type === 'total' && !val.includes('h')) closeAllDropdowns();
+            else if (type === 'reps' || type === 'weekday' || (activeInput.classList.contains('set-input') && !type.includes('w'))) closeAllDropdowns();
             autoSave(type === 'date' ? false : true);
         }
 

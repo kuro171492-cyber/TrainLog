@@ -1872,15 +1872,36 @@
         }
 
 /* ===== FLAT DESIGN OVERRIDES ===== */
-/* Day cards */
+
+/* Month headers — solid brand color, replaces gradient from month_themes.css */
+.month-group-header {
+    background: var(--month-accent) !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+.month-group-header:hover {
+    transform: none !important;
+}
+
+/* Week buttons — keep week colors from month_themes.css, remove shadows/transitions */
+.week-group > button {
+    box-shadow: none !important;
+    transition: none !important;
+}
+.week-group > button:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Day cards — dark + subtle month accent tint via color-mix() */
 .day-card {
     background: rgba(22, 31, 48, 0.96) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(22,31,48,0.96)) 8%, rgba(22, 31, 48, 0.96)) !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     transition: none !important;
     border: 1px solid rgba(71, 85, 105, 0.46) !important;
-    padding: 0 12px !important;
 }
 .day-card::before,
 .day-card::after {
@@ -1888,14 +1909,13 @@
 }
 .day-card.theme-a,
 .day-card.theme-b {
-    background: rgba(22, 31, 48, 0.96) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(22,31,48,0.96)) 8%, rgba(22, 31, 48, 0.96)) !important;
     border-color: rgba(71, 85, 105, 0.46) !important;
 }
 .day-card.status-past,
 .day-card.status-future,
 .day-card.status-today {
     border-color: rgba(71, 85, 105, 0.46) !important;
-    box-shadow: none !important;
 }
 .day-card:hover,
 .day-card.is-expanded {
@@ -1906,23 +1926,18 @@
 /* Day content */
 .day-content {
     background: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
 }
 .day-card.is-expanded .day-content {
     background: none !important;
     border-top-color: rgba(71, 85, 105, 0.3) !important;
 }
 
-/* Day header */
-.day-header {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
+/* Day header — keep original horizontal padding from JS (p-3 sm:p-4) */
 
-/* Exercise cards */
+/* Exercise cards — dark + slightly more accent tint than day-card */
 .exercise-card {
     background: rgba(30, 41, 59, 0.94) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(30,41,59,0.94)) 12%, rgba(30, 41, 59, 0.94)) !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -1937,12 +1952,12 @@
 }
 .exercise-card.theme-a,
 .exercise-card.theme-b {
-    background: rgba(30, 41, 59, 0.94) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(30,41,59,0.94)) 12%, rgba(30, 41, 59, 0.94)) !important;
     border-color: rgba(71, 85, 105, 0.52) !important;
 }
 .exercise-card.is-sub.theme-a,
 .exercise-card.is-sub.theme-b {
-    background: rgba(30, 41, 59, 0.94) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(30,41,59,0.94)) 12%, rgba(30, 41, 59, 0.94)) !important;
 }
 .exercise-card:hover,
 .exercise-card.is-open {
@@ -1950,15 +1965,16 @@
     box-shadow: none !important;
 }
 
-/* Superset cards */
+/* Superset cards — same tint as exercise, green left border differentiates */
 .superset-card {
     background: rgba(30, 41, 59, 0.94) !important;
+    background: color-mix(in srgb, var(--month-accent, rgba(30,41,59,0.94)) 12%, rgba(30, 41, 59, 0.94)) !important;
     box-shadow: none !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
-/* Same width - remove all nesting margins */
+/* Same width — remove all nesting margins */
 .week-group {
     margin-left: 0 !important;
 }
@@ -1978,22 +1994,230 @@
     box-shadow: none !important;
 }
 
-/* Mobile flat adjustments */
-@media (max-width: 640px) {
-    .day-card {
-        padding-left: 8px !important;
-        padding-right: 8px !important;
-    }
+/* Template buttons same height as toggle button */
+.day-action-wide {
+    height: 32px !important;
 }
 
-/* Flat month/week headers (keep colors from month_themes.css, remove shadows/transitions) */
-.month-group-header,
-.week-group > button {
-    box-shadow: none !important;
-    transition: none !important;
+/* Mobile flat adjustments */
+@media (max-width: 640px) {
 }
-.month-group-header:hover,
-.week-group > button:hover {
-    transform: none !important;
+
+/* Time picker dropdown — flat dark, no gradients/shadows */
+.custom-dropdown {
+    background: rgba(22, 31, 48, 0.98) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.5) !important;
+    border: 1px solid rgba(71, 85, 105, 0.46) !important;
+}
+.custom-dropdown::before {
+    background: rgba(30, 41, 59, 0.94) !important;
+    border: 1px solid rgba(71, 85, 105, 0.3) !important;
     box-shadow: none !important;
+}
+.dropdown-column {
+    scroll-behavior: auto !important;
+}
+.dropdown-column::before,
+.dropdown-column::after {
+    background: linear-gradient(180deg, rgba(22, 31, 48, 0.98), rgba(22, 31, 48, 0)) !important;
+}
+.dropdown-column::after {
+    background: linear-gradient(0deg, rgba(22, 31, 48, 0.98), rgba(22, 31, 48, 0)) !important;
+}
+.dropdown-column {
+    border-right-color: rgba(71, 85, 105, 0.2) !important;
+}
+.dropdown-item {
+    color: rgba(148, 163, 184, 0.5) !important;
+    transition: none !important;
+    opacity: 0.6 !important;
+}
+.dropdown-item:hover {
+    color: #94a3b8 !important;
+    background: rgba(71, 85, 105, 0.3) !important;
+    opacity: 1 !important;
+}
+.dropdown-item.is-selected {
+    color: #e2e8f0 !important;
+    transform: none !important;
+    background: rgba(30, 41, 59, 0.94) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+#totalTimeDropdown,
+#exerciseTimeDropdown {
+    border-color: rgba(71, 85, 105, 0.46) !important;
+}
+#exerciseTimeDropdown::before {
+    background: rgba(30, 41, 59, 0.94) !important;
+    border: 1px solid rgba(71, 85, 105, 0.3) !important;
+    box-shadow: none !important;
+}
+
+/* ===== TEMPLATE ROOM ===== */
+#roomTemplates {
+    padding: 0;
+}
+
+.template-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+.template-back-btn:hover {
+    color: #e2e8f0;
+}
+
+#templateToolbar {
+    margin-bottom: 12px;
+}
+
+#templateSearchInput:focus {
+    border-color: rgba(148, 163, 184, 0.5) !important;
+}
+
+.template-card {
+    background: rgba(30, 41, 59, 0.94);
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.template-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+}
+
+.template-name-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 0;
+    outline: none;
+}
+.template-name-input:focus {
+    border-bottom-color: rgba(148, 163, 184, 0.6);
+}
+
+.template-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    justify-content: flex-start;
+}
+.template-menu-top {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.template-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 0;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.template-menu-btn svg {
+    width: 16px;
+    height: 16px;
+}
+.template-menu-btn:hover {
+    background: rgba(148, 163, 184, 0.15);
+    color: #e2e8f0;
+    border-color: rgba(148, 163, 184, 0.4);
+}
+.template-menu-btn.primary {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.3);
+}
+.template-menu-btn.primary:hover {
+    background: rgba(56, 189, 248, 0.12);
+    color: #7dd3fc;
+    border-color: rgba(56, 189, 248, 0.4);
+}
+.template-menu-btn.danger {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+}
+.template-menu-btn.danger:hover {
+    background: rgba(248, 113, 113, 0.12);
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.template-exercises-preview {
+    border-top: 1px dashed rgba(71, 85, 105, 0.3);
+    padding-top: 8px;
+    margin-top: 4px;
+    max-width: 100%;
+}
+.template-exercises-preview.hidden {
+    display: none;
+}
+.template-exercises-preview .template-exercise-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.template-exercises-preview .template-exercise-item {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(71, 85, 105, 0.3);
+    color: #94a3b8;
+}
+
+.template-load-more {
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed rgba(71, 85, 105, 0.4);
+    border-radius: 12px;
+    background: transparent;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.template-load-more:hover {
+    background: rgba(56, 189, 248, 0.08);
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+/* Flat mobile adjustments for template room */
+@media (max-width: 640px) {
+    .template-card {
+        border-radius: 12px;
+    }
 }
