@@ -9,7 +9,7 @@
         "y": "2026",
         "wd": "Вт"
       },
-      "totalTime": "01:10",
+      "totalTime": "01:0",
       "items": [
         {
           "type": "exercise",
@@ -9038,7 +9038,7 @@
       "id": "1776142772030",
       "name": "2lsit",
       "weekday": "Вт",
-      "totalTime": "01:10",
+      "totalTime": "01:0",
       "items": [
         {
           "type": "exercise",
@@ -10914,5 +10914,5 @@
       ]
     }
   ],
-  "exportDate": "2026-06-02T05:02:28.956Z"
+  "exportDate": "2026-06-02T05:14:14.484Z"
 }
