@@ -47,26 +47,22 @@
                 card.className = "template-card";
                 card.dataset.templateId = t.id;
                 card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
-                            </div>
+                    <div class="template-header">
+                        <div class="template-info">
+                            <span class="template-chip">${t.weekday}</span>
                             <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         </div>
+                        <span class="template-time">${t.totalTime || '00:00'}</span>
                     </div>
-                    <div class="flex items-end justify-between gap-3">
-                        <div class="template-exercises-preview hidden">
-                            ${getTemplateExerciseSummary(t)}
-                        </div>
-                        <div class="template-menu mt-0 ml-auto">
-                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
-                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
-                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
-                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
-                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
-                        </div>
+                    <div class="template-exercises-preview hidden">
+                        ${getTemplateExerciseSummary(t)}
+                    </div>
+                    <div class="template-menu">
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary" title="Применить шаблон">▶</button>
+                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn" title="Показать упражнения">👁</button>
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn" title="Переименовать">✎</button>
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn" title="Дублировать">⧉</button>
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger" title="Удалить">🗑</button>
                     </div>
                 `;
                 list.appendChild(card);
