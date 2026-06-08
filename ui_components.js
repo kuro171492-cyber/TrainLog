@@ -47,11 +47,9 @@
                 card.className = "template-card";
                 card.dataset.templateId = t.id;
                 card.innerHTML = `
-                    <div class="template-header">
-                        <div class="template-info">
-                            <span class="template-chip">${t.weekday}</span>
-                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                        </div>
+                    <div class="template-top-row">
+                        <span class="template-chip">${t.weekday}</span>
+                        <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
                         <span class="template-time">${t.totalTime || '00:00'}</span>
                     </div>
                     <div class="template-exercises-preview hidden">
