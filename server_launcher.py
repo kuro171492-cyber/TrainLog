@@ -12,13 +12,21 @@ import threading
 import os
 import sys
 from pathlib import Path
+import json
+import tempfile
+
+try:
+    import qrcode
+    HAS_QRCODE = True
+except ImportError:
+    HAS_QRCODE = False
 
 
 class ServerLauncherGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("TrainLog Server Launcher")
-        self.root.geometry("500x400")
+        self.root.geometry("550x500")
         self.root.resizable(False, False)
         
         # Configure style
@@ -153,6 +161,27 @@ class ServerLauncherGUI:
         )
         info_text.pack(pady=10)
         
+        # QR Code and Share frame
+        share_frame = ttk.LabelFrame(main_frame, text="Share with Phone", padding="10")
+        share_frame.pack(fill=tk.X, pady=(0, 15))
+        
+        share_buttons = ttk.Frame(share_frame)
+        share_buttons.pack(fill=tk.X)
+        
+        ttk.Button(
+            share_buttons,
+            text="📱 Generate QR Code",
+            command=self._generate_qr_code,
+            width=25
+        ).pack(side=tk.LEFT, padx=5)
+        
+        ttk.Button(
+            share_buttons,
+            text="📋 Copy URL",
+            command=self._copy_to_clipboard,
+            width=25
+        ).pack(side=tk.LEFT, padx=5)
+        
         # Footer
         footer_frame = ttk.Frame(main_frame)
         footer_frame.pack(fill=tk.X)
@@ -257,9 +286,67 @@ class ServerLauncherGUI:
             self.root.clipboard_clear()
             self.root.clipboard_append(url)
             self.root.update()
-            messagebox.showinfo("Copied", f"Address copied:\n{url}")
+            messagebox.showinfo("Copied to Clipboard", f"✓ Address copied:\n\n{url}\n\nNow paste it on your phone!")
         else:
-            messagebox.showwarning("Not Ready", "IP address is not detected yet")
+            messagebox.showwarning("Not Ready", "IP address is not detected yet. Wait a moment...")
+    
+    def _generate_qr_code(self):
+        """Generate and display QR code for the server URL"""
+        url = self.url_var.get()
+        
+        if not url or url == "http://IP:8000":
+            messagebox.showwarning("Not Ready", "IP address is not detected yet. Wait a moment...")
+            return
+        
+        if not self.is_running:
+            messagebox.showwarning("Server", "Server is not running!\nStart the server first.")
+            return
+        
+        if not HAS_QRCODE:
+            messagebox.showwarning(
+                "Module Missing",
+                "qrcode module is not installed.\n\n"
+                "Install it with:\npython -m pip install qrcode[pil]\n\n"
+                "For now, you can copy the URL and paste it on your phone."
+            )
+            self._copy_to_clipboard()
+            return
+        
+        try:
+            # Generate QR code
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(url)
+            qr.make(fit=True)
+            
+            # Create image
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Save to temporary file and open
+            temp_dir = tempfile.gettempdir()
+            qr_path = os.path.join(temp_dir, "trainlog_qr.png")
+            img.save(qr_path)
+            
+            # Open with default image viewer
+            import platform
+            if platform.system() == "Windows":
+                os.startfile(qr_path)
+            elif platform.system() == "Darwin":
+                subprocess.run(["open", qr_path])
+            else:
+                subprocess.run(["xdg-open", qr_path])
+            
+            messagebox.showinfo(
+                "QR Code Generated",
+                f"QR code opened!\n\nURL: {url}\n\n"
+                "Scan it with your phone camera to open the app."
+            )
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to generate QR code:\n{str(e)}")
     
     def _open_browser(self):
         """Open the server URL in the default browser"""
