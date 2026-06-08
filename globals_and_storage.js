@@ -359,8 +359,8 @@ const STORAGE_KEY = 'workout_v4_data';
                 <div class="day-header p-3 sm:p-4">
                     <div class="day-toolbar flex flex-col gap-3">
                         <div class="day-toggle-strip" onclick="event.stopPropagation()">
-                            <button type="button" onclick="toggleCollapse(this)" class="day-toggle-btn day-icon-btn rounded-xl transition-all" aria-expanded="false" title="Развернуть тренировку">
-                                <span class="day-toggle-label">Развернуть</span>
+                            <button type="button" onclick="toggleCollapse(this)" class="day-toggle-btn day-icon-btn rounded-xl transition-all" aria-expanded="false" title="Expand session">
+                                <span class="day-toggle-label">Expand</span>
                                 <span class="day-collapse-caret">▼</span>
                             </button>
                         </div>
@@ -378,11 +378,11 @@ const STORAGE_KEY = 'workout_v4_data';
                         <div class="day-actions flex gap-2" onclick="event.stopPropagation()">
                             <button onclick="saveSessionAsTemplate(${id})" class="day-action-wide day-icon-btn rounded-xl transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 8.5h12M8 5.5h8a1 1 0 011 1v11a1 1 0 01-1 1H8a1 1 0 01-1-1v-11a1 1 0 011-1zM9 12h6M9 15h4" /></svg>
-                                <span>Сохранить шаблон</span>
+                                <span>Save template</span>
                             </button>
                             <button onclick="openTemplateModal(${id})" class="day-action-wide day-icon-btn day-icon-btn-primary rounded-xl transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M8 6.5h8l2 3.5v7.5a1 1 0 01-1 1H7a1 1 0 01-1-1V10l2-3.5zM8.5 10h7M10 14h4" /></svg>
-                                <span>Выбрать шаблон</span>
+                                <span>Templates</span>
                             </button>
                         </div>
                     </div>
@@ -391,8 +391,8 @@ const STORAGE_KEY = 'workout_v4_data';
                     <div class="exercise-list space-y-3 pt-3"></div>
                     <div class="day-footer mt-5 flex justify-between items-center">
                         <div class="day-footer-actions flex gap-2">
-                            <button onclick="addExerciseByBtn(this)" class="day-footer-btn day-footer-btn-muted px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">+ УПР</button>
-                            <button onclick="addSupersetByBtn(this)" class="day-footer-btn day-footer-btn-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">+ БЛОК</button>
+                            <button onclick="addExerciseByBtn(this)" class="day-footer-btn day-footer-btn-muted px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">+ Exercise</button>
+                            <button onclick="addSupersetByBtn(this)" class="day-footer-btn day-footer-btn-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all">+ Superset</button>
                         </div>
                         <button onclick="deleteDay(${id})" class="day-delete-btn p-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -416,27 +416,33 @@ const STORAGE_KEY = 'workout_v4_data';
 
         function renderExercise(container, data = null, isSub = false) {
             const div = document.createElement('div');
-            div.className = `exercise-card relative p-3 pb-10 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
+            div.className = `exercise-card relative p-3 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
             div.setAttribute('onclick', 'handleExerciseCardClick(event, this)');
             div.innerHTML = `
                 <div class="exercise-card-shell">
                     <div class="exercise-main flex items-center gap-3">
-                        <div class="editable exercise-name flex-1 rounded-xl px-3 py-2 text-sm font-bold outline-none" contenteditable="false" oninput="autoSave(true)" placeholder="Упражнение...">${data?.name || ''}</div>
+                        <div class="editable exercise-name flex-1 rounded-xl px-3 py-2 text-sm font-bold outline-none" contenteditable="false" oninput="autoSave(true)" placeholder="Exercise name">${data?.name || ''}</div>
                     </div>
                     <div class="exercise-card-controls">
-                        <button type="button" onclick="toggleExerciseEdit(this, event)" class="exercise-edit-btn" title="Редактировать упражнение">
+                        <button type="button" onclick="toggleExerciseEdit(this, event)" class="exercise-edit-btn" title="Edit exercise">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 20l3.5-.5 9.2-9.2a1.8 1.8 0 10-2.5-2.5L5 17l-1 3zM13 7l4 4" /></svg>
+                        </button>
+                        <button onclick="this.closest('[data-type]').remove(); autoSave();" class="exercise-remove-btn" title="Delete exercise">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg>
                         </button>
                     </div>
                 </div>
                 <div class="exercise-details hidden space-y-2">
+                    <div class="set-grid-header" aria-hidden="true">
+                        <span>kg</span>
+                        <span>reps</span>
+                        <span>time</span>
+                        <span></span>
+                    </div>
                     <div class="sets-container space-y-2"></div>
-                    <button onclick="addSetToBtn(this)" class="exercise-add-set text-[9px] font-black uppercase tracking-widest px-2 py-1">+ подход</button>
+                    <button onclick="addSetToBtn(this)" class="exercise-add-set text-[9px] font-black uppercase tracking-widest px-2 py-1">+ set</button>
                 </div>
-                <button onclick="this.closest('[data-type]').remove(); autoSave();" class="exercise-remove-btn absolute right-3 bottom-3 leading-none" title="Удалить упражнение">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg>
-                </button>
             `;
             const sets = div.querySelector('.sets-container');
             if (data?.sets) data.sets.forEach(s => sets.appendChild(createSet(s.w, s.r, s.t)));
@@ -446,12 +452,12 @@ const STORAGE_KEY = 'workout_v4_data';
 
         function renderSuperset(container, data = null) {
             const div = document.createElement('div');
-            div.className = "superset-card p-4 rounded-2xl space-y-4";
+            div.className = "superset-card p-3 rounded-2xl space-y-3";
             div.dataset.type = "superset";
             div.innerHTML = `
-                <div class="superset-header flex justify-between items-center px-1"><span class="superset-label text-[9px] font-black uppercase">Блок</span><button onclick="this.closest('[data-type]').remove(); autoSave();" class="superset-remove-btn" title="Удалить блок"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg></button></div>
-                <div class="superset-inner space-y-4"></div>
-                <button onclick="addExToSuperset(this)" class="superset-add-btn text-[9px] font-black uppercase tracking-widest px-2 py-1">+ В БЛОК</button>
+                <div class="superset-header flex justify-between items-center px-1"><span class="superset-label text-[9px] font-black uppercase">Superset</span><button onclick="this.closest('[data-type]').remove(); autoSave();" class="superset-remove-btn" title="Delete superset"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg></button></div>
+                <div class="superset-inner space-y-2"></div>
+                <button onclick="addExToSuperset(this)" class="superset-add-btn text-[9px] font-black uppercase tracking-widest px-2 py-1">+ exercise</button>
             `;
             container.appendChild(div);
             const inner = div.querySelector('.superset-inner');
@@ -495,26 +501,15 @@ const STORAGE_KEY = 'workout_v4_data';
             div.className = "set-row";
             div.innerHTML = `
                 <div class="set-field set-field-weight" onclick="openDropdown(event, 'weight')">
-                    <span class="set-field-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 10v4M7 8v8M10 7v10M14 7v10M17 8v8M20 10v4M7 12h10" /></svg>
-                    </span>
                     <input type="text" readonly class="set-input font-bold" value="${w}" onclick="event.stopPropagation(); openDropdown(event, 'weight')">
                 </div>
-                <div class="set-field-divider" aria-hidden="true"></div>
                 <div class="set-field set-field-reps">
-                    <span class="set-field-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M7 8a6 6 0 019.6-1.8L19 8M17 16a6 6 0 01-9.6 1.8L5 16M19 8h-4M5 16h4" /></svg>
-                    </span>
                     <input type="text" readonly class="set-input font-bold" value="${r}" onclick="openDropdown(event, 'reps')">
                 </div>
-                <div class="set-field-divider" aria-hidden="true"></div>
                 <div class="set-field set-field-time" onclick="openDropdown(event, 'exercise')">
-                    <span class="set-field-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 3h6M12 8v4l2.5 2.5M7 5l-1.5 1.5M17 5l1.5 1.5M12 21a8 8 0 100-16 8 8 0 000 16z" /></svg>
-                    </span>
                     <input type="text" readonly class="set-input set-input-time font-mono text-blue-400 font-bold" value="${t}" onclick="event.stopPropagation(); openDropdown(event, 'exercise')">
                 </div>
-                <button onclick="this.parentElement.remove(); autoSave();" class="set-remove-btn" title="Удалить подход">
+                <button onclick="this.parentElement.remove(); autoSave();" class="set-remove-btn" title="Delete set">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg>
                 </button>
             `;

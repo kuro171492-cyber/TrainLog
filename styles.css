@@ -2244,3 +2244,488 @@
         border-radius: 8px;
     }
 }
+
+/* ===== PROFESSIONAL UI PASS — 2026-06-08 ===== */
+:root {
+    --surface-0: #0d1117;
+    --surface-1: #121821;
+    --surface-2: #17202c;
+    --surface-3: #1d2836;
+    --line-soft: rgba(148, 163, 184, 0.18);
+    --line-strong: rgba(148, 163, 184, 0.32);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #7c8797;
+    --brand: #ef4444;
+    --brand-hover: #f87171;
+}
+
+html {
+    background: var(--surface-0);
+}
+
+body {
+    background: linear-gradient(180deg, #0d1117 0%, #101722 42%, #0d1117 100%) !important;
+    color: var(--text-primary);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-feature-settings: "tnum" 1, "cv02" 1, "cv03" 1;
+}
+
+nav.sticky {
+    background: rgba(13, 17, 23, 0.94) !important;
+    border-bottom: 1px solid var(--line-soft) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+nav h1 {
+    color: var(--text-primary) !important;
+    letter-spacing: 0 !important;
+}
+
+nav h1 .text-red-600 {
+    color: var(--brand-hover) !important;
+}
+
+nav .bg-red-600 {
+    background: var(--brand) !important;
+    box-shadow: none !important;
+}
+
+.app-nav-btn,
+.app-nav-add,
+.template-menu-btn,
+.template-back-btn,
+.day-icon-btn,
+.exercise-edit-btn,
+.exercise-remove-btn,
+.superset-remove-btn,
+.set-remove-btn {
+    border-radius: 8px !important;
+}
+
+.app-nav-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted) !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+}
+
+.app-nav-btn:hover {
+    color: var(--text-primary) !important;
+    background: rgba(148, 163, 184, 0.1) !important;
+    border-color: var(--line-soft) !important;
+}
+
+.app-nav-add {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    box-shadow: none !important;
+}
+
+main.max-w-xl,
+nav .max-w-xl {
+    max-width: 680px !important;
+}
+
+main.max-w-xl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+.month-group {
+    margin-bottom: 14px !important;
+}
+
+.month-group-header {
+    min-height: 42px;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    font-weight: 800 !important;
+}
+
+.week-group > button {
+    min-height: 36px;
+    border-radius: 8px !important;
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+}
+
+.day-card,
+.template-card {
+    border-radius: 8px !important;
+    background: color-mix(in srgb, var(--month-accent, #334155) 6%, var(--surface-1)) !important;
+    border: 1px solid var(--line-soft) !important;
+}
+
+.day-header {
+    padding: 10px !important;
+}
+
+.day-toolbar {
+    gap: 8px !important;
+}
+
+.day-toggle-btn {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--line-soft) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.day-toggle-label,
+.day-collapse-caret {
+    color: inherit !important;
+}
+
+.day-meta-strip {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+.day-date-chip,
+.day-weekday-badge,
+.day-total-chip {
+    min-height: 34px;
+    border-radius: 8px !important;
+    border: 1px solid var(--line-soft) !important;
+    background: rgba(255, 255, 255, 0.035) !important;
+    color: var(--text-secondary) !important;
+}
+
+.day-date-chip {
+    justify-content: center;
+}
+
+.day-total-input {
+    color: var(--text-primary) !important;
+}
+
+.day-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+}
+
+.day-action-wide,
+.day-footer-btn {
+    min-height: 36px;
+    height: 36px !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--line-soft) !important;
+    color: var(--text-secondary) !important;
+    background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.day-icon-btn-primary,
+.day-footer-btn-primary {
+    color: #fff !important;
+    border-color: color-mix(in srgb, var(--month-accent, var(--brand)) 55%, transparent) !important;
+    background: color-mix(in srgb, var(--month-accent, var(--brand)) 72%, #111827) !important;
+}
+
+.day-content {
+    padding: 10px !important;
+}
+
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px !important;
+    padding-top: 8px !important;
+}
+
+.exercise-card {
+    border-radius: 8px !important;
+    padding: 8px !important;
+    background: color-mix(in srgb, var(--month-accent, #334155) 8%, var(--surface-2)) !important;
+    border: 1px solid var(--line-soft) !important;
+}
+
+.exercise-card.is-sub {
+    background: rgba(13, 17, 23, 0.42) !important;
+    border-color: rgba(148, 163, 184, 0.14) !important;
+}
+
+.exercise-card-shell {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px !important;
+    min-height: 36px;
+}
+
+.exercise-name {
+    min-height: 34px;
+    padding: 7px 8px !important;
+    color: var(--text-primary) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+}
+
+.exercise-name[contenteditable="true"] {
+    background: rgba(255, 255, 255, 0.06) !important;
+    outline: 1px solid var(--line-strong) !important;
+}
+
+.exercise-card-controls {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px !important;
+}
+
+.exercise-edit-btn,
+.exercise-remove-btn,
+.superset-remove-btn,
+.set-remove-btn {
+    position: static !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    color: var(--text-muted) !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+}
+
+.exercise-edit-btn:hover,
+.exercise-remove-btn:hover,
+.superset-remove-btn:hover,
+.set-remove-btn:hover {
+    color: var(--text-primary) !important;
+    background: rgba(148, 163, 184, 0.1) !important;
+    border-color: var(--line-soft) !important;
+}
+
+.exercise-details {
+    padding-top: 6px;
+}
+
+.set-grid-header,
+.set-row {
+    display: grid !important;
+    grid-template-columns: minmax(54px, 1fr) minmax(54px, 1fr) minmax(70px, 1.2fr) 30px;
+    align-items: center;
+    gap: 6px !important;
+}
+
+.set-grid-header {
+    padding: 0 4px;
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.set-row {
+    width: 100%;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.set-field {
+    width: 100%;
+    min-width: 0 !important;
+    height: 34px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.set-field:hover {
+    border-color: var(--line-strong);
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.set-input {
+    width: 100% !important;
+    min-width: 0;
+    padding: 0 4px !important;
+    color: var(--text-primary) !important;
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    text-align: center;
+}
+
+.set-input-time {
+    color: #93c5fd !important;
+}
+
+.set-field-icon,
+.set-field-divider {
+    display: none !important;
+}
+
+.exercise-add-set,
+.superset-add-btn {
+    width: 100%;
+    height: 32px;
+    margin-top: 2px;
+    border-radius: 6px;
+    color: var(--text-secondary) !important;
+    border: 1px dashed var(--line-soft);
+    background: transparent !important;
+}
+
+.exercise-add-set:hover,
+.superset-add-btn:hover {
+    color: var(--text-primary) !important;
+    border-color: var(--line-strong);
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.superset-card {
+    border-radius: 8px !important;
+    padding: 8px !important;
+    background: rgba(13, 17, 23, 0.34) !important;
+    border: 1px solid color-mix(in srgb, var(--month-accent, #64748b) 34%, rgba(148, 163, 184, 0.18)) !important;
+    border-left: 3px solid var(--month-accent, #64748b) !important;
+}
+
+.superset-header {
+    min-height: 28px;
+    padding: 0 !important;
+}
+
+.superset-label {
+    color: var(--text-muted) !important;
+    letter-spacing: 0.08em !important;
+}
+
+.superset-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px !important;
+}
+
+.day-footer {
+    margin-top: 10px !important;
+    gap: 8px;
+}
+
+.day-footer-actions {
+    flex: 1 1 auto;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+}
+
+.day-delete-btn {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border-radius: 8px;
+    color: #fca5a5 !important;
+    border: 1px solid rgba(248, 113, 113, 0.18);
+    background: rgba(127, 29, 29, 0.12);
+}
+
+#templateToolbar {
+    margin-bottom: 10px !important;
+}
+
+#templateSearchInput {
+    height: 38px;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.035) !important;
+    border-color: var(--line-soft) !important;
+    color: var(--text-primary) !important;
+}
+
+.template-card {
+    padding: 10px !important;
+    gap: 10px !important;
+}
+
+.template-chip,
+.template-time,
+.template-menu-btn {
+    border-radius: 6px !important;
+}
+
+.template-menu {
+    gap: 6px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.template-menu::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 430px) {
+    nav.sticky {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    nav .max-w-xl {
+        gap: 6px !important;
+    }
+
+    .app-nav-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .app-nav-add {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    main.max-w-xl {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .day-meta-strip {
+        grid-template-columns: minmax(0, 1fr) 42px 62px;
+    }
+
+    .day-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .day-action-wide {
+        justify-content: center;
+    }
+
+    .set-grid-header,
+    .set-row {
+        grid-template-columns: minmax(48px, 1fr) minmax(48px, 1fr) minmax(64px, 1.15fr) 28px;
+        gap: 4px !important;
+    }
+
+    .set-field {
+        height: 32px;
+    }
+
+    .set-input {
+        font-size: 12px !important;
+    }
+}

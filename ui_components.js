@@ -268,9 +268,9 @@
             el.classList.toggle('is-open', !!willOpen);
             card?.classList.toggle('is-expanded', !!willOpen);
             el.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-            el.setAttribute('title', willOpen ? 'Свернуть тренировку' : 'Развернуть тренировку');
+            el.setAttribute('title', willOpen ? 'Collapse session' : 'Expand session');
             const label = el.querySelector('.day-toggle-label');
-            if (label) label.textContent = willOpen ? 'Свернуть' : 'Развернуть';
+            if (label) label.textContent = willOpen ? 'Collapse' : 'Expand';
             if (willOpen) applyAlternatingThemes();
         }
         function openTemplateModal(id) {

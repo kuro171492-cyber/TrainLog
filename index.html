@@ -64,17 +64,17 @@
 
                 <!-- GitHub Actions (right, top corner) -->
                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <button onclick="validateGitHubSync()" title="Проверить GitHub Sync"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <button onclick="validateGitHubSync()" title="Check GitHub sync"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                             <path
                                 d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 0 0 8.36 22.9c.58.1.8-.25.8-.57v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.7.08-.68.08-.68 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.3-5.23-1.27-5.23-5.66 0-1.25.45-2.26 1.17-3.06-.12-.29-.5-1.47.12-3.06 0 0 .96-.3 3.15 1.17a10.8 10.8 0 0 1 5.74 0c2.2-1.48 3.16-1.17 3.16-1.17.62 1.6.24 2.77.12 3.06.73.8 1.17 1.81 1.17 3.06 0 4.4-2.69 5.36-5.25 5.65.42.37.78 1.08.78 2.2v3.25c0 .32.21.68.8.57A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                         </svg>
                     </button>
-                    <button onclick="downloadFromGitHub()" title="Загрузить из GitHub"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↓GH</button>
-                    <button onclick="uploadToGitHub()" title="Сохранить в GitHub"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↑GH</button>
+                    <button onclick="downloadFromGitHub()" title="Pull from GitHub"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↓GH</button>
+                    <button onclick="uploadToGitHub()" title="Push to GitHub"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors text-xs font-black">↑GH</button>
                 </div>
             </div>
 
@@ -82,24 +82,24 @@
             <div class="flex items-center justify-between gap-2 pt-1.5">
                 <!-- File & Repo Actions (left) -->
                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <button onclick="exportData()" title="Экспорт в файл"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <button onclick="exportData()" title="Export file"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
                     </button>
-                    <button onclick="triggerImport()" title="Импорт из файла"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <button onclick="triggerImport()" title="Import file"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                     </button>
-                    <button onclick="connectRepoFile()" title="Подключить файл в корне репозитория"
-                        class="p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <button onclick="connectRepoFile()" title="Connect repo file"
+                        class="app-nav-btn p-2 text-slate-500 hover:text-slate-900 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -109,8 +109,8 @@
                 </div>
 
                 <!-- Square Add Session Button (right, bottom corner) -->
-                <button onclick="addDay()" title="Новая сессия"
-                    class="bg-red-600 text-white p-2 rounded-lg shadow-lg shadow-red-600/20 active:scale-95 transition-all flex items-center justify-center">
+                <button onclick="addDay()" title="New session"
+                    class="app-nav-add bg-red-600 text-white p-2 rounded-lg shadow-lg shadow-red-600/20 active:scale-95 transition-all flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                 </button>
             </div>
@@ -130,12 +130,12 @@
     </main>
     <div id="mobileDateModal" class="modal-overlay">
         <div class="mobile-date-sheet">
-            <h3 class="text-base font-extrabold text-slate-900 mb-2">Выберите дату</h3>
+            <h3 class="text-base font-extrabold text-slate-900 mb-2">Choose date</h3>
             <input type="date" id="mobileDateInput" class="mobile-date-input">
             <div class="mobile-date-actions">
-                <button id="mobileDateCancelBtn" class="bg-slate-200 text-slate-700">Отмена</button>
-                <button id="mobileDateTodayBtn" class="bg-blue-100 text-blue-700">Сегодня</button>
-                <button id="mobileDateApplyBtn" class="bg-blue-600 text-white">Применить</button>
+                <button id="mobileDateCancelBtn" class="bg-slate-200 text-slate-700">Cancel</button>
+                <button id="mobileDateTodayBtn" class="bg-blue-100 text-blue-700">Today</button>
+                <button id="mobileDateApplyBtn" class="bg-blue-600 text-white">Apply</button>
             </div>
         </div>
     </div>
