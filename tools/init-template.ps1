@@ -78,5 +78,8 @@ Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "  1. Put your prototype in src/" -ForegroundColor White
 Write-Host "  2. Ask AI: 'Fill .md files based on src/ code'" -ForegroundColor White
 Write-Host "  3. Run: icm init --mode hook --force" -ForegroundColor White
-Write-Host "  4. Run: icm store --topic architecture --content 'Project initialized' --importance high" -ForegroundColor White
+Write-Host "  4. Run: icm store --topic architecture --content 'Project initialized' --importance medium --keywords `"architecture,source=init-template,date=$(Get-Date -Format yyyy-MM-dd),ttl=365,importance=normal`"" -ForegroundColor White
 Write-Host "  5. Run: icm embed" -ForegroundColor White
+Write-Host "  6. Weekly: tools\icm-maintain.ps1 -Mode validate" -ForegroundColor White
+Write-Host "  7. Monthly: tools\icm-maintain.ps1 -Mode prune" -ForegroundColor White
+
