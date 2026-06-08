@@ -2097,9 +2097,11 @@
 
 .template-top-row {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
     width: 100%;
+    flex-wrap: nowrap;
 }
 
 .template-chip {
@@ -2149,6 +2151,7 @@
 
 .template-menu {
     display: flex;
+    flex-direction: row;
     flex-wrap: nowrap;
     gap: 6px;
     justify-content: flex-start;
