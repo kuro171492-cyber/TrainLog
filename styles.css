@@ -621,18 +621,6 @@
             color: #1d4ed8;
         }
 
-        .template-load-more {
-            width: 100%;
-            min-height: 44px;
-            border-radius: 16px;
-            border: 1px dashed rgba(96, 165, 250, 0.4);
-            background: rgba(255, 255, 255, 0.88);
-            color: #2563eb;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
 
         .day-card,
         #roomTable>div {
@@ -1999,9 +1987,6 @@
     height: 32px !important;
 }
 
-/* Mobile flat adjustments */
-@media (max-width: 640px) {
-}
 
 /* Time picker dropdown — flat dark, no gradients/shadows */
 .custom-dropdown {
@@ -2156,10 +2141,6 @@
     gap: 6px;
     justify-content: flex-start;
     width: 100%;
-}
-.template-menu-top {
-    margin-top: 0;
-    margin-bottom: 8px;
 }
 
 .template-menu-btn {

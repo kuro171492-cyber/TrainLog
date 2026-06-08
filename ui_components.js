@@ -36,36 +36,7 @@
             showToast("Шаблон сохранен");
         }
 
-        function renderTemplateList() {
-            const list = document.getElementById('templateList');
-            const templates = sortTemplatesAlphabetically(JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'));
-            list.innerHTML = '';
-            if (templates.length === 0) { list.innerHTML = '<p class="text-center text-slate-600 py-10">Библиотека пуста</p>'; return; }
 
-            templates.forEach(t => {
-                const card = document.createElement('div');
-                card.className = "template-card";
-                card.dataset.templateId = t.id;
-                card.innerHTML = `
-                    <div class="template-top-row">
-                        <span class="template-chip">${t.weekday}</span>
-                        <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                        <span class="template-time">${t.totalTime || '00:00'}</span>
-                    </div>
-                    <div class="template-exercises-preview hidden">
-                        ${getTemplateExerciseSummary(t)}
-                    </div>
-                    <div class="template-menu">
-                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary" title="Применить шаблон">▶</button>
-                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn" title="Показать упражнения">👁</button>
-                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn" title="Переименовать">✎</button>
-                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn" title="Дублировать">⧉</button>
-                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger" title="Удалить">🗑</button>
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        }
 
         function getTemplateExerciseSummary(template) {
             const names = [];
@@ -92,15 +63,7 @@
             `;
         }
 
-        function toggleTemplateExercises(btn) {
-            const card = btn.closest('.template-card');
-            const preview = card?.querySelector('.template-exercises-preview');
-            if (!preview) return;
-            const isHidden = preview.classList.contains('hidden');
-            preview.classList.toggle('hidden', !isHidden);
-            btn.classList.toggle('is-active', isHidden);
-            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
-        }
+
 
         function handleTemplateNameKey(e, templateId) {
             if (e.key === 'Enter') {
@@ -207,7 +170,7 @@
             });
         }
 
-        renderTemplateList = function renderTemplateListOptimized() {
+        function renderTemplateList() {
             ensureTemplateControls();
             const list = document.getElementById('templateList');
             const meta = document.getElementById('templateListMeta');
@@ -277,9 +240,9 @@
                 };
                 list.appendChild(moreBtn);
             }
-        };
+        }
 
-        toggleTemplateExercises = function toggleTemplateExercisesOptimized(btn) {
+        function toggleTemplateExercises(btn) {
             const card = btn.closest('.template-card');
             const preview = card?.querySelector('.template-exercises-preview');
             if (!preview) return;
@@ -293,7 +256,7 @@
             preview.classList.toggle('hidden', !isHidden);
             btn.classList.toggle('is-active', isHidden);
             btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
-        };
+        }
 
         // --- UTILS ---
         function toggleCollapse(el) {

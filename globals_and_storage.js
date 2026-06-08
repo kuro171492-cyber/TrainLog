@@ -27,10 +27,10 @@ const STORAGE_KEY = 'workout_v4_data';
 
         let activeInput = null;
         let activeSessionIdForTemplate = null;
-        let workoutChart = null;
+
         let repoFileHandle = null;
         let needsDomSort = false;
-        let datePickerInstance = null;
+
         let monthGroupState = {};
         let weekGroupState = {};
 
@@ -113,13 +113,7 @@ const STORAGE_KEY = 'workout_v4_data';
                 .replace(/^(Bearer|token)\s+/i, '');
         }
 
-        function getGitHubHeaders(token, extraHeaders = {}) {
-            return {
-                Authorization: `token ${sanitizeGitHubToken(token)}`,
-                Accept: 'application/vnd.github+json',
-                ...extraHeaders
-            };
-        }
+
 
         function getGitHubHeadersWithScheme(token, scheme, extraHeaders = {}) {
             return {
@@ -186,9 +180,10 @@ const STORAGE_KEY = 'workout_v4_data';
             return details;
         }
 
-        function getGitHubApiUrl(cfg) {
+        function getGitHubApiUrl(cfg, includeRef = true) {
             const safePath = cfg.path.split('/').map(encodeURIComponent).join('/');
-            return `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${safePath}?ref=${encodeURIComponent(cfg.branch)}`;
+            const baseUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${safePath}`;
+            return includeRef ? `${baseUrl}?ref=${encodeURIComponent(cfg.branch)}` : baseUrl;
         }
 
         function handleGitHubAuthFailure(actionLabel) {
@@ -317,7 +312,7 @@ const STORAGE_KEY = 'workout_v4_data';
                 };
                 if (sha) putBody.sha = sha;
 
-                const putRes = await githubFetchWithAuthFallback(`https://api.github.com/repos/${encodeURIComponent(activeCfg.owner)}/${encodeURIComponent(activeCfg.repo)}/contents/${activeCfg.path.split('/').map(encodeURIComponent).join('/')}`, {
+                const putRes = await githubFetchWithAuthFallback(getGitHubApiUrl(activeCfg, false), {
                     method: 'PUT',
                     token: activeCfg.token,
                     headers: {
