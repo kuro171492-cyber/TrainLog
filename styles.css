@@ -2004,8 +2004,8 @@ main.max-w-xl {
 }
 
 .exercise-name[contenteditable="true"] {
-    background: rgba(255, 255, 255, 0.06) !important;
-    outline: 1px solid var(--line-strong) !important;
+    background: transparent !important;
+    outline: none !important;
 }
 
 .exercise-card-controls {
