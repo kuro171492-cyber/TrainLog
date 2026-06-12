@@ -383,13 +383,13 @@ const STORAGE_KEY = 'workout_v4_data';
                             </div>
                         </div>
                         <div class="day-actions flex gap-2" onclick="event.stopPropagation()">
-                            <button onclick="saveSessionAsTemplate(${id})" class="day-action-wide day-icon-btn rounded-xl transition-all" aria-label="Save as template">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 8.5h12M8 5.5h8a1 1 0 011 1v11a1 1 0 01-1 1H8a1 1 0 01-1-1v-11a1 1 0 011-1zM9 12h6M9 15h4" /></svg>
-                                <span>Template</span>
+                            <button onclick="saveSessionAsTemplate(${id})" class="day-action-wide day-icon-btn rounded-xl transition-all" aria-label="Save as template" title="Save as template">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M17 21a2 2 0 01-2-2v-7m2 7h-7"/></svg>
+                                <span>Save Template</span>
                             </button>
-                            <button onclick="openTemplateModal(${id})" class="day-action-wide day-icon-btn day-icon-btn-primary rounded-xl transition-all" aria-label="Choose template">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M8 6.5h8l2 3.5v7.5a1 1 0 01-1 1H7a1 1 0 01-1-1V10l2-3.5zM8.5 10h7M10 14h4" /></svg>
-                                <span>Templates</span>
+                            <button onclick="openTemplateModal(${id})" class="day-action-wide day-icon-btn day-icon-btn-primary rounded-xl transition-all" aria-label="Load template" title="Load template">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M12 16V4m0 12l-4-4m4 4l4-4"/></svg>
+                                <span>Load Template</span>
                             </button>
                         </div>
                     </div>
