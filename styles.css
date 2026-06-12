@@ -659,14 +659,14 @@
         }
 
         .month-group-count {
-            font-size: 10px;
+            font-size: 11px;
             color: inherit; /* Наследуется от month-text */
             text-transform: none;
             letter-spacing: normal;
         }
         
         .week-group-count {
-            font-size: 10px;
+            font-size: 11px;
             color: inherit; /* Наследуется от month-text */
             text-transform: none;
             letter-spacing: normal;
@@ -727,7 +727,7 @@
         }
         
         .week-group-caret {
-            font-size: 10px;
+            font-size: 11px;
             color: inherit; /* Наследуется от month-text */
             transition: transform 0.2s ease;
         }
@@ -1200,7 +1200,7 @@
         }
 
         nav h1 {
-            font-size: 1.95rem;
+            font-size: 24px;
             line-height: 1;
             letter-spacing: -0.05em;
             color: #1e293b;
@@ -1317,7 +1317,7 @@
             }
 
             .day-toggle-label {
-                font-size: 0.58rem;
+                font-size: 11px;
                 letter-spacing: 0.1em;
             }
 
@@ -1329,7 +1329,7 @@
             .day-weekday-badge {
                 min-width: 32px;
                 min-height: 36px;
-                font-size: 0.72rem;
+                font-size: 12px;
             }
 
             .day-footer {
@@ -1342,7 +1342,7 @@
 
             .day-footer-btn {
                 min-height: 42px;
-                font-size: 10px !important;
+                font-size: 11px !important;
                 padding: 0 10px !important;
             }
 
@@ -1357,7 +1357,7 @@
             }
 
             .set-field-icon {
-                font-size: 10px;
+                font-size: 11px;
                 width: 14px;
                 height: 14px;
             }
@@ -1369,7 +1369,7 @@
             }
 
             .set-input {
-                font-size: 0.65rem;
+                font-size: 12px;
             }
 
             .set-remove-btn {
@@ -1613,7 +1613,7 @@
     justify-content: center;
     padding: 6px 12px;
     border-radius: 8px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -1724,7 +1724,7 @@
     display: inline-block;
     padding: 2px 8px;
     border-radius: 6px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     background: rgba(71, 85, 105, 0.3);
     color: #94a3b8;
@@ -1770,13 +1770,13 @@
     opacity: 0.5;
 }
 .empty-state-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
     color: var(--text-secondary);
     margin-bottom: 8px;
 }
 .empty-state-subtitle {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-muted);
     line-height: 1.5;
     margin-bottom: 24px;
@@ -2131,7 +2131,7 @@ main.max-w-xl {
 .set-grid-header {
     padding: 0 4px;
     color: var(--text-muted);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 800;
     line-height: 1;
     text-transform: uppercase;
