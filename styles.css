@@ -121,7 +121,6 @@
         .low-perf-ui .exercise-card,
         .low-perf-ui .superset-card,
         .low-perf-ui .template-card {
-            content-visibility: auto;
             contain-intrinsic-size: 1px 280px;
         }
 
@@ -2294,15 +2293,17 @@ main.max-w-xl {
     display: none;
 }
 
-/* Micro transitions */
+/* Micro transitions — opacity/box-shadow only, no transform on scroll */
 .day-card {
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease !important;
+    will-change: box-shadow, border-color;
 }
 .day-card.is-expanded {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
 }
 .exercise-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    transition: box-shadow 0.15s ease !important;
+    will-change: box-shadow;
 }
 .exercise-card.is-open {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
@@ -2310,22 +2311,20 @@ main.max-w-xl {
 .day-action-wide,
 .day-footer-btn,
 .day-toggle-btn {
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease !important;
+    transition: box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease !important;
 }
 
 @media (hover: hover) {
     .day-card:hover {
-        transform: translateY(-1px) !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
     }
     .exercise-card:hover {
-        transform: translateY(-1px) !important;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
     }
     .day-action-wide:hover,
     .day-footer-btn:hover,
     .day-toggle-btn:hover {
-        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     }
 }
 
