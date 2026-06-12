@@ -1313,6 +1313,7 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     border: 1px solid rgba(71, 85, 105, 0.46) !important;
+    border-left: 4px solid var(--month-accent) !important;
 }
 .day-card::before,
 .day-card::after {
@@ -1367,13 +1368,14 @@
 }
 
 
-/* Superset cards — same tint as exercise, green left border differentiates */
+/* Superset cards — green left border differentiates */
 .superset-card {
-    background: rgba(30, 41, 59, 0.94) !important;
-    background: color-mix(in srgb, var(--month-accent, rgba(30,41,59,0.94)) 12%, rgba(30, 41, 59, 0.94)) !important;
+    background: var(--surface-2) !important;
     box-shadow: none !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    border: 1px solid var(--line-soft) !important;
+    border-left: 4px solid #10b981 !important;
 }
 
 /* Same width — remove all nesting margins */
@@ -1961,11 +1963,20 @@ main.max-w-xl {
     padding-top: 8px !important;
 }
 
+.exercise-list > .exercise-card:nth-child(odd) {
+    background: color-mix(in srgb, var(--surface-2) 92%, var(--surface-1)) !important;
+}
+
+.exercise-list > .exercise-card:nth-child(even) {
+    background: color-mix(in srgb, var(--surface-2) 88%, var(--surface-3)) !important;
+}
+
 .exercise-card {
     border-radius: 8px !important;
     padding: 8px !important;
-    background: color-mix(in srgb, var(--month-accent, #334155) 8%, var(--surface-2)) !important;
+    background: var(--surface-2) !important;
     border: 1px solid var(--line-soft) !important;
+    border-left: none !important;
 }
 
 .exercise-card.is-sub {
@@ -2147,9 +2158,9 @@ main.max-w-xl {
 .superset-card {
     border-radius: 8px !important;
     padding: 8px !important;
-    background: rgba(13, 17, 23, 0.34) !important;
-    border: 1px solid color-mix(in srgb, var(--month-accent, #64748b) 34%, rgba(148, 163, 184, 0.18)) !important;
-    border-left: 3px solid var(--month-accent, #64748b) !important;
+    background: var(--surface-2) !important;
+    border: 1px solid var(--line-soft) !important;
+    border-left: 4px solid #10b981 !important;
 }
 
 .superset-header {
