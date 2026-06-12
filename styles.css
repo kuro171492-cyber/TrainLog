@@ -120,20 +120,9 @@
         .low-perf-ui .day-card,
         .low-perf-ui .exercise-card,
         .low-perf-ui .superset-card,
-        .low-perf-ui .template-card,
-        .low-perf-ui #roomTable > div {
+        .low-perf-ui .template-card {
             content-visibility: auto;
             contain-intrinsic-size: 1px 280px;
-        }
-
-        #roomTable .light-surface > .flex.flex-col.gap-3.mb-6 > h2,
-        #roomTable .light-surface > .flex.flex-col.gap-3.mb-6 > select {
-            display: none;
-        }
-
-        .top-actions > button,
-        .top-actions > .group-toggle {
-            flex-shrink: 0;
         }
 
         .editable:focus {
@@ -411,16 +400,17 @@
         }
 
         /* Modals */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(148, 163, 184, 0.28);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-        }
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(148, 163, 184, 0.28);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    overscroll-behavior: contain;
+}
 
         .modal-overlay.active {
             display: flex;
@@ -622,8 +612,7 @@
         }
 
 
-        .day-card,
-        #roomTable>div {
+        .day-card {
             background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.94));
             border-color: rgba(148, 163, 184, 0.32) !important;
             box-shadow: 0 20px 44px rgba(148, 163, 184, 0.25);
@@ -702,10 +691,12 @@
             background: transparent;
         }
 
-        .week-group > button:hover {
-            transform: translateX(2px);
-            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
-            border-color: rgba(15, 23, 42, 0.16);
+        @media (hover: hover) {
+            .week-group > button:hover {
+                transform: translateX(2px);
+                box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+                border-color: rgba(15, 23, 42, 0.16);
+            }
         }
 
         .month-group-body.hidden {
@@ -751,39 +742,6 @@
             border-bottom: 1px solid rgba(251, 191, 36, 0.3);
         }
 
-        .day-collapse-btn {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(245, 158, 11, 0.35);
-            background: rgba(255, 255, 255, 0.78);
-            color: #7c2d12;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            transition: background 0.2s ease, border-color 0.2s ease;
-        }
-
-        .day-collapse-btn:hover {
-            background: rgba(255, 251, 235, 0.95);
-            border-color: rgba(217, 119, 6, 0.45);
-        }
-
-        .day-collapse-caret {
-            color: #b45309;
-            font-size: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .day-collapse-btn.is-open .day-collapse-caret {
-            transform: rotate(180deg);
-        }
-
         .day-card.status-past {
             border: 2px solid rgba(22, 163, 74, 0.85) !important;
             box-shadow: 0 16px 36px rgba(22, 163, 74, 0.22);
@@ -817,15 +775,6 @@
         .exercise-card.is-sub.theme-b {
             background: rgba(219, 234, 254, 0.72);
             border-color: rgba(59, 130, 246, 0.32);
-        }
-
-        .exercise-header-toggle {
-            background: linear-gradient(90deg, rgba(37, 99, 235, 0.22), rgba(14, 165, 233, 0.24));
-            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .exercise-header-toggle:hover {
-            background: linear-gradient(90deg, rgba(29, 78, 216, 0.28), rgba(2, 132, 199, 0.3));
         }
 
         .day-card {
@@ -971,10 +920,12 @@
             text-transform: uppercase;
         }
 
-        .day-icon-btn:hover {
-            color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 82%, black);
-            border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 30%, rgba(148, 163, 184, 0.35));
-            background: rgba(255, 255, 255, 0.98);
+        @media (hover: hover) {
+            .day-icon-btn:hover {
+                color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 82%, black);
+                border-color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 30%, rgba(148, 163, 184, 0.35));
+                background: rgba(255, 255, 255, 0.98);
+            }
         }
 
         .day-icon-btn-primary {
@@ -1171,8 +1122,10 @@
             color: #475569;
         }
 
-        .day-footer-btn-muted:hover {
-            background: rgba(248, 250, 252, 1);
+        @media (hover: hover) {
+            .day-footer-btn-muted:hover {
+                background: rgba(248, 250, 252, 1);
+            }
         }
 
         .day-footer-btn-primary {
@@ -1181,8 +1134,10 @@
             color: color-mix(in srgb, var(--weekday-accent, #3b82f6) 84%, black);
         }
 
-        .day-footer-btn-primary:hover {
-            background: color-mix(in srgb, var(--weekday-accent, #3b82f6) 18%, white);
+        @media (hover: hover) {
+            .day-footer-btn-primary:hover {
+                background: color-mix(in srgb, var(--weekday-accent, #3b82f6) 18%, white);
+            }
         }
 
         /* Unified shell */
@@ -1204,66 +1159,6 @@
             line-height: 1;
             letter-spacing: -0.05em;
             color: #1e293b;
-        }
-
-        nav h1 .text-blue-600 {
-            color: #2563eb !important;
-        }
-
-        nav .bg-blue-600 {
-            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
-            border-radius: 16px;
-            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-        }
-
-        .top-actions {
-            gap: 4px !important;
-        }
-
-        .top-actions > button {
-            width: 34px;
-            height: 34px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            color: #64748b !important;
-            background: transparent;
-        }
-
-        .top-actions > button:hover {
-            background: rgba(148, 163, 184, 0.12);
-            color: #1e293b !important;
-        }
-
-        .group-toggle {
-            background: rgba(255, 255, 255, 0.72) !important;
-            border-color: rgba(148, 163, 184, 0.28) !important;
-            padding: 3px !important;
-            border-radius: 16px !important;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        #btnLog,
-        #btnTable {
-            min-width: 92px;
-            border-radius: 12px !important;
-            font-size: 12px !important;
-        }
-
-        #btnLog {
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
-        }
-
-        #roomLog > .flex.justify-between.items-center.mb-6 p {
-            color: rgba(148, 163, 184, 0.88) !important;
-            letter-spacing: 0.14em;
-        }
-
-        #roomLog > .flex.justify-between.items-center.mb-6 button {
-            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
-            border-radius: 16px;
-            box-shadow: 0 16px 32px rgba(37, 99, 235, 0.24);
         }
 
         @media (max-width: 640px) {
@@ -1576,8 +1471,10 @@
     cursor: pointer;
     margin-bottom: 8px;
 }
-.template-back-btn:hover {
-    color: #e2e8f0;
+@media (hover: hover) {
+    .template-back-btn:hover {
+        color: #e2e8f0;
+    }
 }
 
 #templateToolbar {
@@ -1674,7 +1571,7 @@
     background: transparent;
     color: #94a3b8;
     cursor: pointer;
-    transition: all 0.12s;
+    transition: transform 0.12s, color 0.12s, background 0.12s, border-color 0.12s;
     font-size: 16px;
     padding: 0;
 }
@@ -1682,28 +1579,34 @@
     width: 16px;
     height: 16px;
 }
-.template-menu-btn:hover {
-    background: rgba(148, 163, 184, 0.15);
-    color: #e2e8f0;
-    border-color: rgba(148, 163, 184, 0.4);
+@media (hover: hover) {
+    .template-menu-btn:hover {
+        background: rgba(148, 163, 184, 0.15);
+        color: #e2e8f0;
+        border-color: rgba(148, 163, 184, 0.4);
+    }
 }
 .template-menu-btn.primary {
     color: #38bdf8;
     border-color: rgba(56, 189, 248, 0.3);
 }
-.template-menu-btn.primary:hover {
-    background: rgba(56, 189, 248, 0.12);
-    color: #7dd3fc;
-    border-color: rgba(56, 189, 248, 0.4);
+@media (hover: hover) {
+    .template-menu-btn.primary:hover {
+        background: rgba(56, 189, 248, 0.12);
+        color: #7dd3fc;
+        border-color: rgba(56, 189, 248, 0.4);
+    }
 }
 .template-menu-btn.danger {
     color: #f87171;
     border-color: rgba(248, 113, 113, 0.3);
 }
-.template-menu-btn.danger:hover {
-    background: rgba(248, 113, 113, 0.12);
-    color: #fca5a5;
-    border-color: rgba(248, 113, 113, 0.4);
+@media (hover: hover) {
+    .template-menu-btn.danger:hover {
+        background: rgba(248, 113, 113, 0.12);
+        color: #fca5a5;
+        border-color: rgba(248, 113, 113, 0.4);
+    }
 }
 
 .template-exercises-preview {
@@ -1742,9 +1645,11 @@
     text-transform: uppercase;
     cursor: pointer;
 }
-.template-load-more:hover {
-    background: rgba(56, 189, 248, 0.08);
-    border-color: rgba(56, 189, 248, 0.3);
+@media (hover: hover) {
+    .template-load-more:hover {
+        background: rgba(56, 189, 248, 0.08);
+        border-color: rgba(56, 189, 248, 0.3);
+    }
 }
 
 /* Empty state */
@@ -1811,9 +1716,11 @@
     height: 16px;
     flex-shrink: 0;
 }
-.empty-state-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--line-strong);
+@media (hover: hover) {
+    .empty-state-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--line-strong);
+    }
 }
 
 /* Flat mobile adjustments for template room */
@@ -1849,6 +1756,8 @@
 
 html {
     background: var(--surface-0);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -1856,6 +1765,10 @@ body {
     color: var(--text-primary);
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
     font-feature-settings: "tnum" 1, "cv02" 1, "cv03" 1;
+    touch-action: manipulation;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 nav.sticky {
@@ -1901,10 +1814,12 @@ nav .bg-red-600 {
     border: 1px solid transparent !important;
 }
 
-.app-nav-btn:hover {
-    color: var(--text-primary) !important;
-    background: rgba(148, 163, 184, 0.1) !important;
-    border-color: var(--line-soft) !important;
+@media (hover: hover) {
+    .app-nav-btn:hover {
+        color: var(--text-primary) !important;
+        background: rgba(148, 163, 184, 0.1) !important;
+        border-color: var(--line-soft) !important;
+    }
 }
 
 .app-nav-add {
@@ -1965,7 +1880,7 @@ main.max-w-xl {
 .day-toggle-btn {
     width: 100%;
     min-height: 36px;
-    padding: 8px 10px !important;
+    padding: 8px 10px 8px 36px !important;
     color: var(--text-secondary) !important;
     border: 1px solid var(--line-soft) !important;
     background: rgba(255, 255, 255, 0.03) !important;
@@ -1984,7 +1899,6 @@ main.max-w-xl {
 }
 
 .day-date-chip,
-.day-weekday-badge,
 .day-total-chip {
     min-height: 34px;
     border-radius: 8px !important;
@@ -1993,12 +1907,24 @@ main.max-w-xl {
     color: var(--text-secondary) !important;
 }
 
+.day-weekday-badge {
+    min-height: 34px;
+    border-radius: 8px !important;
+    border: 1px solid var(--line-soft) !important;
+    background: rgba(255, 255, 255, 0.035) !important;
+    color: var(--text-secondary) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
 .day-date-chip {
     justify-content: center;
 }
 
 .day-total-input {
     color: var(--text-primary) !important;
+    font-variant-numeric: tabular-nums;
 }
 
 .day-actions {
@@ -2062,6 +1988,7 @@ main.max-w-xl {
     font-size: 13px !important;
     font-weight: 700 !important;
     border-radius: 6px !important;
+    background: transparent !important;
 }
 
 .exercise-name[contenteditable="true"] {
@@ -2092,13 +2019,23 @@ main.max-w-xl {
     background: transparent !important;
 }
 
-.exercise-edit-btn:hover,
-.exercise-remove-btn:hover,
-.superset-remove-btn:hover,
-.set-remove-btn:hover {
-    color: var(--text-primary) !important;
-    background: rgba(148, 163, 184, 0.1) !important;
-    border-color: var(--line-soft) !important;
+.exercise-edit-btn:focus-visible,
+.exercise-remove-btn:focus-visible,
+.superset-remove-btn:focus-visible,
+.set-remove-btn:focus-visible {
+    outline: 2px solid var(--text-muted);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    .exercise-edit-btn:hover,
+    .exercise-remove-btn:hover,
+    .superset-remove-btn:hover,
+    .set-remove-btn:hover {
+        color: var(--text-primary) !important;
+        background: rgba(148, 163, 184, 0.1) !important;
+        border-color: var(--line-soft) !important;
+    }
 }
 
 .exercise-details {
@@ -2158,9 +2095,11 @@ main.max-w-xl {
     border: 1px solid rgba(148, 163, 184, 0.16);
 }
 
-.set-field:hover {
-    border-color: var(--line-strong);
-    background: rgba(255, 255, 255, 0.075);
+@media (hover: hover) {
+    .set-field:hover {
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, 0.075);
+    }
 }
 
 .set-input {
@@ -2173,6 +2112,7 @@ main.max-w-xl {
     font-size: 13px !important;
     line-height: 1 !important;
     text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 .set-input-time {
@@ -2195,11 +2135,13 @@ main.max-w-xl {
     background: transparent !important;
 }
 
-.exercise-add-set:hover,
-.superset-add-btn:hover {
-    color: var(--text-primary) !important;
-    border-color: var(--line-strong);
-    background: rgba(255, 255, 255, 0.04) !important;
+@media (hover: hover) {
+    .exercise-add-set:hover,
+    .superset-add-btn:hover {
+        color: var(--text-primary) !important;
+        border-color: var(--line-strong);
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
 }
 
 .superset-card {
@@ -2285,42 +2227,83 @@ main.max-w-xl {
 .day-card {
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
 }
-.day-card:hover,
 .day-card.is-expanded {
-    transform: translateY(-1px) !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
 }
 .exercise-card {
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
-.exercise-card:hover,
 .exercise-card.is-open {
-    transform: translateY(-1px) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
 }
 .day-action-wide,
 .day-footer-btn,
 .day-toggle-btn {
-    transition: all 0.12s ease !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease !important;
 }
-.day-action-wide:hover,
-.day-footer-btn:hover,
-.day-toggle-btn:hover {
-    transform: translateY(-1px) !important;
+
+@media (hover: hover) {
+    .day-card:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    .exercise-card:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
+    }
+    .day-action-wide:hover,
+    .day-footer-btn:hover,
+    .day-toggle-btn:hover {
+        transform: translateY(-1px) !important;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .day-card,
+    .exercise-card,
+    .day-action-wide,
+    .day-footer-btn,
+    .day-toggle-btn,
+    .month-group-header,
+    .week-group > button,
+    .set-field-weight,
+    .set-field-time {
+        transition: none !important;
+    }
+    .day-card:hover,
+    .exercise-card:hover,
+    .day-action-wide:hover,
+    .day-footer-btn:hover,
+    .day-toggle-btn:hover,
+    .month-group-header:hover,
+    .week-group > button:hover {
+        transform: none !important;
+    }
+    @media (pointer: coarse) {
+        .day-card:active,
+        .exercise-card:active,
+        .day-action-wide:active,
+        .day-footer-btn:active,
+        .day-toggle-btn:active {
+            transform: none !important;
+        }
+    }
 }
 
 /* Tap feedback for touch devices */
 @media (pointer: coarse) {
     .day-card:active {
-        transform: scale(0.985) !important;
+        opacity: 0.85;
     }
     .exercise-card:active {
-        transform: scale(0.985) !important;
+        opacity: 0.85;
     }
     .day-action-wide:active,
     .day-footer-btn:active,
     .day-toggle-btn:active {
-        transform: scale(0.97) !important;
+        opacity: 0.7;
+        background: rgba(255, 255, 255, 0.06) !important;
     }
 }
 

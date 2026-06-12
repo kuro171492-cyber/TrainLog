@@ -190,7 +190,7 @@
             if (fileData?.workouts && fileData?.templates) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
                 localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
-                showToast("Данные загружены из trainlog_data.json");
+                showToast("Data loaded from trainlog_data.json");
             }
 
             const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -427,8 +427,8 @@
 
                 weekCount += 1;
                 monthCount += 1;
-                if (weekCountEl) weekCountEl.textContent = `${weekCount} трен.`;
-                if (monthCountEl) monthCountEl.textContent = `${monthCount} трен.`;
+                if (weekCountEl) weekCountEl.textContent = `${weekCount} sess.`;
+                if (monthCountEl) monthCountEl.textContent = `${monthCount} sess.`;
                 weekBody?.appendChild(card);
             });
 
@@ -502,7 +502,7 @@
 
         async function connectRepoFile() {
             if (!window.showOpenFilePicker && !window.showSaveFilePicker) {
-                showToast("Браузер не поддерживает доступ к файлам");
+                showToast("Browser does not support file access");
                 return;
             }
             try {
@@ -526,7 +526,7 @@
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
                     localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
                     await loadFromStorage();
-                    showToast("Файл подключен. История загружена");
+                    showToast("File connected. History loaded");
                     return;
                 }
 
@@ -535,9 +535,9 @@
                     templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
                     exportDate: new Date().toISOString()
                 });
-                showToast("Файл подключен. Сохранение в репозиторий активно");
+                showToast("File connected. Saving to repository active");
             } catch (err) {
-                if (err?.name !== 'AbortError') showToast("Не удалось подключить файл");
+                if (err?.name !== 'AbortError') showToast("Failed to connect file");
             }
         }
 
