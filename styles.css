@@ -2001,6 +2001,7 @@ main.max-w-xl {
     background: transparent !important;
     min-width: 0;
     border: none !important;
+    box-shadow: none !important;
 }
 
 .exercise-name[contenteditable="true"] {
