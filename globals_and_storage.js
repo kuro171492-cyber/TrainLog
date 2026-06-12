@@ -426,7 +426,7 @@ const STORAGE_KEY = 'workout_v4_data';
             const div = document.createElement('div');
             div.className = `exercise-card relative p-3 rounded-2xl border space-y-2 ${isSub ? 'is-sub' : ''}`;
             div.dataset.type = 'exercise';
-            div.setAttribute('onclick', 'handleExerciseCardClick(event, this)');
+            div.setAttribute('onclick', `handleExerciseCardClick(event, this)${isSub ? ';event.stopPropagation()' : ''}`);
             div.innerHTML = `
                 <div class="exercise-card-shell">
                     <div class="exercise-main flex items-center gap-3">
