@@ -120,6 +120,26 @@
     <main class="max-w-xl mx-auto px-4">
         <div id="roomLog" class="room active space-y-4">
             <div id="daysContainer" class="space-y-4"></div>
+            <div id="emptyState" class="hidden">
+                <div class="empty-state-inner">
+                    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6.5 6.5L17.5 17.5M17.5 6.5L6.5 17.5"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <h2 class="empty-state-title">Пока нет тренировок</h2>
+                    <p class="empty-state-subtitle">Нажмите <strong>+</strong> чтобы создать первую</p>
+                    <div class="empty-state-actions">
+                        <button onclick="connectRepoFile()" class="empty-state-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6m-6 4h6M8 4h8a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+                            Подключить файл
+                        </button>
+                        <button onclick="configureGitHubSync()" class="empty-state-btn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12A11.5 11.5 0 0 0 8.36 22.9c.58.1.8-.25.8-.57v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.7.08-.68.08-.68 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.3-5.23-1.27-5.23-5.66 0-1.25.45-2.26 1.17-3.06-.12-.29-.5-1.47.12-3.06 0 0 .96-.3 3.15 1.17a10.8 10.8 0 0 1 5.74 0c2.2-1.48 3.16-1.17 3.16-1.17.62 1.6.24 2.77.12 3.06.73.8 1.17 1.81 1.17 3.06 0 4.4-2.69 5.36-5.25 5.65.42.37.78 1.08.78 2.2v3.25c0 .32.21.68.8.57A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+                            Настроить GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="roomTemplates" class="room space-y-4">
             <button onclick="switchRoom('log')" class="template-back-btn">

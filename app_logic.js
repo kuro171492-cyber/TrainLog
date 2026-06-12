@@ -195,10 +195,12 @@
 
             const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             document.getElementById('daysContainer').innerHTML = '';
-            if (data.length > 0) data.forEach(d => addDay(d, false, false));
-            else addDay(null, true);
-            groupDayCardsByMonth();
-            applyAlternatingThemes();
+            if (data.length > 0) {
+                data.forEach(d => addDay(d, false, false));
+                groupDayCardsByMonth();
+                applyAlternatingThemes();
+            }
+            if (typeof updateEmptyState === 'function') updateEmptyState();
         }
 
         function datePartsToTimestamp(d, mLabel, y) {

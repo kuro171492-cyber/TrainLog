@@ -403,6 +403,7 @@ const STORAGE_KEY = 'workout_v4_data';
             const container = document.getElementById('daysContainer');
             if (insertAtTop) container.prepend(card);
             else container.appendChild(card);
+            if (typeof updateEmptyState === 'function') updateEmptyState();
             const list = card.querySelector('.exercise-list');
             if (card.dataset.itemsLoaded === '1') {
                 if (data?.items) data.items.forEach(i => i.type === 'superset' ? renderSuperset(list, i) : renderExercise(list, i));

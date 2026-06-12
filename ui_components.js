@@ -258,6 +258,21 @@
             btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
         }
 
+        // --- EMPTY STATE ---
+        function updateEmptyState() {
+            const hasCards = document.querySelectorAll('#daysContainer .day-card').length > 0;
+            const empty = document.getElementById('emptyState');
+            const container = document.getElementById('daysContainer');
+            if (!empty || !container) return;
+            if (hasCards) {
+                empty.classList.add('hidden');
+                container.classList.remove('hidden');
+            } else {
+                empty.classList.remove('hidden');
+                container.classList.add('hidden');
+            }
+        }
+
         // --- UTILS ---
         function toggleCollapse(el) {
             const card = el.closest('.day-card');
@@ -285,7 +300,13 @@
         function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
         function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); applyAlternatingThemes(); autoSave(true); }
-        function deleteDay(id) { if (confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
+        function deleteDay(id) {
+            if (confirm('Удалить тренировку?')) {
+                document.querySelector(`.day-card[data-id="${id}"]`)?.remove();
+                autoSave();
+                if (typeof updateEmptyState === 'function') updateEmptyState();
+            }
+        }
         function toggleExerciseDetails(triggerEl) {
             const card = triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
             const details = card?.querySelector('.exercise-details');
