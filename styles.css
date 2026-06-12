@@ -2294,19 +2294,16 @@ main.max-w-xl {
 }
 
 /* Micro transitions — opacity/box-shadow only, no transform on scroll */
-.day-card {
-    transition: box-shadow 0.18s ease, border-color 0.18s ease !important;
-    will-change: box-shadow, border-color;
+.day-card,
+.exercise-card,
+.superset-card {
+    transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
+    contain: layout paint style;
 }
-.day-card.is-expanded {
+.day-card.is-expanded,
+.exercise-card.is-open,
+.superset-card.is-open {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
-}
-.exercise-card {
-    transition: box-shadow 0.15s ease !important;
-    will-change: box-shadow;
-}
-.exercise-card.is-open {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
 }
 .day-action-wide,
 .day-footer-btn,
@@ -2314,59 +2311,51 @@ main.max-w-xl {
     transition: box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease !important;
 }
 
-@media (hover: hover) {
-    .day-card:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
-    }
-    .exercise-card:hover {
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14) !important;
-    }
-    .day-action-wide:hover,
-    .day-footer-btn:hover,
-    .day-toggle-btn:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    }
+/* Expand/collapse animations for content areas */
+.day-content,
+.exercise-details,
+.superset-details {
+    transition: max-height 0.25s ease, opacity 0.2s ease, padding-top 0.25s ease, padding-bottom 0.25s ease !important;
+    overflow: hidden;
+    max-height: 5000px;
+    opacity: 1;
+}
+.day-content.hidden,
+.exercise-details.hidden,
+.superset-details.hidden {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    pointer-events: none;
 }
 
-/* Respect reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .day-card,
     .exercise-card,
+    .superset-card,
     .day-action-wide,
     .day-footer-btn,
     .day-toggle-btn,
-    .month-group-header,
-    .week-group > button,
-    .set-field-weight,
-    .set-field-time {
+    .day-content,
+    .exercise-details,
+    .superset-details {
         transition: none !important;
     }
-    .day-card:hover,
-    .exercise-card:hover,
-    .day-action-wide:hover,
-    .day-footer-btn:hover,
-    .day-toggle-btn:hover,
-    .month-group-header:hover,
-    .week-group > button:hover {
-        transform: none !important;
-    }
-    @media (pointer: coarse) {
-        .day-card:active,
-        .exercise-card:active,
-        .day-action-wide:active,
-        .day-footer-btn:active,
-        .day-toggle-btn:active {
-            transform: none !important;
-        }
+    .day-content.hidden,
+    .exercise-details.hidden,
+    .superset-details.hidden {
+        max-height: 0 !important;
+        opacity: 0 !important;
     }
 }
 
 /* Tap feedback for touch devices */
 @media (pointer: coarse) {
-    .day-card:active {
-        opacity: 0.85;
-    }
-    .exercise-card:active {
+    .day-card:active,
+    .exercise-card:active,
+    .superset-card:active {
         opacity: 0.85;
     }
     .day-action-wide:active,

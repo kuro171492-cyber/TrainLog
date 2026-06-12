@@ -309,9 +309,12 @@
             }
         }
         function toggleExerciseDetails(triggerEl) {
-            const card = triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
-            const details = card?.querySelector('.exercise-details');
-            if (!details) return;
+            const isSuperset = triggerEl?.classList?.contains('superset-card');
+            const card = isSuperset
+                ? triggerEl?.classList?.contains('superset-card') ? triggerEl : triggerEl.closest('.superset-card')
+                : triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
+            const details = card?.querySelector(isSuperset ? '.superset-details' : '.exercise-details');
+            if (!details || !card) return;
             details.classList.toggle('hidden');
             card.classList.toggle('is-open', !details.classList.contains('hidden'));
         }
