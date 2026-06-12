@@ -460,17 +460,37 @@ const STORAGE_KEY = 'workout_v4_data';
 
         function renderSuperset(container, data = null) {
             const div = document.createElement('div');
-            div.className = "superset-card p-3 rounded-2xl space-y-3";
+            div.className = "superset-card relative p-3 rounded-2xl border space-y-2";
             div.dataset.type = "superset";
+            div.setAttribute('onclick', 'handleExerciseCardClick(event, this)');
+            
+            const exercises = data?.exercises || [];
+            const names = exercises.map(e => e?.name).filter(Boolean);
+            const displayName = names.length > 0 
+                ? names.join(' / ') 
+                : 'Superset';
+            
             div.innerHTML = `
-                <div class="superset-header flex justify-between items-center px-1"><span class="superset-label text-[9px] font-black uppercase">Superset</span><button onclick="this.closest('[data-type]').remove(); autoSave();" class="superset-remove-btn" title="Delete superset" aria-label="Delete superset"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg></button></div>
-                <div class="superset-inner space-y-2"></div>
-                <button onclick="addExToSuperset(this)" class="superset-add-btn text-[9px] font-black uppercase tracking-widest px-2 py-1">+ Exercise</button>
+                <div class="superset-card-shell">
+                    <div class="superset-main flex items-center gap-3">
+                        <div class="superset-name flex-1 rounded-xl px-3 py-2 text-sm font-bold outline-none" contenteditable="false">
+                            ${displayName}
+                        </div>
+                    </div>
+                    <div class="superset-card-controls">
+                        <button onclick="this.closest('[data-type]').remove(); autoSave();" class="superset-remove-btn" title="Delete superset" aria-label="Delete superset">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M6 7.5h12M9.5 7.5v-2h5v2M9 10.5v5M15 10.5v5M8 18.5h8a1 1 0 001-1v-10H7v10a1 1 0 001 1z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="superset-details hidden space-y-2">
+                    <div class="superset-inner space-y-2"></div>
+                    <button onclick="addExToSuperset(this)" class="superset-add-btn text-[9px] font-black uppercase tracking-widest px-2 py-1">+ Exercise</button>
+                </div>
             `;
             container.appendChild(div);
             const inner = div.querySelector('.superset-inner');
-            if (data?.exercises) data.exercises.forEach(ex => renderExercise(inner, ex, true));
-            else { renderExercise(inner, null, true); renderExercise(inner, null, true); }
+            exercises.forEach(ex => renderExercise(inner, ex, true));
         }
 
         function handleExerciseCardClick(event, card) {

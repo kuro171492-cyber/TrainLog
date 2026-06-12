@@ -2014,6 +2014,45 @@ main.max-w-xl {
     gap: 4px !important;
 }
 
+.superset-card-shell {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px !important;
+    min-height: 36px;
+}
+
+.superset-name {
+    min-height: 34px;
+    padding: 7px 8px !important;
+    color: var(--text-primary) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.superset-card-controls {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px !important;
+}
+
+.superset-details {
+    padding-top: 6px;
+    padding-left: 6px;
+}
+
+.superset-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px !important;
+}
+
 .exercise-edit-btn,
 .exercise-remove-btn,
 .superset-remove-btn,
