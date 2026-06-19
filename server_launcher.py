@@ -196,7 +196,7 @@ class ServerLauncherGUI:
         ttk.Button(
             footer_frame,
             text="Quit",
-            command=self.root.quit,
+            command=self._on_quit,
             width=20
         ).pack(side=tk.LEFT, padx=5)
         
@@ -218,6 +218,11 @@ class ServerLauncherGUI:
             except Exception:
                 ip = "127.0.0.1"
         
+        # Thread-safe UI update via root.after
+        self.root.after(0, lambda: self._set_ip(ip))
+    
+    def _set_ip(self, ip):
+        """Thread-safe IP setter"""
         self.ip_var.set(ip)
         self._update_url()
     
@@ -235,12 +240,12 @@ class ServerLauncherGUI:
             return
         
         try:
-            # Start Python HTTP server
+            # Start Python HTTP server - redirect output to avoid buffer overflow
             self.server_process = subprocess.Popen(
                 [sys.executable, "-m", "http.server", str(self.port)],
                 cwd=str(self.project_root),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
             )
             self.is_running = True
             self._update_status()
@@ -360,6 +365,18 @@ class ServerLauncherGUI:
             webbrowser.open(url)
         else:
             messagebox.showwarning("Not Ready", "IP address is not detected yet")
+
+    def _on_quit(self):
+        """Stop server and quit application"""
+        if self.is_running and self.server_process:
+            try:
+                self.server_process.terminate()
+                self.server_process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                self.server_process.kill()
+            except Exception:
+                pass
+        self.root.quit()
 
 
 def main():
