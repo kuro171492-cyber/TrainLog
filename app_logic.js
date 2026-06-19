@@ -12,8 +12,6 @@
         let localSaveTimer = null;
         let repoSaveTimer = null;
         let latestSavePayload = null;
-        let analyticsOptionSignature = '';
-        const ANALYTICS_RENDER_LIMIT = LOW_PERF_UI ? 120 : 320;
 
         function scheduleStatePersistence(workouts, templates) {
             latestSavePayload = {
@@ -192,110 +190,28 @@
             if (fileData?.workouts && fileData?.templates) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
                 localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
-                showToast("Данные загружены из trainlog_data.json");
+                showToast("Data loaded from trainlog_data.json");
             }
 
             const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             document.getElementById('daysContainer').innerHTML = '';
-            if (data.length > 0) data.forEach(d => addDay(d, false, false));
-            else addDay(null, true);
-            groupDayCardsByMonth();
-            applyAlternatingThemes();
+            if (data.length > 0) {
+                data.forEach(d => addDay(d, false, false));
+                groupDayCardsByMonth();
+                applyAlternatingThemes();
+            }
+            if (typeof updateEmptyState === 'function') updateEmptyState();
         }
 
-        function getAnalyticsRows() {
-            const data = sortSessionsByDate(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-            const rows = [];
-            data.forEach(session => {
-                const dateLabel = `${session.dateObj.d} ${session.dateObj.m}`;
-                session.items.forEach(item => {
-                    const exercises = item.type === 'superset' ? item.exercises : [item];
-                    exercises.forEach(ex => {
-                        rows.push({
-                            dateLabel,
-                            exercise: ex.name || '---',
-                            result: ex.sets.map(s => `${s.w}x${s.r}`).join(', '),
-                            timestamp: sessionDateToTimestamp(session)
-                        });
-                    });
-                });
-            });
-            return rows;
-        }
-
-        function ensureAnalyticsControls(rows) {
-            const analyticsPanel = document.querySelector('#roomTable .light-surface .flex.flex-col.gap-3.mb-6');
-            const select = document.getElementById('chartExerciseSelect');
-            let searchInput = document.getElementById('analyticsSearchInput');
-            let summary = document.getElementById('analyticsSummary');
-            if (analyticsPanel) {
-                analyticsPanel.querySelectorAll(':scope > h2, :scope > select').forEach(el => el.remove());
-                if (!searchInput || !summary) {
-                    const filtersRow = document.createElement('div');
-                    filtersRow.className = 'flex flex-col sm:flex-row gap-2';
-                    filtersRow.innerHTML = `
-                        <input id="analyticsSearchInput" type="search" class="flex-1 bg-white border border-slate-300 text-slate-700 text-sm font-semibold py-2.5 px-4 rounded-xl outline-none">
-                        <div id="analyticsSummary" class="min-h-[42px] px-4 rounded-xl border border-slate-300 bg-white/80 text-[11px] font-bold uppercase tracking-wide text-slate-500 flex items-center"></div>
-                    `;
-                    analyticsPanel.appendChild(filtersRow);
-                    searchInput = filtersRow.querySelector('#analyticsSearchInput');
-                    summary = filtersRow.querySelector('#analyticsSummary');
-                    searchInput?.addEventListener('input', updateAnalyticsChart);
-                }
-            }
-            if (searchInput) searchInput.placeholder = 'Фильтр по упражнению';
-            const names = Array.from(new Set(rows.map(row => row.exercise).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'ru', { sensitivity: 'base' }));
-            const signature = names.join('||');
-            if (select && analyticsOptionSignature !== signature) {
-                const currentValue = select.value || '__all__';
-                select.innerHTML = `<option value="__all__">Все упражнения</option>${names.map(name => `<option value="${name}">${name}</option>`).join('')}`;
-                select.value = names.includes(currentValue) ? currentValue : '__all__';
-                analyticsOptionSignature = signature;
-            }
-            return { select, searchInput, summary };
-        }
-
-        // Analytics (simplified for this version)
-        function renderAnalytics() {
-            const body = document.getElementById('analyticsBody');
-            const rows = getAnalyticsRows();
-            const { select, searchInput, summary } = ensureAnalyticsControls(rows);
-            const selectedExercise = select?.value || '__all__';
-            const query = (searchInput?.value || '').trim().toLocaleLowerCase('ru');
-            let filteredRows = rows.filter(row => selectedExercise === '__all__' || row.exercise === selectedExercise);
-            if (query) {
-                filteredRows = filteredRows.filter(row =>
-                    row.exercise.toLocaleLowerCase('ru').includes(query) ||
-                    row.result.toLocaleLowerCase('ru').includes(query) ||
-                    row.dateLabel.toLocaleLowerCase('ru').includes(query)
-                );
-            }
-
-            const visibleRows = filteredRows.slice(0, ANALYTICS_RENDER_LIMIT);
-            if (visibleRows.length) {
-                body.innerHTML = visibleRows.map(rowData => `
-                    <tr class="border-b border-slate-200">
-                        <td class="p-4 text-slate-500">${rowData.dateLabel}</td>
-                        <td class="p-4 text-slate-700 font-bold">${rowData.exercise}</td>
-                        <td class="p-4 text-slate-500 text-[10px]">${rowData.result}</td>
-                    </tr>
-                `).join('');
-            } else {
-                body.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-500 font-semibold">Ничего не найдено</td></tr>';
-            }
-            if (summary) {
-                const isLimited = filteredRows.length > visibleRows.length;
-                summary.textContent = isLimited
-                    ? `Показано ${visibleRows.length} из ${filteredRows.length}`
-                    : `${filteredRows.length} записей`;
-            }
+        function datePartsToTimestamp(d, mLabel, y) {
+            const day = Number(d) || 1;
+            const month = MONTH_INDEX[mLabel] ?? 0;
+            const year = Number(y) || new Date().getFullYear();
+            return new Date(year, month, day).getTime();
         }
 
         function sessionDateToTimestamp(session) {
-            const d = Number(session?.dateObj?.d) || 1;
-            const m = MONTH_INDEX[session?.dateObj?.m] ?? 0;
-            const y = Number(session?.dateObj?.y) || new Date().getFullYear();
-            return new Date(y, m, d).getTime();
+            return datePartsToTimestamp(session?.dateObj?.d, session?.dateObj?.m, session?.dateObj?.y);
         }
 
         function sortSessionsByDate(sessions = []) {
@@ -305,23 +221,7 @@
         function sortDayCardsInDom() {
             const container = document.getElementById('daysContainer');
             const cards = Array.from(container.querySelectorAll('.day-card'));
-            cards.sort((a, b) => {
-                const aSession = {
-                    dateObj: {
-                        d: a.querySelector('[data-type="d"]').textContent.trim(),
-                        m: a.querySelector('[data-type="m"]').textContent.trim(),
-                        y: a.querySelector('[data-type="y"]').textContent.trim()
-                    }
-                };
-                const bSession = {
-                    dateObj: {
-                        d: b.querySelector('[data-type="d"]').textContent.trim(),
-                        m: b.querySelector('[data-type="m"]').textContent.trim(),
-                        y: b.querySelector('[data-type="y"]').textContent.trim()
-                    }
-                };
-                return sessionDateToTimestamp(bSession) - sessionDateToTimestamp(aSession);
-            });
+            cards.sort((a, b) => getDayCardTimestamp(b) - getDayCardTimestamp(a));
             cards.forEach(card => container.appendChild(card));
             groupDayCardsByMonth();
         }
@@ -527,8 +427,8 @@
 
                 weekCount += 1;
                 monthCount += 1;
-                if (weekCountEl) weekCountEl.textContent = `${weekCount} трен.`;
-                if (monthCountEl) monthCountEl.textContent = `${monthCount} трен.`;
+                if (weekCountEl) weekCountEl.textContent = `${weekCount} sess.`;
+                if (monthCountEl) monthCountEl.textContent = `${monthCount} sess.`;
                 weekBody?.appendChild(card);
             });
 
@@ -547,11 +447,11 @@
         }
 
         function getDayCardTimestamp(card) {
-            const day = Number(card.querySelector('[data-type="d"]')?.textContent.trim()) || 1;
-            const monthLabel = card.querySelector('[data-type="m"]')?.textContent.trim();
-            const month = MONTH_INDEX[monthLabel] ?? 0;
-            const year = Number(card.querySelector('[data-type="y"]')?.textContent.trim()) || new Date().getFullYear();
-            return normalizeToLocalMidnight(new Date(year, month, day));
+            return datePartsToTimestamp(
+                card.querySelector('[data-type="d"]')?.textContent.trim(),
+                card.querySelector('[data-type="m"]')?.textContent.trim(),
+                card.querySelector('[data-type="y"]')?.textContent.trim()
+            );
         }
 
         function applyDayStatusBorders() {
@@ -602,7 +502,7 @@
 
         async function connectRepoFile() {
             if (!window.showOpenFilePicker && !window.showSaveFilePicker) {
-                showToast("Браузер не поддерживает доступ к файлам");
+                showToast("Browser does not support file access");
                 return;
             }
             try {
@@ -626,7 +526,7 @@
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(fileData.workouts));
                     localStorage.setItem(TEMPLATE_KEY, JSON.stringify(fileData.templates));
                     await loadFromStorage();
-                    showToast("Файл подключен. История загружена");
+                    showToast("File connected. History loaded");
                     return;
                 }
 
@@ -635,9 +535,9 @@
                     templates: JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'),
                     exportDate: new Date().toISOString()
                 });
-                showToast("Файл подключен. Сохранение в репозиторий активно");
+                showToast("File connected. Saving to repository active");
             } catch (err) {
-                if (err?.name !== 'AbortError') showToast("Не удалось подключить файл");
+                if (err?.name !== 'AbortError') showToast("Failed to connect file");
             }
         }
 

@@ -4,10 +4,10 @@
                 const aName = (a?.name || '').trim();
                 const bName = (b?.name || '').trim();
                 const isAutoName = (name) => {
-                    const n = (name || '').trim().toLocaleLowerCase('ru');
+                    const n = (name || '').trim().toLocaleLowerCase('en');
                     if (!n) return true;
-                    if (n === 'новый шаблон' || n === 'без названия') return true;
-                    return n.startsWith('новый шаблон (');
+                    if (n === 'new template' || n === 'untitled') return true;
+                    return n.startsWith('new template (');
                 };
                 const aAuto = isAutoName(aName);
                 const bAuto = isAutoName(bName);
@@ -17,7 +17,7 @@
                     const bId = Number(b?.id) || 0;
                     return aId - bId;
                 }
-                return aName.localeCompare(bName, 'ru', { sensitivity: 'base', numeric: true });
+                return aName.localeCompare(bName, 'en', { sensitivity: 'base', numeric: true });
             });
         }
 
@@ -26,52 +26,17 @@
             const templates = sortTemplatesAlphabetically(JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'));
             const newT = {
                 id: Date.now().toString(),
-                name: "Новый шаблон",
+                name: "New template",
                 weekday: card.querySelector('.weekday-value').textContent.trim(),
                 totalTime: card.querySelector('[data-type="total-time"]').value,
                 items: Array.from(card.querySelectorAll('.exercise-list > [data-type]')).map(el => parseExerciseElement(el))
             };
             templates.push(newT);
             localStorage.setItem(TEMPLATE_KEY, JSON.stringify(sortTemplatesAlphabetically(templates)));
-            showToast("Шаблон сохранен");
+            showToast("Template saved");
         }
 
-        function renderTemplateList() {
-            const list = document.getElementById('templateList');
-            const templates = sortTemplatesAlphabetically(JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'));
-            list.innerHTML = '';
-            if (templates.length === 0) { list.innerHTML = '<p class="text-center text-slate-600 py-10">Библиотека пуста</p>'; return; }
 
-            templates.forEach(t => {
-                const card = document.createElement('div');
-                card.className = "template-card";
-                card.dataset.templateId = t.id;
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-3 flex-wrap">
-                                <span class="template-chip">${t.weekday}</span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase">Общее время: ${t.totalTime || '00:00'}</span>
-                            </div>
-                            <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                        </div>
-                    </div>
-                    <div class="flex items-end justify-between gap-3">
-                        <div class="template-exercises-preview hidden">
-                            ${getTemplateExerciseSummary(t)}
-                        </div>
-                        <div class="template-menu mt-0 ml-auto">
-                            <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn icon primary" title="Применить шаблон">▶</button>
-                            <button onclick="toggleTemplateExercises(this)" class="template-menu-btn icon" title="Показать упражнения">👁</button>
-                            <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn icon" title="Переименовать">✎</button>
-                            <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn icon" title="Дублировать">⧉</button>
-                            <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn icon danger" title="Удалить">🗑</button>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(card);
-            });
-        }
 
         function getTemplateExerciseSummary(template) {
             const names = [];
@@ -88,25 +53,17 @@
             });
 
             const uniqueNames = Array.from(new Set(names));
-            if (uniqueNames.length === 0) return '<p class="text-[11px] text-slate-500">Нет упражнений в шаблоне</p>';
+            if (uniqueNames.length === 0) return '<p class="text-[11px] text-slate-500">No exercises in template</p>';
 
             return `
-                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Упражнения</p>
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">Exercises</p>
                 <div class="template-exercise-list">
                     ${uniqueNames.map(name => `<span class="template-exercise-item">${name}</span>`).join('')}
                 </div>
             `;
         }
 
-        function toggleTemplateExercises(btn) {
-            const card = btn.closest('.template-card');
-            const preview = card?.querySelector('.template-exercises-preview');
-            if (!preview) return;
-            const isHidden = preview.classList.contains('hidden');
-            preview.classList.toggle('hidden', !isHidden);
-            btn.classList.toggle('is-active', isHidden);
-            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
-        }
+
 
         function handleTemplateNameKey(e, templateId) {
             if (e.key === 'Enter') {
@@ -120,12 +77,12 @@
             const templates = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
             const idx = templates.findIndex(t => t.id === templateId);
             if (idx === -1) return;
-            const nextName = inputEl.value.trim() || "Без названия";
+            const nextName = inputEl.value.trim() || "Untitled";
             if (templates[idx].name === nextName) return;
             templates[idx].name = nextName;
             localStorage.setItem(TEMPLATE_KEY, JSON.stringify(sortTemplatesAlphabetically(templates)));
             renderTemplateList();
-            showToast("Название обновлено");
+            showToast("Name updated");
         }
 
         function focusTemplateName(templateId) {
@@ -143,11 +100,11 @@
             templates.push({
                 ...JSON.parse(JSON.stringify(source)),
                 id: Date.now().toString(),
-                name: `${source.name || 'Шаблон'} (копия)`
+                name: `${source.name || 'Template'} (copy)`
             });
             localStorage.setItem(TEMPLATE_KEY, JSON.stringify(sortTemplatesAlphabetically(templates)));
             renderTemplateList();
-            showToast("Шаблон продублирован");
+            showToast("Template duplicated");
         }
 
         function applyTemplateById(id) {
@@ -167,6 +124,7 @@
         }
 
         function deleteTemplate(id) {
+            if (!confirm('Delete template?')) return;
             let t = JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]');
             localStorage.setItem(TEMPLATE_KEY, JSON.stringify(sortTemplatesAlphabetically(t.filter(x => x.id !== id))));
             renderTemplateList();
@@ -185,14 +143,14 @@
             const toolbar = document.createElement('div');
             toolbar.id = 'templateToolbar';
             toolbar.innerHTML = `
-                <input id="templateSearchInput" type="search" class="w-full bg-transparent border border-slate-600/50 text-slate-300 text-sm font-semibold py-2 px-4 rounded-xl outline-none placeholder-slate-500" placeholder="Поиск...">
+                <input id="templateSearchInput" type="search" class="w-full bg-transparent border border-slate-600/50 text-slate-300 text-sm font-semibold py-2 px-4 rounded-xl outline-none placeholder-slate-500" placeholder="Search...">
                 <div id="templateListMeta" class="text-[10px] text-slate-500 font-bold uppercase tracking-wide mt-2"></div>
             `;
             list.parentElement.insertBefore(toolbar, list);
             const searchInput = document.getElementById('templateSearchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', () => {
-                    templateSearchQuery = searchInput.value.trim().toLocaleLowerCase('ru');
+                    templateSearchQuery = searchInput.value.trim().toLocaleLowerCase('en');
                     templateRenderLimit = LOW_PERF_UI ? 18 : 36;
                     renderTemplateList();
                 });
@@ -208,19 +166,19 @@
                     ...(t?.items || []).flatMap(item => item?.type === 'superset'
                         ? (item.exercises || []).map(ex => ex?.name || '')
                         : [item?.name || ''])
-                ].join(' ').toLocaleLowerCase('ru');
+                ].join(' ').toLocaleLowerCase('en');
                 return haystack.includes(templateSearchQuery);
             });
         }
 
-        renderTemplateList = function renderTemplateListOptimized() {
+        function renderTemplateList() {
             ensureTemplateControls();
             const list = document.getElementById('templateList');
             const meta = document.getElementById('templateListMeta');
             const searchInput = document.getElementById('templateSearchInput');
             const templates = sortTemplatesAlphabetically(JSON.parse(localStorage.getItem(TEMPLATE_KEY) || '[]'));
             const filteredTemplates = getFilteredTemplates(templates);
-            if (searchInput && searchInput.value.trim().toLocaleLowerCase('ru') !== templateSearchQuery) {
+            if (searchInput && searchInput.value.trim().toLocaleLowerCase('en') !== templateSearchQuery) {
                 searchInput.value = templateSearchQuery;
             }
             if (!templateRenderLimit) templateRenderLimit = LOW_PERF_UI ? 18 : 36;
@@ -229,12 +187,12 @@
 
             if (meta) {
                 meta.textContent = filteredTemplates.length > visibleTemplates.length
-                    ? `Показано ${visibleTemplates.length} из ${filteredTemplates.length}`
-                    : `${filteredTemplates.length} шаблонов`;
+                    ? `Showing ${visibleTemplates.length} of ${filteredTemplates.length}`
+                    : `${filteredTemplates.length} templates`;
             }
 
             if (filteredTemplates.length === 0) {
-                list.innerHTML = '<p class="text-center text-slate-500 py-10 text-sm">Ничего не найдено</p>';
+                list.innerHTML = '<p class="text-center text-slate-500 py-10 text-sm">Nothing found</p>';
                 return;
             }
 
@@ -244,25 +202,26 @@
                 card.className = 'template-card';
                 card.dataset.templateId = t.id;
                 card.innerHTML = `
-                    <div class="template-menu template-menu-top">
-                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary" title="Применить">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                        </button>
-                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn" title="Показать упражнения">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                        </button>
+                    <div class="template-top-row">
+                        <span class="template-chip">${t.weekday}</span>
+                        <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
+                        <span class="template-time">${t.totalTime || '00:00'}</span>
                     </div>
-                    <input type="text" class="template-name-input" value="${t.name}" onkeydown="handleTemplateNameKey(event, '${t.id}')" onblur="saveTemplateName(this, '${t.id}')">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase">${t.totalTime || '00:00'}</span>
                     <div class="template-exercises-preview hidden mt-2" data-loaded="0"></div>
                     <div class="template-menu">
-                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn" title="Переименовать">
+                        <button onclick="applyTemplateById('${t.id}')" class="template-menu-btn primary" title="Apply">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </button>
+                        <button onclick="toggleTemplateExercises(this)" class="template-menu-btn" title="Show exercises">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                        <button onclick="focusTemplateName('${t.id}')" class="template-menu-btn" title="Rename">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn" title="Дублировать">
+                        <button onclick="duplicateTemplate('${t.id}')" class="template-menu-btn" title="Duplicate">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                         </button>
-                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger" title="Удалить">
+                        <button onclick="deleteTemplate('${t.id}')" class="template-menu-btn danger" title="Delete">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                         </button>
                     </div>
@@ -275,16 +234,16 @@
                 const moreBtn = document.createElement('button');
                 moreBtn.type = 'button';
                 moreBtn.className = 'template-load-more';
-                moreBtn.textContent = 'Показать еще';
+                moreBtn.textContent = 'Show more';
                 moreBtn.onclick = () => {
                     templateRenderLimit += LOW_PERF_UI ? 18 : 36;
                     renderTemplateList();
                 };
                 list.appendChild(moreBtn);
             }
-        };
+        }
 
-        toggleTemplateExercises = function toggleTemplateExercisesOptimized(btn) {
+        function toggleTemplateExercises(btn) {
             const card = btn.closest('.template-card');
             const preview = card?.querySelector('.template-exercises-preview');
             if (!preview) return;
@@ -297,8 +256,23 @@
             }
             preview.classList.toggle('hidden', !isHidden);
             btn.classList.toggle('is-active', isHidden);
-            btn.title = isHidden ? 'Скрыть упражнения' : 'Показать упражнения';
-        };
+            btn.title = isHidden ? 'Hide exercises' : 'Show exercises';
+        }
+
+        // --- EMPTY STATE ---
+        function updateEmptyState() {
+            const hasCards = document.querySelectorAll('#daysContainer .day-card').length > 0;
+            const empty = document.getElementById('emptyState');
+            const container = document.getElementById('daysContainer');
+            if (!empty || !container) return;
+            if (hasCards) {
+                empty.classList.add('hidden');
+                container.classList.remove('hidden');
+            } else {
+                empty.classList.remove('hidden');
+                container.classList.add('hidden');
+            }
+        }
 
         // --- UTILS ---
         function toggleCollapse(el) {
@@ -310,9 +284,9 @@
             el.classList.toggle('is-open', !!willOpen);
             card?.classList.toggle('is-expanded', !!willOpen);
             el.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-            el.setAttribute('title', willOpen ? 'Свернуть тренировку' : 'Развернуть тренировку');
+            el.setAttribute('title', willOpen ? 'Collapse' : 'Expand');
             const label = el.querySelector('.day-toggle-label');
-            if (label) label.textContent = willOpen ? 'Свернуть' : 'Развернуть';
+            if (label) label.textContent = willOpen ? 'Collapse' : 'Expand';
             if (willOpen) applyAlternatingThemes();
         }
         function openTemplateModal(id) {
@@ -327,11 +301,20 @@
         function addExerciseByBtn(btn) { renderExercise(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
         function addSupersetByBtn(btn) { renderSuperset(btn.parentElement.parentElement.previousElementSibling); applyAlternatingThemes(); autoSave(true); }
         function addExToSuperset(btn) { renderExercise(btn.previousElementSibling, null, true); applyAlternatingThemes(); autoSave(true); }
-        function deleteDay(id) { if (confirm('Удалить тренировку?')) { document.querySelector(`.day-card[data-id="${id}"]`)?.remove(); autoSave(); } }
+        function deleteDay(id) {
+            if (confirm('Delete workout?')) {
+                document.querySelector(`.day-card[data-id="${id}"]`)?.remove();
+                autoSave();
+                if (typeof updateEmptyState === 'function') updateEmptyState();
+            }
+        }
         function toggleExerciseDetails(triggerEl) {
-            const card = triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
-            const details = card?.querySelector('.exercise-details');
-            if (!details) return;
+            const isSuperset = triggerEl?.classList?.contains('superset-card');
+            const card = isSuperset
+                ? triggerEl?.classList?.contains('superset-card') ? triggerEl : triggerEl.closest('.superset-card')
+                : triggerEl?.classList?.contains('exercise-card') ? triggerEl : triggerEl.closest('.exercise-card');
+            const details = card?.querySelector(isSuperset ? '.superset-details' : '.exercise-details');
+            if (!details || !card) return;
             details.classList.toggle('hidden');
             card.classList.toggle('is-open', !details.classList.contains('hidden'));
         }

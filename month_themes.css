@@ -66,7 +66,6 @@ body {
 .month-january .week-3 > button { background-color: #85b4f6; color: var(--text-dark); }
 .month-january .week-4 > button { background-color: #5c9bf3; color: var(--text-light); }
 .month-january .week-5 > button { background-color: var(--jan-main); color: var(--text-light); }
-.month-january .month-header { background-color: var(--jan-main); color: var(--text-light); }
 
 /* === ФЕВРАЛЬ #0047AB === */
 .month-february .week-1 > button { background-color: #ccd9f5; color: var(--text-dark); }
@@ -74,7 +73,6 @@ body {
 .month-february .week-3 > button { background-color: #668de0; color: var(--text-light); }
 .month-february .week-4 > button { background-color: #3366d6; color: var(--text-light); }
 .month-february .week-5 > button { background-color: var(--feb-main); color: var(--text-light); }
-.month-february .month-header { background-color: var(--feb-main); color: var(--text-light); }
 
 /* === МАРТ #169120 (Светлый зеленый - темный текст!) === */
 .month-march .week-1 > button { background-color: #c7e8ca; color: var(--text-dark); }
@@ -82,7 +80,6 @@ body {
 .month-march .week-3 > button { background-color: #57ba5e; color: var(--text-dark); }
 .month-march .week-4 > button { background-color: #36a33e; color: var(--text-dark); }
 .month-march .week-5 > button { background-color: var(--mar-main); color: var(--text-light); }
-.month-march .month-header { background-color: var(--mar-main); color: var(--text-light); }
 
 /* === АПРЕЛЬ #1B8A19 === */
 .month-april .week-1 > button { background-color: #c8e8c7; color: var(--text-dark); }
@@ -90,7 +87,6 @@ body {
 .month-april .week-3 > button { background-color: #5aba57; color: var(--text-dark); }
 .month-april .week-4 > button { background-color: #39a335; color: var(--text-light); }
 .month-april .week-5 > button { background-color: var(--apr-main); color: var(--text-light); }
-.month-april .month-header { background-color: var(--apr-main); color: var(--text-light); }
 
 /* === МАЙ #0F7012 (Очень темный) === */
 .month-may .week-1 > button { background-color: #c7e0c8; color: var(--text-dark); }
@@ -98,7 +94,6 @@ body {
 .month-may .week-3 > button { background-color: #57a25a; color: var(--text-light); }
 .month-may .week-4 > button { background-color: #2e8332; color: var(--text-light); }
 .month-may .week-5 > button { background-color: var(--may-main); color: var(--text-light); }
-.month-may .month-header { background-color: var(--may-main); color: var(--text-light); }
 
 /* === ИЮНЬ #F03F2B === */
 .month-june .week-1 > button { background-color: #fbcfc9; color: var(--text-dark); }
@@ -106,7 +101,6 @@ body {
 .month-june .week-3 > button { background-color: #f36f5d; color: var(--text-light); }
 .month-june .week-4 > button { background-color: #ef3f27; color: var(--text-light); }
 .month-june .week-5 > button { background-color: var(--jun-main); color: var(--text-light); }
-.month-june .month-header { background-color: var(--jun-main); color: var(--text-light); }
 
 /* === ИЮЛЬ #E33719 === */
 .month-july .week-1 > button { background-color: #f9cdc7; color: var(--text-dark); }
@@ -114,7 +108,6 @@ body {
 .month-july .week-3 > button { background-color: #ed6157; color: var(--text-light); }
 .month-july .week-4 > button { background-color: #e72b1f; color: var(--text-light); }
 .month-july .week-5 > button { background-color: var(--jul-main); color: var(--text-light); }
-.month-july .month-header { background-color: var(--jul-main); color: var(--text-light); }
 
 /* === АВГУСТ #C91902 === */
 .month-august .week-1 > button { background-color: #f5c7c1; color: var(--text-dark); }
@@ -122,7 +115,6 @@ body {
 .month-august .week-3 > button { background-color: #e15745; color: var(--text-light); }
 .month-august .week-4 > button { background-color: #d71f07; color: var(--text-light); }
 .month-august .week-5 > button { background-color: var(--aug-main); color: var(--text-light); }
-.month-august .month-header { background-color: var(--aug-main); color: var(--text-light); }
 
 /* === СЕНТЯБРЬ #F28C0F (Оранжевый - темный текст на светлых) === */
 .month-september .week-1 > button { background-color: #fce4c7; color: var(--text-dark); }
@@ -130,7 +122,6 @@ body {
 .month-september .week-3 > button { background-color: #f6ae57; color: var(--text-dark); }
 .month-september .week-4 > button { background-color: #f3931f; color: var(--text-dark); }
 .month-september .week-5 > button { background-color: var(--sep-main); color: var(--text-light); }
-.month-september .month-header { background-color: var(--sep-main); color: var(--text-light); }
 
 /* === ОКТЯБРЬ #C76D00 === */
 .month-october .week-1 > button { background-color: #f5d9c0; color: var(--text-dark); }
@@ -138,7 +129,6 @@ body {
 .month-october .week-3 > button { background-color: #e18d40; color: var(--text-dark); }
 .month-october .week-4 > button { background-color: #d76700; color: var(--text-dark); }
 .month-october .week-5 > button { background-color: var(--oct-main); color: var(--text-light); }
-.month-october .month-header { background-color: var(--oct-main); color: var(--text-light); }
 
 /* === НОЯБРЬ #9E3A14 (Терракот) === */
 .month-november .week-1 > button { background-color: #efdcd4; color: var(--text-dark); }
@@ -146,7 +136,6 @@ body {
 .month-november .week-3 > button { background-color: #cf967e; color: var(--text-dark); }
 .month-november .week-4 > button { background-color: #bf7353; color: var(--text-light); }
 .month-november .week-5 > button { background-color: var(--nov-main); color: var(--text-light); }
-.month-november .month-header { background-color: var(--nov-main); color: var(--text-light); }
 
 /* === ДЕКАБРЬ #8B5CF6 === */
 .month-december .week-1 > button { background-color: #e8dffc; color: var(--text-dark); }
@@ -154,114 +143,5 @@ body {
 .month-december .week-3 > button { background-color: #ba9ff6; color: var(--text-dark); }
 .month-december .week-4 > button { background-color: #a37ff3; color: var(--text-light); }
 .month-december .week-5 > button { background-color: var(--dec-main); color: var(--text-light); }
-.month-december .month-header { background-color: var(--dec-main); color: var(--text-light); }
 
-/* ============================================
-   АРХИТЕКТУРА ЭЛЕМЕНТОВ
-   ============================================ */
 
-/* Заголовок месяца - сплошная заливка, скругление 20px */
-.month-header {
-    border-radius: 20px;
-    padding: 15px 20px;
-    font-weight: 800;
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-}
-
-/* Контейнер недели */
-.week-container {
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-/* Заголовок недели */
-.week-header {
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Карточка упражнения - наследует палитру, но чуть темнее фона недели */
-.exercise-card {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.exercise-title {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 5px;
-}
-
-.exercise-body {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    font-weight: 500;
-}
-
-/* Кнопки действий - сплошной цвет, высокая контрастность */
-.action-btn {
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.1s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.action-btn:active {
-    transform: scale(0.96);
-}
-
-/* Кнопка переключения (свернуть/развернуть) */
-.toggle-btn {
-    background-color: rgba(0, 0, 0, 0.25);
-    color: inherit;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Для очень светлых недель (Март, Сентябрь 1-2 неделя) - темная кнопка */
-.month-march .week-1 .toggle-btn,
-.month-march .week-2 .toggle-btn,
-.month-september .week-1 .toggle-btn,
-.month-september .week-2 .toggle-btn,
-.month-june .week-1 .toggle-btn,
-.month-july .week-1 .toggle-btn {
-    background-color: var(--text-dark);
-    color: white;
-    border: none;
-}
-
-/* Аккордеон */
-.scroll-container {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
-}
-
-.scroll-container.open {
-    max-height: 2000px;
-    transition: max-height 0.5s ease-in-out;
-}
-
-/* Принудительно убираем белые фоны */
-.card, .workout-item, .exercise-item {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-    color: inherit !important;
-}
